@@ -11,6 +11,7 @@ import android.view.inputmethod.EditorInfo;
 import android.widget.AutoCompleteTextView;
 import android.widget.EditText;
 import android.widget.TextView;
+
 import androidx.appcompat.app.AlertDialog;
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
@@ -23,9 +24,9 @@ import com.google.firebase.auth.FirebaseAuth;
 public class MainActivity extends AppCompatActivity {
 
     // Constants
-    static final String CHAT_PREFS = "ChatPrefs";
+    static final String SPLIT_PREFS = "SplitPrefs";
     static final String DISPLAY_NAME_KEY = "username";
-static final String TAG = "Registration";
+    static final String TAG = "Registration";
 
     // TODO: Add member variables here:
     // UI references.
@@ -41,28 +42,33 @@ static final String TAG = "Registration";
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_register);
 
-        mEmailView = (AutoCompleteTextView) findViewById(R.id.register_email);
-        mPasswordView = (EditText) findViewById(R.id.register_password);
-        mConfirmPasswordView = (EditText) findViewById(R.id.register_confirm_password);
-        mUsernameView = (AutoCompleteTextView) findViewById(R.id.register_username);
 
-        // Keyboard sign in action
-        mConfirmPasswordView.setOnEditorActionListener(new TextView.OnEditorActionListener() {
-            @Override
-            public boolean onEditorAction(TextView textView, int id, KeyEvent keyEvent) {
-                if (id == R.integer.register_form_finished || id == EditorInfo.IME_NULL) {
-                    attemptRegistration();
-                    return true;
+        SharedPreferences prefs = getSharedPreferences(SPLIT_PREFS, 0);
+        String displayName = prefs.getString(DISPLAY_NAME_KEY, "");
+        if (TextUtils.isEmpty(displayName)) {
+            setContentView(R.layout.activity_register);
+            mEmailView = (AutoCompleteTextView) findViewById(R.id.register_email);
+            mPasswordView = (EditText) findViewById(R.id.register_password);
+            mConfirmPasswordView = (EditText) findViewById(R.id.register_confirm_password);
+            mUsernameView = (AutoCompleteTextView) findViewById(R.id.register_username);
+
+            // Keyboard sign in action
+            mConfirmPasswordView.setOnEditorActionListener(new TextView.OnEditorActionListener() {
+                @Override
+                public boolean onEditorAction(TextView textView, int id, KeyEvent keyEvent) {
+                    if (id == R.integer.register_form_finished || id == EditorInfo.IME_NULL) {
+                        attemptRegistration();
+                        return true;
+                    }
+                    return false;
                 }
-                return false;
-            }
-        });
+            });
 
-        // TODO: Get hold of an instance of FirebaseAuth
-        mAuth = FirebaseAuth.getInstance();
-
+            // TODO: Get hold of an instance of FirebaseAuth
+            mAuth = FirebaseAuth.getInstance();
+        } else
+            setContentView(R.layout.activity_expenses);
 
     }
 
@@ -124,7 +130,7 @@ static final String TAG = "Registration";
     private boolean isPasswordValid(String password) {
         //TODO: Add own logic to check for a valid password
         String confirmPassword = mConfirmPasswordView.getText().toString();
-        return confirmPassword.equals(password) && password.length() > R.integer.password_length;
+        return confirmPassword.equals(password) && password.length() > getResources().getInteger(R.integer.password_length);
     }
 
     // TODO: Create a Firebase user
@@ -134,7 +140,6 @@ static final String TAG = "Registration";
         String password = mPasswordView.getText().toString();
 
 
-
         mAuth.createUserWithEmailAndPassword(email, password).addOnCompleteListener(this,
                 new OnCompleteListener<AuthResult>() {
 
@@ -142,7 +147,7 @@ static final String TAG = "Registration";
                     public void onComplete(@NonNull Task<AuthResult> task) {
                         Log.d(TAG, "createUser onComplete: " + task.isSuccessful());
 
-                        if(!task.isSuccessful()){
+                        if (!task.isSuccessful()) {
                             Log.d(TAG, "user creation failed", task.getException());
                             showErrorDialog(getString(R.string.error_registration) + "\n" + task.getException().getMessage());
                         } else {
@@ -159,13 +164,13 @@ static final String TAG = "Registration";
     // TODO: Save the display name to Shared Preferences
     private void saveDisplayName() {
         String displayName = mUsernameView.getText().toString();
-        SharedPreferences prefs = getSharedPreferences(CHAT_PREFS, 0);
+        SharedPreferences prefs = getSharedPreferences(SPLIT_PREFS, 0);
         prefs.edit().putString(DISPLAY_NAME_KEY, displayName).apply();
     }
 
 
     // TODO: Create an alert dialog to show in case registration failed
-    private void showErrorDialog(String message){
+    private void showErrorDialog(String message) {
 
         new AlertDialog.Builder(this)
                 .setTitle(getString(R.string.error_title))
