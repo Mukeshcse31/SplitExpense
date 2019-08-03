@@ -124,7 +124,7 @@ static final String TAG = "Registration";
     private boolean isPasswordValid(String password) {
         //TODO: Add own logic to check for a valid password
         String confirmPassword = mConfirmPasswordView.getText().toString();
-        return confirmPassword.equals(password) && password.length() > 6;
+        return confirmPassword.equals(password) && password.length() > R.integer.password_length;
     }
 
     // TODO: Create a Firebase user
