@@ -1,34 +1,34 @@
 {
   "project_info": {
-    "project_number": "341915617313",
-    "firebase_url": "https://splitwiseclone-37b4b.firebaseio.com",
-    "project_id": "splitwiseclone-37b4b",
-    "storage_bucket": "splitwiseclone-37b4b.appspot.com"
+    "project_number": "770717414293",
+    "firebase_url": "https://splitwiseclone-83993.firebaseio.com",
+    "project_id": "splitwiseclone-83993",
+    "storage_bucket": "splitwiseclone-83993.appspot.com"
   },
   "client": [
     {
       "client_info": {
-        "mobilesdk_app_id": "1:341915617313:android:a129349da6b50890",
+        "mobilesdk_app_id": "1:770717414293:android:a129349da6b50890",
         "android_client_info": {
           "package_name": "com.google.app.splitwise_clone"
         }
       },
       "oauth_client": [
         {
-          "client_id": "341915617313-lr8s6alfh2pfs8u0sutltmp76k90cnca.apps.googleusercontent.com",
+          "client_id": "770717414293-hbln6p9vuj6nfdba5utsvqp6tnciqvdc.apps.googleusercontent.com",
           "client_type": 3
         }
       ],
       "api_key": [
         {
-          "current_key": "AIzaSyBscBx6LMQJHzzWPov3St9bLiCMVp10VyA"
+          "current_key": "AIzaSyBkk17bLat9P0daWETg5tfS2qQvn86YXT4"
         }
       ],
       "services": {
         "appinvite_service": {
           "other_platform_oauth_client": [
             {
-              "client_id": "341915617313-lr8s6alfh2pfs8u0sutltmp76k90cnca.apps.googleusercontent.com",
+              "client_id": "770717414293-hbln6p9vuj6nfdba5utsvqp6tnciqvdc.apps.googleusercontent.com",
               "client_type": 3
             }
           ]

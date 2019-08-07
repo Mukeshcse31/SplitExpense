@@ -1,72 +1,79 @@
 <?xml version="1.0" encoding="utf-8"?>
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
-              xmlns:tools="http://schemas.android.com/tools"
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
               android:layout_width="match_parent"
               android:layout_height="match_parent"
-              android:orientation="vertical"
-              android:paddingBottom="@dimen/activity_vertical_margin"
-              android:paddingLeft="@dimen/activity_horizontal_margin"
-              android:paddingRight="@dimen/activity_horizontal_margin"
-              android:paddingTop="@dimen/activity_vertical_margin"
+              android:paddingBottom="@dimen/activity_vertical_margin_10"
+              android:paddingLeft="@dimen/activity_horizontal_margin_10"
+              android:paddingRight="@dimen/activity_horizontal_margin_10"
+              android:paddingTop="@dimen/activity_vertical_margin_10"
               android:background="@drawable/background_signup"
               tools:context="com.google.app.splitwise_clone.MainActivity"
               android:gravity="top">
 
 
+    <com.google.android.material.textfield.TextInputLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="@dimen/layout_marginTop_10"
+        android:id="@+id/label_userName"
+        android:textColorHint="@color/white"
+        app:layout_constraintTop_toTopOf="parent"
+        tools:layout_editor_absoluteX="10dp">
+
+        <AutoCompleteTextView
+            android:id="@+id/register_username"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:hint="@string/prompt_username"
+            android:imeOptions="actionNext"
+            android:inputType="textNoSuggestions"
+            android:maxLines="@integer/signUp_lines"
+            android:textColor="@color/white"
+            android:textColorHint="@color/white"
+            android:textIsSelectable="false"
+            android:textSize="@dimen/signUp_textSize"
+            android:textStyle="bold" />
+
+    </com.google.android.material.textfield.TextInputLayout>
+
+    <com.google.android.material.textfield.TextInputLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:id="@+id/email"
+        android:layout_marginTop="@dimen/layout_marginTop_10"
+        app:layout_constraintTop_toBottomOf="@+id/label_userName"
+        android:textColorHint="@color/white"
+        tools:layout_editor_absoluteX="10dp">
+
+        <AutoCompleteTextView
+            android:id="@+id/register_email"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="10dp"
+            android:hint="@string/prompt_email"
+            android:imeOptions="actionNext"
+            android:inputType="textEmailAddress"
+            android:maxLines="@integer/signUp_lines"
+            android:textColor="@color/white"
+            android:textColorHint="@color/white"
+            android:textIsSelectable="false"
+            android:textSize="@dimen/signUp_textSize"
+            android:textStyle="bold" />
+
+    </com.google.android.material.textfield.TextInputLayout>
 
         <com.google.android.material.textfield.TextInputLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:textColorHint="@color/white"
-            >
-
-            <AutoCompleteTextView
-                android:id="@+id/register_username"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:textSize="25sp"
-                android:hint="@string/prompt_username"
-                android:textColor="@color/white"
-                android:textColorHint="@color/white"
-                android:inputType="textNoSuggestions"
-                android:imeOptions="actionNext"
-                android:maxLines="1"
-                android:textIsSelectable="false"
-                android:textStyle="bold"/>
-
-        </com.google.android.material.textfield.TextInputLayout>
-
-        <com.google.android.material.textfield.TextInputLayout
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:textColorHint="@color/white"
-            >
-
-            <AutoCompleteTextView
-                android:id="@+id/register_email"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:hint="@string/prompt_email"
-                android:textColor="@color/white"
-                android:textSize="25sp"
-                android:imeOptions="actionNext"
-                android:textColorHint="@color/white"
-                android:inputType="textEmailAddress"
-                android:maxLines="1"
-                android:textIsSelectable="false"
-                android:textStyle="bold"/>
-
-        </com.google.android.material.textfield.TextInputLayout>
-
-        <com.google.android.material.textfield.TextInputLayout
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:textColorHint="@color/white"
-            >
+            android:id="@+id/password1"
+            app:layout_constraintTop_toBottomOf="@+id/email"
+            android:textColorHint="@color/white">
 
             <EditText
                 android:id="@+id/register_password"
-                android:textSize="25sp"
+                android:textSize="@dimen/signUp_textSize"
                 android:textColor="@color/white"
                 android:textColorHint="@color/white"
                 android:layout_width="match_parent"
@@ -74,21 +81,22 @@
                 android:layout_height="wrap_content"
                 android:hint="@string/prompt_password"
                 android:inputType="textPassword"
-                android:maxLines="1"
+                android:maxLines="@integer/signUp_lines"
                 android:textStyle="bold"/>
 
         </com.google.android.material.textfield.TextInputLayout>
 
         <com.google.android.material.textfield.TextInputLayout
             android:layout_width="match_parent"
+            android:id="@+id/label_confirm_password"
+            app:layout_constraintTop_toBottomOf="@+id/password1"
             android:layout_height="wrap_content"
-            android:textColorHint="@color/white"
-            >
+            android:textColorHint="@color/white">
 
             <EditText
                 android:id="@+id/register_confirm_password"
                 android:textColor="@color/white"
-                android:textSize="25sp"
+                android:textSize="@dimen/signUp_textSize"
                 android:textColorHint="@color/white"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
@@ -97,7 +105,7 @@
                 android:imeActionLabel="@string/action_sign_up"
                 android:imeOptions="actionUnspecified"
                 android:inputType="textPassword"
-                android:maxLines="1"
+                android:maxLines="@integer/signUp_lines"
                 android:textStyle="bold"/>
 
         </com.google.android.material.textfield.TextInputLayout>
@@ -105,15 +113,56 @@
         <Button
             android:id="@+id/register_sign_up_button"
             style="?android:textAppearanceMedium"
+            app:layout_constraintTop_toBottomOf="@+id/label_confirm_password"
             android:background="@color/white"
             android:textColor="@color/green"
             android:onClick="signUp"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_marginTop="16dp"
+            android:layout_marginTop="@dimen/layout_marginTop_16"
             android:text="@string/action_sign_up"
             android:textStyle="bold"/>
 
+    <Button
+        android:id="@+id/loginbutton"
+        style="?android:textAppearanceMedium"
+        app:layout_constraintTop_toBottomOf="@+id/label_confirm_password"
+        android:background="@color/white"
+        android:textColor="@color/green"
+        android:onClick="login"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="@dimen/layout_marginTop_16"
+        android:visibility="invisible"
+        android:text="@string/action_Login"
+        android:textStyle="bold"/>
+
+    <Button
+        android:id="@+id/getSignUp"
+        style="?android:textAppearanceMedium"
+        app:layout_constraintBottom_toBottomOf="parent"
+        android:background="@color/white"
+        android:textColor="@color/green"
+        android:onClick="getSignUp"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="@string/action_getSignUp"
+        android:visibility="invisible"
+        android:layout_marginBottom="@dimen/layout_marginBottom_16"
+        android:textStyle="bold"/>
+
+    <Button
+        android:id="@+id/getLogin"
+        style="?android:textAppearanceMedium"
+        app:layout_constraintBottom_toBottomOf="parent"
+        android:background="@color/white"
+        android:textColor="@color/green"
+        android:onClick="getLogin"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="@string/action_getLogin"
+        android:layout_marginBottom="@dimen/layout_marginBottom_16"
+        android:textStyle="bold"/>
 
 
-</LinearLayout>
+</androidx.constraintlayout.widget.ConstraintLayout>

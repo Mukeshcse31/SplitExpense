@@ -9,6 +9,7 @@ import android.view.KeyEvent;
 import android.view.View;
 import android.view.inputmethod.EditorInfo;
 import android.widget.AutoCompleteTextView;
+import android.widget.Button;
 import android.widget.EditText;
 import android.widget.TextView;
 
@@ -18,8 +19,12 @@ import androidx.appcompat.app.AppCompatActivity;
 
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.Task;
+import com.google.android.material.textfield.TextInputLayout;
+import com.google.app.splitwise_clone.model.InstantMessage;
 import com.google.firebase.auth.AuthResult;
 import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.database.DatabaseError;
+import com.google.firebase.database.DatabaseReference;
 
 public class MainActivity extends AppCompatActivity {
 
@@ -28,13 +33,13 @@ public class MainActivity extends AppCompatActivity {
     static final String DISPLAY_NAME_KEY = "username";
     static final String TAG = "Registration";
 
-    // TODO: Add member variables here:
-    // UI references.
     private AutoCompleteTextView mEmailView;
     private AutoCompleteTextView mUsernameView;
+    private TextInputLayout mUserNameLayout;
+    private TextInputLayout mlabel_confirm_password;
     private EditText mPasswordView;
     private EditText mConfirmPasswordView;
-
+private Button mloginbutton, msignUp, mgetLogin, mgetSignUp;
     // Firebase instance variables
     private FirebaseAuth mAuth;
 
@@ -52,6 +57,13 @@ public class MainActivity extends AppCompatActivity {
             mPasswordView = (EditText) findViewById(R.id.register_password);
             mConfirmPasswordView = (EditText) findViewById(R.id.register_confirm_password);
             mUsernameView = (AutoCompleteTextView) findViewById(R.id.register_username);
+mloginbutton = findViewById(R.id.loginbutton);
+msignUp = findViewById(R.id.register_sign_up_button);
+mgetLogin = findViewById(R.id.getLogin);
+mgetSignUp = findViewById(R.id.getSignUp);
+
+            mUserNameLayout = findViewById(R.id.label_userName);
+            mlabel_confirm_password = findViewById(R.id.label_confirm_password);
 
             // Keyboard sign in action
             mConfirmPasswordView.setOnEditorActionListener(new TextView.OnEditorActionListener() {
@@ -64,11 +76,9 @@ public class MainActivity extends AppCompatActivity {
                     return false;
                 }
             });
-
-            // TODO: Get hold of an instance of FirebaseAuth
             mAuth = FirebaseAuth.getInstance();
         } else
-            setContentView(R.layout.activity_expenses);
+            gotoNextPage();
 
     }
 
@@ -116,7 +126,6 @@ public class MainActivity extends AppCompatActivity {
             // There was an error; don't attempt login and focus the first form field with an error.
             focusView.requestFocus();
         } else {
-            // TODO: Call create FirebaseUser() here
             createFirebaseUser();
 
         }
@@ -128,18 +137,14 @@ public class MainActivity extends AppCompatActivity {
     }
 
     private boolean isPasswordValid(String password) {
-        //TODO: Add own logic to check for a valid password
         String confirmPassword = mConfirmPasswordView.getText().toString();
         return confirmPassword.equals(password) && password.length() > getResources().getInteger(R.integer.password_length);
     }
 
-    // TODO: Create a Firebase user
     private void createFirebaseUser() {
 
         String email = mEmailView.getText().toString();
         String password = mPasswordView.getText().toString();
-
-
         mAuth.createUserWithEmailAndPassword(email, password).addOnCompleteListener(this,
                 new OnCompleteListener<AuthResult>() {
 
@@ -152,9 +157,7 @@ public class MainActivity extends AppCompatActivity {
                             showErrorDialog(getString(R.string.error_registration) + "\n" + task.getException().getMessage());
                         } else {
                             saveDisplayName();
-                            Intent intent = new Intent(MainActivity.this, Expenses.class);
-                            finish();
-                            startActivity(intent);
+                            gotoNextPage();
                         }
                     }
                 });
@@ -164,6 +167,8 @@ public class MainActivity extends AppCompatActivity {
     // TODO: Save the display name to Shared Preferences
     private void saveDisplayName() {
         String displayName = mUsernameView.getText().toString();
+        if(TextUtils.isEmpty(displayName)) displayName = "Mukesh"; //TODO parameterize when login
+
         SharedPreferences prefs = getSharedPreferences(SPLIT_PREFS, 0);
         prefs.edit().putString(DISPLAY_NAME_KEY, displayName).apply();
     }
@@ -180,4 +185,58 @@ public class MainActivity extends AppCompatActivity {
                 .show();
 
     }
+
+    public void getLogin(View v) {
+
+        mUserNameLayout.setVisibility(View.INVISIBLE);
+        mlabel_confirm_password.setVisibility(View.INVISIBLE);
+        msignUp.setVisibility(View.INVISIBLE);
+        mgetLogin.setVisibility(View.INVISIBLE);
+
+        mloginbutton.setVisibility(View.VISIBLE);
+        mgetSignUp.setVisibility(View.VISIBLE);
+
+    }
+
+
+    public void getSignUp(View v) {
+
+        mUserNameLayout.setVisibility(View.VISIBLE);
+        mlabel_confirm_password.setVisibility(View.VISIBLE);
+        msignUp.setVisibility(View.VISIBLE);
+        mgetLogin.setVisibility(View.VISIBLE);
+
+        mloginbutton.setVisibility(View.INVISIBLE);
+        mgetSignUp.setVisibility(View.INVISIBLE);
+
+    }
+
+    private void gotoNextPage(){
+        Intent intent = new Intent(MainActivity.this, Expenses.class);
+        finish();
+        startActivity(intent);
+    }
+    public void login(View v){
+
+        String email = mEmailView.getText().toString();
+        String password = mPasswordView.getText().toString();
+
+        mAuth.signInWithEmailAndPassword(email, password).addOnCompleteListener(this,
+                new OnCompleteListener<AuthResult>() {
+
+            @Override
+            public void onComplete(@NonNull Task<AuthResult> task) {
+                Log.d(TAG, "User Login onComplete: " + task.isSuccessful());
+
+                if (!task.isSuccessful()) {
+                    Log.d(TAG, "user Login failed", task.getException());
+                    showErrorDialog(getString(R.string.error_Login) + "\n" + task.getException().getMessage());
+                } else {
+                    saveDisplayName();//TODO get the display name from DB
+                    gotoNextPage();
+                }
+            }
+        });
+    }
+    //TODO Login and setTitle
 }
