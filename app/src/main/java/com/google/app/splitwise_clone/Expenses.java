@@ -68,34 +68,14 @@ public class Expenses extends AppCompatActivity {
         }
     }
 
+    public void addAGroup(View v){
+
+
+    }
+
+
     public void addAFriend(View v) {
 
-
-        Query query = mDatabaseReference.child("friends").orderByChild("id").limitToLast(1);
-        query.addListenerForSingleValueEvent(new ValueEventListener() {
-            @Override
-            public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
-                int id = 1;
-                if (dataSnapshot.exists()) {
-                    for (DataSnapshot i : dataSnapshot.getChildren()) {
-                        Log.i(TAG, i.getKey());
-                        Friend f = i.getValue(Friend.class);
-                        id = f.getId();
-
-                    }
-                }
-                Intent intent = new Intent(Expenses.this, AddFriend.class);
-                intent.putExtra("friendId", id);
-                startActivity(intent);
-
-            }
-
-
-            @Override
-            public void onCancelled(@NonNull DatabaseError databaseError) {
-
-            }
-        });
 
     }
 

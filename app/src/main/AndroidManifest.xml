@@ -27,6 +27,11 @@
         <activity android:name=".AddFriend"
             android:parentActivityName=".Expenses">
         </activity>
+
+        <activity android:name=".Friends"
+            android:parentActivityName=".MainActivity">
+        </activity>
+
     </application>
 
 </manifest>

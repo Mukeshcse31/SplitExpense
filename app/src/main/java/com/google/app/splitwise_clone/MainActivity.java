@@ -213,6 +213,7 @@ mgetSignUp = findViewById(R.id.getSignUp);
 
     private void gotoNextPage(){
         Intent intent = new Intent(MainActivity.this, Expenses.class);
+        intent = new Intent(MainActivity.this, Friends.class);
         finish();
         startActivity(intent);
     }

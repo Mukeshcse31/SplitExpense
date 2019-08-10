@@ -13,5 +13,21 @@
 
     <item name="visible" type="id"/>
     <item name="masked" type="id"/>
+
+    <dimen name="list_top_margin">112dp</dimen>
+    <dimen name="list_bottom_margin">24dp</dimen>
+    <dimen name="app_bar_layout_main_height">125dp</dimen>
+    <dimen name="app_bar_layout_elevation">4dp</dimen>
+
+    <dimen name="detail_toolbar_elevation">2dp</dimen>
+
+<!--friends' list-->
+    <dimen name="text_size_small">8sp</dimen>
+    <dimen name="text_size_header">16sp</dimen>
+    <dimen name="text_size_large">32sp</dimen>
+    <dimen name="line">1dp</dimen>
+    <dimen name="margin_4">4dp</dimen>
+
+
 </resources>
 

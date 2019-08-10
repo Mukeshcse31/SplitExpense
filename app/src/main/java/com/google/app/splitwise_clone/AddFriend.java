@@ -68,7 +68,7 @@ public class AddFriend extends AppCompatActivity {
 
                             int friendId = 1;
                             if (getIntent().hasExtra("friendId")) {
-                                friendId = getIntent().getIntExtra("friendId", 1);
+                                friendId = getIntent().getIntExtra("friendId", 0);
                                 friendId++;
                             }
                             Friend msg = new Friend(friendId, name, email);

@@ -1,0 +1,17 @@
+<?xml version="1.0" encoding="utf-8"?>
+<menu xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto">
+
+    <item
+        android:id="@+id/saveFriend"
+        android:title="Add Friends"
+        app:showAsAction="always"
+        android:orderInCategory="0"/>
+
+    <item
+        android:id="@+id/gotoGroups"
+        android:title="Groups"
+        app:showAsAction="always"
+        android:orderInCategory="1"/>
+
+</menu>
