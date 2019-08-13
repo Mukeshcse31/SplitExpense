@@ -44,24 +44,12 @@
             android:layout_weight="3"
             android:textSize="@dimen/text_size_header" />
 
-        <TextView
-            android:id="@+id/tv_status"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_gravity="end"
-            android:textAppearance="@style/TextAppearance.AppCompat.Medium"
-            android:textSize="@dimen/text_size_header"
-            android:text="Status"
-            android:layout_weight="5"
-            android:textStyle="italic" />
-
         <ImageView
             android:id="@+id/member_iv"
             android:layout_width="20dp"
             android:layout_height="26dp"
             android:layout_marginTop="@dimen/margin_4"
-            android:layout_weight="1"
-            android:src="@drawable/greater" />
+            android:layout_weight="1" />
 
     </LinearLayout>
 

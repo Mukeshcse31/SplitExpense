@@ -55,7 +55,7 @@ public class AddFriend extends AppCompatActivity {
                 final String email = mFriendEmail.getText().toString().toLowerCase();//convert email to lowercase
 
 //                https://stackoverflow.com/questions/51607449/what-is-the-different-betwen-equalto-and-startat-endat-in-firebase-and-whe/51610286
-                Query query = mDatabaseReference.child("friends").orderByChild("email").startAt(email).endAt(email);
+                Query query = mDatabaseReference.child("users").orderByChild("email").startAt(email).endAt(email);
                 query.addListenerForSingleValueEvent(new ValueEventListener() {
                     @Override
                     public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
@@ -73,7 +73,7 @@ public class AddFriend extends AppCompatActivity {
                             }
                             Friend msg = new Friend(friendId, name, email);
 
-                            mDatabaseReference.child("friends/" + friendId).setValue(msg, new DatabaseReference.CompletionListener() {
+                            mDatabaseReference.child("users/" + friendId).setValue(msg, new DatabaseReference.CompletionListener() {
                                 @Override
                                 public void onComplete(DatabaseError databaseError, DatabaseReference dataReference) {
 //https://stackoverflow.com/questions/30729312/how-to-dismiss-a-snackbar-using-its-own-action-button

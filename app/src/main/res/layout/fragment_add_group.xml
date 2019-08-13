@@ -1,0 +1,99 @@
+<?xml version="1.0" encoding="utf-8"?><!--Copyright (C) 2017 The Android Open Source Project
+
+ Licensed under the Apache License, Version 2.0 (the "License");
+ you may not use this file except in compliance with the License.
+ You may obtain a copy of the License at
+
+  	http://www.apache.org/licenses/LICENSE-2.0
+
+ Unless required by applicable law or agreed to in writing, software
+ distributed under the License is distributed on an "AS IS" BASIS,
+ WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ See the License for the specific language governing permissions and
+ limitations under the License.-->
+
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:background="@color/gray"
+    android:layout_height="match_parent">
+
+    <LinearLayout
+        android:id="@+id/addGroupLinearLayout"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal">
+    <ImageView
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        android:layout_width="80dp"
+        android:layout_height="80dp"
+        android:src="@drawable/camera"/>
+
+    <com.google.android.material.textfield.TextInputLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="@dimen/layout_marginTop_10"
+        android:id="@+id/add_friend_Name"
+        android:textColorHint="@color/white"
+        app:layout_constraintTop_toTopOf="parent"
+        tools:layout_editor_absoluteX="10dp">
+
+        <AutoCompleteTextView
+            android:id="@+id/group_name"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:hint="@string/add_group_name"
+            android:imeOptions="actionNext"
+            android:inputType="textNoSuggestions"
+            android:maxLines="@integer/signUp_lines"
+            android:textColor="@color/white"
+            android:textColorHint="@color/white"
+            android:textIsSelectable="false"
+            android:textSize="@dimen/signUp_textSize"
+            android:textStyle="bold" />
+
+    </com.google.android.material.textfield.TextInputLayout>
+
+    </LinearLayout>
+    <TextView
+        android:id="@+id/tv_members"
+        android:text="@string/members"
+        app:layout_constraintTop_toBottomOf="@id/addGroupLinearLayout"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:paddingStart="@dimen/padding_small"
+        android:paddingTop="@dimen/padding_small"
+        android:paddingEnd="@dimen/padding_small"
+        android:textSize="16sp"
+        android:textStyle="bold" />
+
+    <androidx.recyclerview.widget.RecyclerView
+        android:id="@+id/members_rv"
+        style="@style/RecyclerViewStyle"
+        app:layout_constraintTop_toBottomOf="@id/tv_members"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_behavior="@string/appbar_scrolling_view_behavior" />
+
+
+    <TextView
+        android:id="@+id/tv_nonmembers"
+        android:layout_width="match_parent"
+        app:layout_constraintTop_toBottomOf="@id/members_rv"
+        android:layout_height="wrap_content"
+        android:paddingTop="@dimen/padding_small"
+        android:text="@string/non_members"
+        android:textSize="16sp"
+        android:textStyle="bold" />
+
+    <androidx.recyclerview.widget.RecyclerView
+        android:id="@+id/nonmembers_rv"
+        style="@style/RecyclerViewStyle"
+        app:layout_constraintTop_toBottomOf="@id/tv_nonmembers"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_behavior="@string/appbar_scrolling_view_behavior" />
+
+</androidx.constraintlayout.widget.ConstraintLayout>

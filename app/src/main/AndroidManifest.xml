@@ -27,11 +27,13 @@
         <activity android:name=".AddFriend"
             android:parentActivityName=".Expenses">
         </activity>
+        <activity android:name=".groups.Groups">
+        </activity>
 
         <activity android:name=".Friends"
             android:parentActivityName=".MainActivity">
         </activity>
-
+        <activity android:name=".groups.AddGroup"/>
     </application>
 
 </manifest>

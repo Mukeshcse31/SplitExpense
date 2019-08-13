@@ -9,6 +9,8 @@ private String amount;
 private String status;
 
     public SingleBalance() {
+        this.amount = "0.0";
+        this.status = "no expenses";
     }
 
     public SingleBalance(String amount, String status) {

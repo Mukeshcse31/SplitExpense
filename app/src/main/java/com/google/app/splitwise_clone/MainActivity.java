@@ -29,8 +29,8 @@ import com.google.firebase.database.DatabaseReference;
 public class MainActivity extends AppCompatActivity {
 
     // Constants
-    static final String SPLIT_PREFS = "SplitPrefs";
-    static final String DISPLAY_NAME_KEY = "username";
+    public static final String SPLIT_PREFS = "SplitPrefs";
+    public static final String DISPLAY_NAME_KEY = "username";
     static final String TAG = "Registration";
 
     private AutoCompleteTextView mEmailView;

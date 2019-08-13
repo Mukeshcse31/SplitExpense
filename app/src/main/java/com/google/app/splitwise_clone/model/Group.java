@@ -1,29 +1,23 @@
 package com.google.app.splitwise_clone.model;
 
+import java.util.HashMap;
+import java.util.Map;
 
-import java.util.List;
+public class Group {
 
-class Group {
-
-    private String id;
     private String name;
-private List<String> friends;
+private Map<String, SingleBalance> members = new HashMap<>();
 
     public Group() {
     }
 
-    public Group(String id, String name, List<String> friends) {
-        this.id = id;
+    public Group(String name) {
         this.name = name;
-        this.friends = friends;
     }
 
-    public String getId() {
-        return id;
-    }
-
-    public void setId(String id) {
-        this.id = id;
+    public Group(String name, Map<String, SingleBalance> members) {
+        this.name = name;
+        this.members = members;
     }
 
     public String getName() {
@@ -34,11 +28,22 @@ private List<String> friends;
         this.name = name;
     }
 
-    public List<String> getFriends() {
-        return friends;
+    public Map<String, SingleBalance> getMembers() {
+        return members;
     }
 
-    public void setFriends(List<String> friends) {
-        this.friends = friends;
+    public void setMembers(Map<String, SingleBalance> members) {
+        this.members = members;
     }
+
+    public void addMember(String memberName, SingleBalance sb){
+        this.members.put(memberName, sb);
+    }
+
+
+    public void removeMember(String memberName){
+        if(members.containsKey(memberName))
+            members.remove(memberName);
+    }
+
 }

@@ -11,6 +11,7 @@ import androidx.appcompat.app.AppCompatActivity;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
+import com.google.app.splitwise_clone.groups.Groups;
 import com.google.app.splitwise_clone.model.Friend;
 import com.google.app.splitwise_clone.model.SingleBalance;
 import com.google.app.splitwise_clone.utils.FriendsAdapter;
@@ -36,32 +37,41 @@ public class Friends extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_friend_list);
+
+        getSupportActionBar().setTitle("");
         mDatabaseReference = FirebaseDatabase.getInstance().getReference();
         friends_rv = (RecyclerView) findViewById(R.id.friends_rv);
 
         LinearLayoutManager layoutManager = new LinearLayoutManager(this);
         friends_rv.setLayoutManager(layoutManager);
 
-        Query query = mDatabaseReference.child("friends").orderByChild("id").limitToLast(1);
+        Query query = mDatabaseReference.child("users").orderByChild("mukesh").limitToLast(1);
+
+
+//        Query query = mDatabaseReference.child("users").startAt("mukesh").endAt("mukesh");
+
+
         query.addListenerForSingleValueEvent(new ValueEventListener() {
             @Override
             public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
                 int id = 0;
                 if (dataSnapshot.exists()) {
+                    Map<String, SingleBalance> allbalances = null;
                     for (DataSnapshot i : dataSnapshot.getChildren()) {
 
                         Log.i(TAG, i.getKey());
                         Friend f = i.getValue(Friend.class);
 //                        Map<String, SingleBalance> balances= f.getAllBalance();
                         id = f.getId();
-                        Map<String, SingleBalance> allbalances = f.getBalances();
+                        allbalances = f.getBalances();
                         SingleBalance sb1 = new SingleBalance("1212", "test");
 //                        f.addToBalance("new_fri", sb1);
 //                        f.addToGroup("G3");
-                        mDatabaseReference.child("friends/" + id).setValue(f);
-                        mFriendsAdapter = new FriendsAdapter(allbalances, Friends.this);
-                        friends_rv.setAdapter(mFriendsAdapter);
+//                        mDatabaseReference.child("friends/" + id).setValue(f);
                     }
+
+                    mFriendsAdapter = new FriendsAdapter(allbalances, Friends.this);
+                    friends_rv.setAdapter(mFriendsAdapter);
                 }
             }
 
@@ -84,9 +94,10 @@ public class Friends extends AppCompatActivity {
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
         switch (item.getItemId()) {
+
             case R.id.saveFriend:
 
-                Query query = mDatabaseReference.child("friends").orderByChild("id").limitToLast(1);
+                Query query = mDatabaseReference.child("users").orderByChild("mukesh").limitToLast(1);
                 query.addListenerForSingleValueEvent(new ValueEventListener() {
                     @Override
                     public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
@@ -104,7 +115,7 @@ public class Friends extends AppCompatActivity {
 //                        mDatabaseReference.child("friends/" + id).setValue(f);
                             }
                         }
-                        Intent intent = new Intent(Friends.this, AddFriend.class);
+                        Intent intent = new Intent(Friends.this, Groups.class);
                         intent.putExtra("friendId", id);
                         startActivity(intent);
 
@@ -115,6 +126,12 @@ public class Friends extends AppCompatActivity {
                 });
 
                 break;
+
+            case R.id.gotoGroups:
+                Intent intent = new Intent(Friends.this, Groups.class);
+                startActivity(intent);
+                break;
+
         }
         return super.onOptionsItemSelected(item);
     }
