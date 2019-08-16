@@ -49,4 +49,12 @@
         <item name="android:elevation">@dimen/detail_toolbar_elevation</item>
     </style>
 
+    <!-- FloatingActionButton in the ArticleDetailActivity -->
+    <style name="FloatingActionButtonStyle" parent="Widget.Design.FloatingActionButton">
+        <item name="android:layout_width">wrap_content</item>
+        <item name="android:layout_height">wrap_content</item>
+
+        <item name="android:stateListAnimator">@animator/fab_state_list_anim</item>
+    </style>
+
 </resources>

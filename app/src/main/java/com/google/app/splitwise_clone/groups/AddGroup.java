@@ -75,8 +75,8 @@ public class AddGroup extends AppCompatActivity implements GroupMembersAdapter.O
     }
 
     private void membersViews() {
-        String path1 = getString(R.string.users);
-        final String path2 = getString(R.string.groups);
+        String path1 = getString(R.string.db_users);
+        final String path2 = getString(R.string.db_groups);
         final String currentGroup = "group1";
 
         Query query = mDatabaseReference.child(path1);
@@ -89,7 +89,7 @@ public class AddGroup extends AppCompatActivity implements GroupMembersAdapter.O
                         String name = i.getKey();
                         Friend f = i.getValue(Friend.class);
                         String email = f.getEmail();
-                        all_member.put(name, email);
+                        all_member.put(name, email);//get all the users
                     }
 //--- - - - - - - - - - - - - -TODO if dataSnapshot.exists() check--
 

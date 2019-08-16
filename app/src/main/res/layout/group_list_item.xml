@@ -14,11 +14,9 @@
      limitations under the License.
 -->
 <FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
     android:padding="@dimen/line">
-
 
     <LinearLayout
         android:layout_width="match_parent"
@@ -32,43 +30,42 @@
             android:layout_height="16dp"
             android:layout_marginTop="@dimen/margin_4"
             android:layout_weight="3"
+            android:contentDescription="@string/group_image"
             android:src="@drawable/people_selected" />
-<LinearLayout
-    android:layout_width="wrap_content"
-    android:layout_height="wrap_content"
-    android:orientation="vertical"
-    android:layout_weight="3">
 
-    <TextView
-        android:id="@+id/tv_group_name"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_gravity="start"
-        android:textStyle="bold"
-        android:text="Name"
+        <LinearLayout
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_weight="3"
+            android:orientation="vertical">
 
-        android:textSize="@dimen/text_size_header" />
+            <TextView
+                android:id="@+id/tv_group_name"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="start"
+                android:textSize="@dimen/text_size_header"
+                android:textStyle="bold" />
 
-    <TextView
-        android:id="@+id/tv_member_status"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_gravity="start"
-        android:textStyle="bold"
-        android:text="Name"
-        android:textSize="@dimen/text_size_header" />
+            <TextView
+                android:id="@+id/tv_member_status"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="start"
+                android:textSize="@dimen/text_size_header"
+                android:textStyle="bold" />
 
-</LinearLayout>
+        </LinearLayout>
 
         <TextView
             android:id="@+id/tv_status"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_gravity="end"
+            android:layout_weight="5"
+            android:text="@string/status"
             android:textAppearance="@style/TextAppearance.AppCompat.Medium"
             android:textSize="@dimen/text_size_header"
-            android:text="Status"
-            android:layout_weight="5"
             android:textStyle="italic" />
 
         <ImageView
@@ -76,6 +73,7 @@
             android:layout_height="26dp"
             android:layout_marginTop="@dimen/margin_4"
             android:layout_weight="1"
+            android:contentDescription="@string/goto_groupDetails"
             android:src="@drawable/greater" />
 
     </LinearLayout>

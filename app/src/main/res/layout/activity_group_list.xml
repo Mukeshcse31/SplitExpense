@@ -26,8 +26,8 @@
             <TextView
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="Groups"
-                android:textSize="22dp" />
+                android:text="@string/groups"
+                android:textSize="22sp" />
 
             <LinearLayout
                 android:layout_width="match_parent"
@@ -64,14 +64,14 @@
                     <TextView
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:text="you are owed"
-                        android:textSize="22dp" />
+                        android:text="@string/you_are_owed"
+                        android:textSize="22sp" />
 
                     <TextView
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:text="$2B"
-                        android:textSize="12dp" />
+                        android:text="@string/default_amount"
+                        android:textSize="12sp" />
 
                 </LinearLayout>
 
@@ -104,5 +104,16 @@
 
     </androidx.swiperefreshlayout.widget.SwipeRefreshLayout>
 
+    <com.google.android.material.floatingactionbutton.FloatingActionButton
+        android:id="@+id/add_expense_fab"
+        style="@style/FloatingActionButtonStyle"
+        android:layout_gravity="end|center_vertical"
+        android:backgroundTint="@color/fab_background"
+        android:contentDescription="@string/add_expense"
+        android:src="@drawable/add_expense_fab"
+        app:elevation="@dimen/fab_elevation"
+        app:fabSize="normal"
+        app:pressedTranslationZ="@dimen/fab_press_translation_z" />
 
 </androidx.coordinatorlayout.widget.CoordinatorLayout>
+

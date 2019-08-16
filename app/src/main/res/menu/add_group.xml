@@ -4,14 +4,14 @@
 
     <item
         android:id="@+id/gotoGroupList"
-        android:title="Cancel"
+        android:title="@string/cancel"
         app:showAsAction="always"
         android:orderInCategory="0"/>
 
 
     <item
         android:id="@+id/addGroup"
-        android:title="Add"
+        android:title="@string/add"
         app:showAsAction="always"
         android:orderInCategory="1"/>
 

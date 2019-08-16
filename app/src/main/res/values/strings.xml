@@ -31,24 +31,49 @@
 <string name="sample_message">Hello!</string>
 
     <!--Add Friend-->
+    <string name="add">Add</string>
+    <string name="cancel">Cancel</string>
+    <string name="friends">Friends</string>
+    <string name="add_friend">Add Friend</string>
     <string name="add_friend_name">NAME</string>
     <string name="add_friend_email">EMAIL</string>
     <string name="email_exists">Email Already Exists</string>
     <string name="friend_added">friend added</string>
     <string name="close">CLOSE</string>
+    <string name="friend_image">image of friend</string>
+    <string name="goto_details">goto expense details</string>
 
     <!--Add Group-->
+    <string name="groups">Groups</string>
+    <string name="add_group">Add Group</string>
     <string name="add_group_name"> Group Name</string>
     <string name="group_exists">Group Already Exists</string>
     <string name="group_added">Group added</string>
     <string name="members">MEMBERS</string>
     <string name="non_members">OTHERS</string>
-
+    <string name="add_group_image">click to add picture</string>
+<string name="group_image">image of group</string>
+    <string name="goto_groupDetails">go to group details</string>
 
     <!--DB schema names-->
-    <string name="users">users</string>
-    <string name="groups">groups</string>
-    <string name="messages">messages</string>
+    <string name="db_users">users</string>
+    <string name="db_groups">groups</string>
+    <string name="db_messages">messages</string>
+
+    <!--Expenses-->
+    <string name="save">Save</string>
+    <string name="description">Description</string>
+    <string name="amount">Amount</string>
+    <string name="status">Status</string>
+    <string name="add_expense">Add Expense</string>
+<string name="you_are_owed">you are owed</string>
+    <string name="default_amount">$0</string>
 
 
+    <string name="send_message">send Messages</string>
+
+    <!--TextUtils-->
+    <string name="new_line">\n</string>
+
+    <color name="fab_background">#FF2768</color>
 </resources>

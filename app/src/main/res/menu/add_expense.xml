@@ -3,15 +3,9 @@
     xmlns:app="http://schemas.android.com/apk/res-auto">
 
     <item
-        android:id="@+id/saveFriend"
-        android:title="@string/add_friend"
+        android:id="@+id/saveExpense"
+        android:title="@string/save"
         app:showAsAction="always"
         android:orderInCategory="0"/>
-
-    <item
-        android:id="@+id/gotoGroups"
-        android:title="@string/groups"
-        app:showAsAction="always"
-        android:orderInCategory="1"/>
 
 </menu>

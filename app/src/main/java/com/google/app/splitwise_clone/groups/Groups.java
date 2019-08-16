@@ -5,12 +5,17 @@ import android.os.Bundle;
 import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
+import android.view.View;
 
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.core.app.ShareCompat;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
+
+import com.google.android.material.floatingactionbutton.FloatingActionButton;
 import com.google.app.splitwise_clone.R;
+import com.google.app.splitwise_clone.expense.AddExpense;
 import com.google.app.splitwise_clone.utils.GroupsAdapter;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
@@ -27,6 +32,7 @@ public class Groups extends AppCompatActivity {
     private String TAG = Groups.class.getSimpleName();
     private GroupsAdapter mGroupsAdapter;
     private RecyclerView groups_rv;
+    private FloatingActionButton mFloatingActionButton;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -37,6 +43,7 @@ public class Groups extends AppCompatActivity {
         getSupportActionBar().setTitle("");
         mDatabaseReference = FirebaseDatabase.getInstance().getReference();
         groups_rv = (RecyclerView) findViewById(R.id.groups_rv);
+        mFloatingActionButton = findViewById(R.id.add_expense_fab);
 
         LinearLayoutManager layoutManager = new LinearLayoutManager(this);
         groups_rv.setLayoutManager(layoutManager);
@@ -61,6 +68,15 @@ public class Groups extends AppCompatActivity {
 
             }
         });
+
+        mFloatingActionButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                Intent intent = new Intent(Groups.this, AddExpense.class);
+                startActivity(intent);
+            }
+        });
+
     }
 
 

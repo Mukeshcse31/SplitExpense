@@ -113,8 +113,8 @@ private OnClickListener mOnClickListener;
 
             final String member_name = it.next();
             String email = group_members.get(member_name);
-
-            tv_friend_name.setText(member_name + "\n" + email);
+String temp = member_name + tv_friend_name.getContext().getString(R.string.new_line) + email;
+            tv_friend_name.setText(temp);
             member_iv.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {

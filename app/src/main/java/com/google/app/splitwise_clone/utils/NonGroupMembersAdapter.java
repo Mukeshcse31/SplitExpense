@@ -51,9 +51,10 @@ public class NonGroupMembersAdapter extends RecyclerView.Adapter<NonGroupMembers
         viewHolderCount = 0;
     }
 
-    public interface OnClickListener{
+    public interface OnClickListener {
         void addFriendToGroup(String name);
     }
+
     @Override
     public ReviewViewHolder onCreateViewHolder(ViewGroup viewGroup, int viewType) {
 
@@ -103,14 +104,15 @@ public class NonGroupMembersAdapter extends RecyclerView.Adapter<NonGroupMembers
         /**
          * A method we wrote for convenience. This method will take an integer as input and
          * use that integer to display the appropriate text within a list item.
+         *
          * @param listIndex Position of the item in the list
          */
         void bind(int listIndex) {
 
             final String member_name = it.next();
             String email = nonGroup_members.get(member_name);
-
-            tv_friend_name.setText(member_name + "\n" + email);
+            String temp = member_name + tv_friend_name.getContext().getString(R.string.new_line) + email;
+            tv_friend_name.setText(temp);
             member_iv.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {

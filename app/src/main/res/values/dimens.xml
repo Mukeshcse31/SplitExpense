@@ -29,5 +29,15 @@
     <dimen name="margin_4">4dp</dimen>
 
 <dimen name="padding_small">8dp</dimen>
+
+<!--FAB-->
+    <dimen name="fab_elevation">4dp</dimen>
+    <dimen name="fab_press_translation_z">6dp</dimen>
+    <dimen name="fab_margin">24dp</dimen>
+
+    <!--Add Expense-->
+    <dimen name="layout_marginStart_addExpense">8dp</dimen>
+    <dimen name="layout_marginEnd_addExpense">8dp</dimen>
+    <dimen name="layout_margin">8dp</dimen>
 </resources>
 
