@@ -6,7 +6,9 @@ import java.util.Map;
 public class Group {
 
     private String name;
-private Map<String, SingleBalance> members = new HashMap<>();
+    private String photoUrl;
+
+    private Map<String, SingleBalance> members = new HashMap<>();
 
     public Group() {
     }
@@ -20,6 +22,14 @@ private Map<String, SingleBalance> members = new HashMap<>();
         this.members = members;
     }
 
+
+    public String getPhotoUrl() {
+        return photoUrl;
+    }
+
+    public void setPhotoUrl(String photoUrl) {
+        this.photoUrl = photoUrl;
+    }
     public String getName() {
         return name;
     }

@@ -21,37 +21,41 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.TextView;
+
 import androidx.recyclerview.widget.RecyclerView;
+
 import com.google.app.splitwise_clone.R;
+import com.google.app.splitwise_clone.model.Expense;
 import com.google.app.splitwise_clone.model.Group;
 import com.google.app.splitwise_clone.model.SingleBalance;
 import com.google.firebase.database.DataSnapshot;
+
 import java.util.List;
 import java.util.Map;
 
-public class GroupsAdapter extends RecyclerView.Adapter<GroupsAdapter.ReviewViewHolder> {
+public class ExpenseAdapter extends RecyclerView.Adapter<ExpenseAdapter.ReviewViewHolder> {
 
-    private static final String TAG = GroupsAdapter.class.getSimpleName();
+    private static final String TAG = ExpenseAdapter.class.getSimpleName();
 
     private static int viewHolderCount;
     List<DataSnapshot>  mDataSnapshotList;
     private OnClickListener mOnClickListener;
 
-    public GroupsAdapter(List<DataSnapshot> dataSnapshotList, OnClickListener listener) {
+    public ExpenseAdapter(List<DataSnapshot> dataSnapshotList, OnClickListener listener) {
         mDataSnapshotList = dataSnapshotList;
         mOnClickListener = listener;
         viewHolderCount = 0;
     }
 
     public interface OnClickListener{
-        void gotoSharedGroup(String name);
+        void gotoExpenseDetails(String name);
     }
 
     @Override
     public ReviewViewHolder onCreateViewHolder(ViewGroup viewGroup, int viewType) {
 
         Context context = viewGroup.getContext();
-        int layoutIdForListItem = R.layout.group_list_item;
+        int layoutIdForListItem = R.layout.expense_list_item;
         LayoutInflater inflater = LayoutInflater.from(context);
         boolean shouldAttachToParentImmediately = false;
 
@@ -80,15 +84,17 @@ public class GroupsAdapter extends RecyclerView.Adapter<GroupsAdapter.ReviewView
     class ReviewViewHolder extends RecyclerView.ViewHolder {
 
         // Will display the position in the list, ie 0 through getItemCount() - 1
-        TextView tv_group_name;
+        TextView dateSpent_tv, tv_expenseDescription, tv_status;
         // Will display which ViewHolder is displaying this data
-        TextView tv_member_status;
+        TextView tv_paidBy;
 
         public ReviewViewHolder(View itemView) {
             super(itemView);
 
-            tv_group_name = (TextView) itemView.findViewById(R.id.tv_group_name);
-            tv_member_status = (TextView) itemView.findViewById(R.id.tv_member_status);
+            dateSpent_tv = itemView.findViewById(R.id.dateSpent_tv);
+            tv_expenseDescription = (TextView) itemView.findViewById(R.id.tv_expenseDescription);
+            tv_paidBy = (TextView) itemView.findViewById(R.id.tv_paidBy);
+            tv_status = itemView.findViewById(R.id.tv_status);
         }
 
         /**
@@ -100,25 +106,28 @@ public class GroupsAdapter extends RecyclerView.Adapter<GroupsAdapter.ReviewView
 
             DataSnapshot d = mDataSnapshotList.get(listIndex);
 
-            Group group = d.getValue(Group.class);
-            Map<String, SingleBalance> members = group.getMembers();
-//            final String group_name = group.getName();
+            Expense expense = d.getValue(Expense.class);
+            String date = expense.getDateSpent();
+String spender = expense.getMemberSpent();
+
+            Map<String, SingleBalance> splitExpense = expense.getSplitExpense();
             final String group_name = d.getKey();
-            String member_status = "";
+            SingleBalance singleBalance = splitExpense.get("Mukesh");
+            tv_status.setText(singleBalance.getStatus() + "\n" + singleBalance.getAmount());
 
-            for (Map.Entry<String, SingleBalance> entrySet : members.entrySet()){
-                String name = entrySet.getKey();
-                SingleBalance sb = entrySet.getValue();
-                member_status += String.format("%s %s %s\n", name, sb.getStatus(),sb.getAmount());
-            }
+//            for (Map.Entry<String, SingleBalance> entrySet : splitExpense.entrySet()){
+//                String name = entrySet.getKey();
+//                SingleBalance sb = entrySet.getValue();
+//                member_status += String.format("%s %s %s\n", name, sb.getStatus(),sb.getAmount());
+//            }
+            dateSpent_tv.setText(date);
+            tv_expenseDescription.setText(expense.getDescription());
+            tv_paidBy.setText(String.format("%s paid $%f",spender,expense.getTotal()));
 
-            tv_group_name.setText(group_name);
-            tv_member_status.setText(member_status);
-
-            tv_group_name.getRootView().setOnClickListener(new View.OnClickListener() {
+            tv_expenseDescription.getRootView().setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
-                    mOnClickListener.gotoSharedGroup(group_name);
+                    mOnClickListener.gotoExpenseDetails(group_name);
                 }
             });
         }

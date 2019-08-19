@@ -5,24 +5,24 @@ import java.util.Map;
 
 public class SingleBalance {
 
-private String amount;
+private float amount;
 private String status;
 
     public SingleBalance() {
-        this.amount = "0.0";
+        this.amount = 0.0f;
         this.status = "no expenses";
     }
 
-    public SingleBalance(String amount, String status) {
+    public SingleBalance(float amount, String status) {
         this.amount = amount;
         this.status = status;
     }
 
-    public String getAmount() {
+    public float getAmount() {
         return amount;
     }
 
-    public void setAmount(String amount) {
+    public void setAmount(float amount) {
         this.amount = amount;
     }
 

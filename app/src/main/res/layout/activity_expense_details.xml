@@ -60,7 +60,8 @@
             android:textColorHint="@color/black"
             android:textIsSelectable="false"
             android:textSize="@dimen/signUp_textSize"
-            android:textStyle="bold" />
+            android:textStyle="bold"
+            android:windowSoftInputMode = "adjustNothing"/>
 
     </com.google.android.material.textfield.TextInputLayout>
 
@@ -89,7 +90,8 @@
             android:textColorHint="@color/black"
             android:textIsSelectable="false"
             android:textSize="@dimen/signUp_textSize"
-            android:textStyle="bold" />
+            android:textStyle="bold"
+            android:windowSoftInputMode = "adjustNothing"/>
 
     </com.google.android.material.textfield.TextInputLayout>
 

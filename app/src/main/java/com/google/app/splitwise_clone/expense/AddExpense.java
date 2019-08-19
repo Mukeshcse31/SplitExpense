@@ -2,6 +2,7 @@ package com.google.app.splitwise_clone.expense;
 
 import android.content.Intent;
 import android.os.Bundle;
+import android.text.TextUtils;
 import android.util.Log;
 import android.util.SparseBooleanArray;
 import android.view.Menu;
@@ -16,12 +17,16 @@ import android.widget.Spinner;
 import android.widget.Toast;
 
 import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.core.text.TextUtilsCompat;
 import androidx.fragment.app.DialogFragment;
 
 import com.google.app.splitwise_clone.R;
 import com.google.app.splitwise_clone.groups.AddGroup;
 import com.google.app.splitwise_clone.groups.Groups;
+import com.google.app.splitwise_clone.model.Expense;
+import com.google.app.splitwise_clone.model.SingleBalance;
 import com.google.app.splitwise_clone.utils.DatePickerFragment;
 import com.google.app.splitwise_clone.utils.GroupsAdapter;
 import com.google.app.splitwise_clone.utils.MultiSpinner;
@@ -32,9 +37,14 @@ import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.Query;
 import com.google.firebase.database.ValueEventListener;
 
+import org.w3c.dom.Text;
+
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Calendar;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 public class AddExpense extends AppCompatActivity implements ListView.OnItemClickListener {
 
@@ -52,8 +62,8 @@ public class AddExpense extends AppCompatActivity implements ListView.OnItemClic
         setContentView(R.layout.activity_expense_details);
 
         date_btn = findViewById(R.id.date_btn);
-mDescription = findViewById(R.id.expense_description);
-mAmount = findViewById(R.id.expense_amount);
+        mDescription = findViewById(R.id.expense_description);
+        mAmount = findViewById(R.id.expense_amount);
 
         getSupportActionBar().setTitle(getString(R.string.add_expense));
         mDatabaseReference = FirebaseDatabase.getInstance().getReference();
@@ -62,6 +72,7 @@ mAmount = findViewById(R.id.expense_amount);
         listView.setChoiceMode(ListView.CHOICE_MODE_MULTIPLE);
 
         spinner2 = (Spinner) findViewById(R.id.member_spent);
+        setDefaultDate();
 
         Query query = mDatabaseReference.child("groups/group1/members");
 
@@ -122,31 +133,95 @@ mAmount = findViewById(R.id.expense_amount);
         return true;
     }
 
-    private List<String> getExpenseParticipants(){
+    private List<String> getExpenseParticipants() {
 
         SparseBooleanArray sp = listView.getCheckedItemPositions();
         List<String> participants = new ArrayList<>();
 
         for (int i = 0; i < sp.size(); i++) {
-            if(sp.valueAt(i) == true)
+            if (sp.valueAt(i) == true)
                 participants.add(groupMembers[i]);
 //            str += groupMembers[sp.keyAt(i)] + ",";
         }
         return participants;
     }
+
+
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
         switch (item.getItemId()) {
             case R.id.saveExpense:
                 String spentDate = date_btn.getText().toString();
                 String description = mDescription.getText().toString();
-                String amount = mAmount.getText().toString();
+                float amount = Float.valueOf(mAmount.getText().toString());
                 List<String> participants = getExpenseParticipants();
                 String spender = (String) spinner2.getSelectedItem();
                 Log.i(TAG, "Expense Added");
+                Expense expense = new Expense(spentDate, spender, description, amount);
+
+                for (int i = 0; i < participants.size(); i++) {
+
+                    final String participant = participants.get(i);
+                    float amountForUser = amount;
+                    float amountSpentForOthers = 0.0f;
+                    String amountStatus = "you spent";
+                    if (TextUtils.equals(spender, participant)) {
+                        amountSpentForOthers = amount / participants.size();
+
+                    } else {
+                        amountForUser = -(amount / participants.size());
+                        amountStatus = "you owe";
+                    }
+                    final SingleBalance singleBalance = new SingleBalance(amountForUser, amountStatus);
+                    final float amountSpentForOthers1 = amountSpentForOthers;
+                    expense.addMember(participant, singleBalance);
+
+                    //update the participant's total amount
+                    Query query = mDatabaseReference.child("groups/group1/members/" + participant);
+                    query.addListenerForSingleValueEvent(new ValueEventListener() {
+                        @Override
+                        public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+                            if (dataSnapshot.exists()) {
+                                float existingBalance = 0.0f;
+                                for (DataSnapshot i : dataSnapshot.getChildren()) {
+
+                                    //if key is amount
+                                    if (TextUtils.equals(i.getKey(), "amount")) {
+                                        existingBalance = Float.parseFloat(i.getValue().toString());
+                                        float newBalance = existingBalance + singleBalance.getAmount() - amountSpentForOthers1;
+                                        String newStatus = "you owe";
+                                        if (newBalance > 0)
+                                            newStatus = "owes you";
+                                        mDatabaseReference.child("groups/group1/members/" + participant).setValue(new SingleBalance(newBalance, newStatus));
+                                    }
+                                }
+                            }
+                        }
+
+                        @Override
+                        public void onCancelled(@NonNull DatabaseError databaseError) {
+
+                        }
+                    });
+                }
+                //update individual expense
+                mDatabaseReference.child("groups/group1/expenses").push().setValue(expense, new DatabaseReference.CompletionListener() {
+                    @Override
+                    public void onComplete(DatabaseError databaseError, DatabaseReference dataReference) {
+                        Toast.makeText(AddExpense.this, " added", Toast.LENGTH_LONG).show();
+                    }
+                });
+                finish();
                 break;
         }
         return super.onOptionsItemSelected(item);
     }
 
+    private void setDefaultDate() {
+        final Calendar c = Calendar.getInstance();
+        int year = c.get(Calendar.YEAR);
+        int month = c.get(Calendar.MONTH);
+        int day = c.get(Calendar.DAY_OF_MONTH);
+        date_btn.setText(String.format("%d-%02d-%02d", year, month, day));
+    }
 }

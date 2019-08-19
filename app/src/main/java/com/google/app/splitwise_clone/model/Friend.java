@@ -22,6 +22,14 @@ public class Friend {
         this.email = email;
     }
 
+    public String getEmail() {
+        return email;
+    }
+
+    public void setEmail(String email) {
+        this.email = email;
+    }
+
     public int getId() {
         return id;
     }
@@ -36,14 +44,6 @@ public class Friend {
 
     public void setName(String name) {
         this.name = name;
-    }
-
-    public String getEmail() {
-        return email;
-    }
-
-    public void setEmail(String email) {
-        this.email = email;
     }
 
     public Map<String, Boolean> getGroups() {
@@ -65,7 +65,7 @@ public class Friend {
     }
 
     public void addToBalance(String friendName, SingleBalance sb){
-        this.balances.put("qq", new SingleBalance("44","gg"));
+        this.balances.put("qq", new SingleBalance(44,"gg"));
     }
 
     public void removeBalance(String friendName){

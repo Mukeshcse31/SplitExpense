@@ -1,6 +1,8 @@
 package com.google.app.splitwise_clone.groups;
 
+import android.content.Intent;
 import android.content.SharedPreferences;
+import android.net.Uri;
 import android.os.Bundle;
 import android.text.TextUtils;
 import android.util.Log;
@@ -8,6 +10,7 @@ import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.AutoCompleteTextView;
+import android.widget.ImageButton;
 import android.widget.Toast;
 
 import androidx.annotation.NonNull;
@@ -15,6 +18,8 @@ import androidx.appcompat.app.AppCompatActivity;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
+import com.google.android.gms.tasks.OnSuccessListener;
+import com.google.android.gms.tasks.Task;
 import com.google.android.material.snackbar.Snackbar;
 import com.google.app.splitwise_clone.AddFriend;
 import com.google.app.splitwise_clone.R;
@@ -24,13 +29,21 @@ import com.google.app.splitwise_clone.model.SingleBalance;
 import com.google.app.splitwise_clone.utils.GroupMembersAdapter;
 import com.google.app.splitwise_clone.utils.GroupsAdapter;
 import com.google.app.splitwise_clone.utils.NonGroupMembersAdapter;
+import com.google.firebase.database.ChildEventListener;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.Query;
 import com.google.firebase.database.ValueEventListener;
-
+import com.google.firebase.storage.FirebaseStorage;
+import com.google.firebase.storage.StorageReference;
+import com.google.firebase.storage.UploadTask;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.Iterator;
+import java.util.List;
+import java.util.Map;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Iterator;
@@ -46,25 +59,33 @@ public class AddGroup extends AppCompatActivity implements GroupMembersAdapter.O
 
     private AutoCompleteTextView mGroupName;
     private DatabaseReference mDatabaseReference;
-
+    private FirebaseStorage mFirebaseStorage;
+    private StorageReference mPhotosStorageReference;
+private String photoURL = "";
+    private ChildEventListener mChildEventListener;
+    private static final int RC_PHOTO_PICKER = 2;
     private static final String TAG = AddGroup.class.getSimpleName();
     private GroupMembersAdapter mGroupMembersAdapter;
     private NonGroupMembersAdapter mNonGroupMembersAdapter;
     private RecyclerView members_rv;
     private RecyclerView nonmembers_rv;
+    private ImageButton mPhotoPickerButton;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.fragment_add_group);
         getSupportActionBar().setTitle("");
+        mFirebaseStorage = FirebaseStorage.getInstance();
         mDatabaseReference = FirebaseDatabase.getInstance().getReference();
+        mPhotosStorageReference = mFirebaseStorage.getReference().child("group_photos");
         mGroupName = findViewById(R.id.group_name);
-
-        getSupportActionBar().setTitle("");
-        mDatabaseReference = FirebaseDatabase.getInstance().getReference();
+//
+//        getSupportActionBar().setTitle("");
+//        mDatabaseReference = FirebaseDatabase.getInstance().getReference();
         members_rv = (RecyclerView) findViewById(R.id.members_rv);
         nonmembers_rv = findViewById(R.id.nonmembers_rv);
+        mPhotoPickerButton = (ImageButton) findViewById(R.id.photoPickerButton);
 
         LinearLayoutManager layoutManager = new LinearLayoutManager(this);
         members_rv.setLayoutManager(layoutManager);
@@ -72,6 +93,52 @@ public class AddGroup extends AppCompatActivity implements GroupMembersAdapter.O
         nonmembers_rv.setLayoutManager(layoutManager1);
         membersViews();
 
+        mPhotoPickerButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                Intent intent = new Intent(Intent.ACTION_GET_CONTENT);
+                intent.setType("image/jpeg");
+                intent.putExtra(Intent.EXTRA_LOCAL_ONLY, true);
+                startActivityForResult(Intent.createChooser(intent, "Complete action using"), RC_PHOTO_PICKER);
+            }
+        });
+
+    }
+
+
+    @Override
+    public void onActivityResult(int requestCode, int resultCode, Intent data) {
+        super.onActivityResult(requestCode, resultCode, data);
+//        if (requestCode == RC_SIGN_IN) {
+//            if (resultCode == RESULT_OK) {
+//                // Sign-in succeeded, set up the UI
+//                Toast.makeText(this, "Signed in!", Toast.LENGTH_SHORT).show();
+//            } else if (resultCode == RESULT_CANCELED) {
+//                // Sign in was canceled by the user, finish the activity
+//                Toast.makeText(this, "Sign in canceled", Toast.LENGTH_SHORT).show();
+//                finish();
+//            }
+//        } else
+            if (requestCode == RC_PHOTO_PICKER && resultCode == RESULT_OK) {
+            Uri selectedImageUri = data.getData();
+
+            // Get a reference to store file at chat_photos/<FILENAME>
+            StorageReference photoRef = mPhotosStorageReference.child("group1");
+
+            // Upload file to Firebase Storage
+            photoRef.putFile(selectedImageUri)
+                    .addOnSuccessListener(this, new OnSuccessListener<UploadTask.TaskSnapshot>() {
+                        public void onSuccess(UploadTask.TaskSnapshot taskSnapshot) {
+                            // When the image has successfully uploaded, we get its download URL
+                            Uri downloadUrl = mPhotosStorageReference.getDownloadUrl().getResult();
+        photoURL = downloadUrl.toString();
+                            // Set the download URL to the message box, so that the user can send it to the database
+//                            FriendlyMessage friendlyMessage = new FriendlyMessage(null, mUsername, downloadUrl.toString());
+//                            mMessagesDatabaseReference.push().setValue(friendlyMessage);
+                        }
+
+                    });
+        }
     }
 
     private void membersViews() {
@@ -86,9 +153,9 @@ public class AddGroup extends AppCompatActivity implements GroupMembersAdapter.O
                 if (dataSnapshot.exists()) {
                     Map<String, String> all_member = new HashMap<>();
                     for (DataSnapshot i : dataSnapshot.getChildren()) {
-                        String name = i.getKey();
+                        String email = i.getKey();
                         Friend f = i.getValue(Friend.class);
-                        String email = f.getEmail();
+                        String name = f.getName(); //TODO check this
                         all_member.put(name, email);//get all the users
                     }
 //--- - - - - - - - - - - - - -TODO if dataSnapshot.exists() check--
@@ -236,7 +303,7 @@ public class AddGroup extends AppCompatActivity implements GroupMembersAdapter.O
                     public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
                         int id = 1;
                         if (dataSnapshot.exists()) {
-                            mGroupName.setError(getString(R.string.email_exists));
+                            mGroupName.setError(getString(R.string.group_exists));
                             Toast.makeText(AddGroup.this, "Group already exists", Toast.LENGTH_LONG).show();
 
                         } else {
@@ -248,7 +315,7 @@ public class AddGroup extends AppCompatActivity implements GroupMembersAdapter.O
 
                                 grp.addMember(displayName, new SingleBalance());
                             }
-
+                            if(!TextUtils.isEmpty(photoURL)) grp.setPhotoUrl(photoURL);
                             mDatabaseReference.child("groups/" + name).setValue(grp, new DatabaseReference.CompletionListener() {
                                 @Override
                                 public void onComplete(DatabaseError databaseError, DatabaseReference dataReference) {
@@ -285,5 +352,31 @@ public class AddGroup extends AppCompatActivity implements GroupMembersAdapter.O
         }
         return super.onOptionsItemSelected(item);
     }
+
+
+//    private void attachDatabaseReadListener() {
+//        if (mChildEventListener == null) {
+//            mChildEventListener = new ChildEventListener() {
+//                @Override
+//                public void onChildAdded(DataSnapshot dataSnapshot, String s) {
+//                    FriendlyMessage friendlyMessage = dataSnapshot.getValue(FriendlyMessage.class);
+//                    mMessageAdapter.add(friendlyMessage);
+//                }
+//
+//                public void onChildChanged(DataSnapshot dataSnapshot, String s) {}
+//                public void onChildRemoved(DataSnapshot dataSnapshot) {}
+//                public void onChildMoved(DataSnapshot dataSnapshot, String s) {}
+//                public void onCancelled(DatabaseError databaseError) {}
+//            };
+//            mMessagesDatabaseReference.addChildEventListener(mChildEventListener);
+//        }
+//    }
+//
+//    private void detachDatabaseReadListener() {
+//        if (mChildEventListener != null) {
+//            mMessagesDatabaseReference.removeEventListener(mChildEventListener);
+//            mChildEventListener = null;
+//        }
+//    }
 
 }

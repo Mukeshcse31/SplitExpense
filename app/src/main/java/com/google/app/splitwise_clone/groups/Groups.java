@@ -16,6 +16,7 @@ import androidx.recyclerview.widget.RecyclerView;
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
 import com.google.app.splitwise_clone.R;
 import com.google.app.splitwise_clone.expense.AddExpense;
+import com.google.app.splitwise_clone.expense.ExpenseList;
 import com.google.app.splitwise_clone.utils.GroupsAdapter;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
@@ -26,7 +27,7 @@ import com.google.firebase.database.ValueEventListener;
 import java.util.ArrayList;
 import java.util.List;
 
-public class Groups extends AppCompatActivity {
+public class Groups extends AppCompatActivity implements GroupsAdapter.OnClickListener{
 
     private DatabaseReference mDatabaseReference;
     private String TAG = Groups.class.getSimpleName();
@@ -98,4 +99,12 @@ public class Groups extends AppCompatActivity {
         return super.onOptionsItemSelected(item);
     }
 
+    @Override
+    public void gotoSharedGroup(String name) {
+
+        Intent intent = new Intent(Groups.this, ExpenseList.class);
+        intent.putExtra("group_name", name);
+        startActivity(intent);
+
+    }
 }

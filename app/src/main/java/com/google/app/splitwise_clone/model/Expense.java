@@ -8,14 +8,14 @@ public class Expense {
     private String dateSpent;
     private String memberSpent;
     private String description;
-    private String total;
+    private float total;
     private Map<String, SingleBalance> splitExpense = new HashMap<>();
 
 
     public Expense() {
     }
 
-    public Expense(String dateSpent, String memberSpent, String description, String total) {
+    public Expense(String dateSpent, String memberSpent, String description, float total) {
         this.dateSpent = dateSpent;
         this.memberSpent = memberSpent;
         this.description = description;
@@ -46,11 +46,11 @@ public class Expense {
         this.description = description;
     }
 
-    public String getTotal() {
+    public float getTotal() {
         return total;
     }
 
-    public void setTotal(String total) {
+    public void setTotal(float total) {
         this.total = total;
     }
 

@@ -1,34 +1,33 @@
 <resources>
     <!--Registration-->
     <string name="app_name">SplitWise_Clone</string>
-<string name="prompt_email">Email</string>
-<string name="prompt_username">Username</string>
-<string name="prompt_password">Password</string>
-<string name="prompt_password_again">Confirm Password</string>
-<string name="prompt_msg">Type a message</string>
-<string name="action_sign_in">Sign in or register</string>
-<string name="action_register">Register</string>
-<string name="action_sign_in_short">Sign in</string>
-<string name="action_sign_up">Sign up</string>
+    <string name="prompt_email">Email</string>
+    <string name="prompt_username">Username</string>
+    <string name="prompt_password">Password</string>
+    <string name="prompt_password_again">Confirm Password</string>
+    <string name="prompt_msg">Type a message</string>
+    <string name="action_sign_in">Sign in or register</string>
+    <string name="action_register">Register</string>
+    <string name="action_sign_in_short">Sign in</string>
+    <string name="action_sign_up">Sign up</string>
     <string name="action_Login">Login</string>
-
-
+<string name="signup_success">User SignedUp successfully</string>
 
     <string name="action_getLogin">Already have an account? Login here</string>
     <string name="action_getSignUp">Create a new Account</string>
-<string name="action_send">Send</string>
+    <string name="action_send">Send</string>
 
     <string name="error_title">Oops</string>
     <string name="error_registration">Registration attempt failed</string>
     <string name="error_Login">Login attempt failed</string>
-<string name="error_invalid_email">This email address is invalid</string>
-<string name="error_invalid_password">Password too short or does not match</string>
-<string name="error_incorrect_password">This password is incorrect</string>
-<string name="error_field_required">This field is required</string>
-<string name="permission_rationale">"Contacts permissions are needed for providing email
+    <string name="error_invalid_email">This email address is invalid</string>
+    <string name="error_invalid_password">Password too short or does not match</string>
+    <string name="error_incorrect_password">This password is incorrect</string>
+    <string name="error_field_required">This field is required</string>
+    <string name="permission_rationale">"Contacts permissions are needed for providing email
         completions."
     </string>
-<string name="sample_message">Hello!</string>
+    <string name="sample_message">Hello!</string>
 
     <!--Add Friend-->
     <string name="add">Add</string>
@@ -52,7 +51,7 @@
     <string name="members">MEMBERS</string>
     <string name="non_members">OTHERS</string>
     <string name="add_group_image">click to add picture</string>
-<string name="group_image">image of group</string>
+    <string name="group_image">image of group</string>
     <string name="goto_groupDetails">go to group details</string>
 
     <!--DB schema names-->
@@ -66,7 +65,7 @@
     <string name="amount">Amount</string>
     <string name="status">Status</string>
     <string name="add_expense">Add Expense</string>
-<string name="you_are_owed">you are owed</string>
+    <string name="you_are_owed">you are owed</string>
     <string name="default_amount">$0</string>
 
 

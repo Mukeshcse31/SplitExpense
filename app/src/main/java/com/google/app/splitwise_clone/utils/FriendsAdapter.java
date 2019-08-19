@@ -102,7 +102,7 @@ public class FriendsAdapter extends RecyclerView.Adapter<FriendsAdapter.ReviewVi
             SingleBalance details = mBalance.get(friend_name);
             tv_friend_name.setText(friend_name);
 
-            String stat = details.getAmount();
+            String stat = String.valueOf(details.getAmount());
             if(Integer.parseInt(stat) > 0)
                 stat = "owes you \n";
             else

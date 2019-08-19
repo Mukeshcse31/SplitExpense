@@ -34,6 +34,7 @@
         <activity android:name=".Friends"
             android:parentActivityName=".MainActivity">
         </activity>
+        <activity android:name=".expense.ExpenseList"/>
         <activity android:name=".groups.AddGroup"/>
     </application>
 

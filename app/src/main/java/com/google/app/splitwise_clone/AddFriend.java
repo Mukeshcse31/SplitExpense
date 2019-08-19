@@ -71,6 +71,8 @@ public class AddFriend extends AppCompatActivity {
                                 friendId = getIntent().getIntExtra("friendId", 0);
                                 friendId++;
                             }
+                            //friends can be added only to the respective groups
+                            //TODO add to the group
                             Friend msg = new Friend(friendId, name, email);
 
                             mDatabaseReference.child("users/" + friendId).setValue(msg, new DatabaseReference.CompletionListener() {
