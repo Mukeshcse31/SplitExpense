@@ -70,7 +70,7 @@ public class MainActivity extends AppCompatActivity {
         String email = prefs.getString(USERNAME_KEY, "");
         String password = prefs.getString(PASSWORD_KEY, "");
 
-        if (TextUtils.isEmpty(displayName)) {
+        if (TextUtils.isEmpty(email)) {
             setContentView(R.layout.activity_register);
             mEmailView = (AutoCompleteTextView) findViewById(R.id.register_email);
             mPasswordView = (EditText) findViewById(R.id.register_password);
@@ -305,7 +305,9 @@ public class MainActivity extends AppCompatActivity {
                             Log.d(TAG, "user Login failed", task.getException());
                             showErrorDialog(getString(R.string.error_Login) + "\n" + task.getException().getMessage());
                         } else {
-                            saveUserCredentials(email, password);//TODO get the display name from DB
+                            saveUserCredentials(email, password);
+                            gotoNextPage();
+
 //                            Query query = mDatabaseReference.child("users").orderByChild("email").startAt(email).endAt(email);
 //                            query.addListenerForSingleValueEvent(new ValueEventListener() {
 //                                @Override

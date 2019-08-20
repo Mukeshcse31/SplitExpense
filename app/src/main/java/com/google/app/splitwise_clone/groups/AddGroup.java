@@ -11,6 +11,7 @@ import android.view.MenuItem;
 import android.view.View;
 import android.widget.AutoCompleteTextView;
 import android.widget.ImageButton;
+import android.widget.ImageView;
 import android.widget.Toast;
 
 import androidx.annotation.NonNull;
@@ -18,6 +19,8 @@ import androidx.appcompat.app.AppCompatActivity;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
+import com.bumptech.glide.Glide;
+import com.bumptech.glide.load.engine.DiskCacheStrategy;
 import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.android.gms.tasks.Task;
 import com.google.android.material.snackbar.Snackbar;
@@ -69,7 +72,7 @@ private String photoURL = "";
     private NonGroupMembersAdapter mNonGroupMembersAdapter;
     private RecyclerView members_rv;
     private RecyclerView nonmembers_rv;
-    private ImageButton mPhotoPickerButton;
+    private ImageView mPhotoPickerButton;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -85,7 +88,7 @@ private String photoURL = "";
 //        mDatabaseReference = FirebaseDatabase.getInstance().getReference();
         members_rv = (RecyclerView) findViewById(R.id.members_rv);
         nonmembers_rv = findViewById(R.id.nonmembers_rv);
-        mPhotoPickerButton = (ImageButton) findViewById(R.id.photoPickerButton);
+        mPhotoPickerButton = findViewById(R.id.photoPickerButton);
 
         LinearLayoutManager layoutManager = new LinearLayoutManager(this);
         members_rv.setLayoutManager(layoutManager);
@@ -123,15 +126,30 @@ private String photoURL = "";
             Uri selectedImageUri = data.getData();
 
             // Get a reference to store file at chat_photos/<FILENAME>
-            StorageReference photoRef = mPhotosStorageReference.child("group1");
+            final StorageReference photoRef = mPhotosStorageReference.child("group1");
 
             // Upload file to Firebase Storage
             photoRef.putFile(selectedImageUri)
                     .addOnSuccessListener(this, new OnSuccessListener<UploadTask.TaskSnapshot>() {
                         public void onSuccess(UploadTask.TaskSnapshot taskSnapshot) {
                             // When the image has successfully uploaded, we get its download URL
-                            Uri downloadUrl = mPhotosStorageReference.getDownloadUrl().getResult();
-        photoURL = downloadUrl.toString();
+String path = taskSnapshot.getMetadata().getPath();
+
+// Reference to an image file in Cloud Storage
+//                            StorageReference storageReference = FirebaseStorage.getInstance().getReference();
+//
+//// ImageView in your Activity
+//                            ImageView imageView = findViewById(R.id.imageView);
+
+// Download directly from StorageReference using Glide
+// (See MyAppGlideModule for Loader registration)
+
+                            Glide.with(AddGroup.this)
+                                    .load(photoRef)
+                                    .into(mPhotoPickerButton);
+
+//                            Uri downloadUrl = mPhotosStorageReference.getDownloadUrl().getResult();
+//        photoURL = downloadUrl.toString();
                             // Set the download URL to the message box, so that the user can send it to the database
 //                            FriendlyMessage friendlyMessage = new FriendlyMessage(null, mUsername, downloadUrl.toString());
 //                            mMessagesDatabaseReference.push().setValue(friendlyMessage);
