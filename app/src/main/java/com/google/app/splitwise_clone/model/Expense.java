@@ -1,9 +1,13 @@
 package com.google.app.splitwise_clone.model;
 
+import android.graphics.Movie;
+import android.os.Parcel;
+import android.os.Parcelable;
+
 import java.util.HashMap;
 import java.util.Map;
 
-public class Expense {
+public class Expense implements Parcelable {
 
     private String dateSpent;
     private String memberSpent;
@@ -21,6 +25,29 @@ public class Expense {
         this.description = description;
         this.total = total;
     }
+
+    protected Expense(Parcel in){
+
+        dateSpent = in.readString();
+        memberSpent = in.readString();
+        description = in.readString();
+        total = in.readFloat();
+        splitExpense = new HashMap<String, SingleBalance>();
+        in.readMap(splitExpense, SingleBalance.class.getClassLoader());
+    }
+
+    public static final Creator<Expense> CREATOR = new Creator<Expense>() {
+        @Override
+        public Expense createFromParcel(Parcel in) {
+            return new Expense(in);
+        }
+
+        @Override
+        public Expense[] newArray(int size) {
+            return new Expense[size];
+        }
+    };
+
 
     public String getDateSpent() {
         return dateSpent;
@@ -72,4 +99,18 @@ public class Expense {
             splitExpense.remove(memberName);
     }
 
+    @Override
+    public int describeContents() {
+        return 0;
+    }
+
+    @Override
+    public void writeToParcel(Parcel dest, int flags) {
+
+        dest.writeString(dateSpent);
+        dest.writeString(memberSpent);
+        dest.writeString(description);
+        dest.writeFloat(total);
+        dest.writeMap(splitExpense);
+    }
 }

@@ -33,7 +33,6 @@ public class Groups extends AppCompatActivity implements GroupsAdapter.OnClickLi
     private String TAG = Groups.class.getSimpleName();
     private GroupsAdapter mGroupsAdapter;
     private RecyclerView groups_rv;
-    private FloatingActionButton mFloatingActionButton;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -44,8 +43,6 @@ public class Groups extends AppCompatActivity implements GroupsAdapter.OnClickLi
         getSupportActionBar().setTitle("");
         mDatabaseReference = FirebaseDatabase.getInstance().getReference();
         groups_rv = (RecyclerView) findViewById(R.id.groups_rv);
-        mFloatingActionButton = findViewById(R.id.add_expense_fab);
-
         LinearLayoutManager layoutManager = new LinearLayoutManager(this);
         groups_rv.setLayoutManager(layoutManager);
         Query query = mDatabaseReference.child("groups");
@@ -69,15 +66,6 @@ public class Groups extends AppCompatActivity implements GroupsAdapter.OnClickLi
 
             }
         });
-
-        mFloatingActionButton.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                Intent intent = new Intent(Groups.this, AddExpense.class);
-                startActivity(intent);
-            }
-        });
-
     }
 
 

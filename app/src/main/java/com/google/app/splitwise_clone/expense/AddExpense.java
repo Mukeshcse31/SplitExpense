@@ -6,6 +6,7 @@ import android.text.TextUtils;
 import android.util.Log;
 import android.util.SparseBooleanArray;
 import android.view.Menu;
+import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.AdapterView;
@@ -55,6 +56,8 @@ public class AddExpense extends AppCompatActivity implements ListView.OnItemClic
     private static String[] groupMembers;
     private AutoCompleteTextView mDescription, mAmount;
     private Button date_btn;
+    private Expense mExpense;
+    private String group_name, expenseId = null;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -73,6 +76,19 @@ public class AddExpense extends AppCompatActivity implements ListView.OnItemClic
 
         spinner2 = (Spinner) findViewById(R.id.member_spent);
         setDefaultDate();
+
+        Bundle bundle = getIntent().getExtras();
+        if (bundle.containsKey(ExpenseList.GROUP_NAME)) {
+
+            group_name = bundle.getString(ExpenseList.GROUP_NAME);
+            if (bundle.containsKey(ExpenseList.EDIT_EXPENSEID)) {
+
+                expenseId = bundle.getString(ExpenseList.EDIT_EXPENSEID);
+                mExpense = bundle.getParcelable(ExpenseList.EDIT_EXPENSE);
+
+            }
+        }
+
 
         Query query = mDatabaseReference.child("groups/group1/members");
 
@@ -98,6 +114,7 @@ public class AddExpense extends AppCompatActivity implements ListView.OnItemClic
                     spinner2.setAdapter(dataAdapter);
 
                 }
+                populateExpense();
             }
 
             @Override
@@ -105,6 +122,39 @@ public class AddExpense extends AppCompatActivity implements ListView.OnItemClic
 
             }
         });
+
+        //check for edit or new expense
+//        if(mExpense == null) {
+//}
+//else{
+//
+//}
+
+    }
+
+    private void populateExpense() {
+
+        if (mExpense != null) {
+            date_btn.setText(mExpense.getDateSpent());
+            mDescription.setText(mExpense.getDescription());
+            mAmount.setText("" + mExpense.getTotal());
+
+//        https://stackoverflow.com/questions/13151699/set-text-on-spinner
+
+            for (int i = 0; i < spinner2.getAdapter().getCount(); i++) {
+                if (spinner2.getAdapter().getItem(i).toString().contains(mExpense.getMemberSpent())) {
+                    spinner2.setSelection(i);
+                    break;
+                }
+            }
+
+            Map<String, SingleBalance> splitExpense = mExpense.getSplitExpense();
+            for (int i = 0; i < groupMembers.length; i++)
+                if (splitExpense.containsKey(groupMembers[i]))
+                    listView.setItemChecked(i, true);
+                else
+                    listView.setItemChecked(i, false);
+        }
     }
 
     @Override
@@ -129,8 +179,17 @@ public class AddExpense extends AppCompatActivity implements ListView.OnItemClic
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
         // Inflate the menu; this adds items to the action bar if it is present.
+
         getMenuInflater().inflate(R.menu.add_expense, menu);
+
+        if (mExpense == null)
+            menu.findItem(R.id.deleteExpense).setVisible(false);
+        else
+            menu.findItem(R.id.deleteExpense).setVisible(true);
+
         return true;
+
+        //check for edit or new expense
     }
 
     private List<String> getExpenseParticipants() {
@@ -212,6 +271,11 @@ public class AddExpense extends AppCompatActivity implements ListView.OnItemClic
                     }
                 });
                 finish();
+                break;
+
+            case R.id.deleteExpense:
+
+                //code to delete the expense detail
                 break;
         }
         return super.onOptionsItemSelected(item);

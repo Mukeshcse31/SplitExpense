@@ -48,7 +48,7 @@ public class ExpenseAdapter extends RecyclerView.Adapter<ExpenseAdapter.ReviewVi
     }
 
     public interface OnClickListener{
-        void gotoExpenseDetails(String name);
+        void gotoExpenseDetails(String expenseId, int index);
     }
 
     @Override
@@ -102,16 +102,17 @@ public class ExpenseAdapter extends RecyclerView.Adapter<ExpenseAdapter.ReviewVi
          * use that integer to display the appropriate text within a list item.
          * @param listIndex Position of the item in the list
          */
-        void bind(int listIndex) {
+        void bind(final int listIndex) {
 
             DataSnapshot d = mDataSnapshotList.get(listIndex);
 
             Expense expense = d.getValue(Expense.class);
+
             String date = expense.getDateSpent();
 String spender = expense.getMemberSpent();
 
             Map<String, SingleBalance> splitExpense = expense.getSplitExpense();
-            final String group_name = d.getKey();
+            final String expense_id = d.getKey();
             SingleBalance singleBalance = splitExpense.get("Mukesh");
             tv_status.setText(singleBalance.getStatus() + "\n" + singleBalance.getAmount());
 
@@ -122,12 +123,12 @@ String spender = expense.getMemberSpent();
 //            }
             dateSpent_tv.setText(date);
             tv_expenseDescription.setText(expense.getDescription());
-            tv_paidBy.setText(String.format("%s paid $%f",spender,expense.getTotal()));
+            tv_paidBy.setText(String.format("%s paid $%.2f",spender,expense.getTotal()));
 
             tv_expenseDescription.getRootView().setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
-                    mOnClickListener.gotoExpenseDetails(group_name);
+                    mOnClickListener.gotoExpenseDetails(expense_id, listIndex);
                 }
             });
         }

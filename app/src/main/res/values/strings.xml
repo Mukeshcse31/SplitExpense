@@ -44,6 +44,7 @@
 
     <!--Add Group-->
     <string name="groups">Groups</string>
+    <string name="group_name">group_name</string>
     <string name="add_group">Add Group</string>
     <string name="add_group_name"> Group Name</string>
     <string name="group_exists">Group Already Exists</string>
@@ -61,13 +62,14 @@
 
     <!--Expenses-->
     <string name="save">Save</string>
+    <string name="delete">Delete</string>
     <string name="description">Description</string>
     <string name="amount">Amount</string>
     <string name="status">Status</string>
     <string name="add_expense">Add Expense</string>
     <string name="you_are_owed">you are owed</string>
     <string name="default_amount">$0</string>
-
+<string name="edit_expense">edit_expense</string>
 
     <string name="send_message">send Messages</string>
 

@@ -13,14 +13,13 @@ import android.widget.AutoCompleteTextView;
 import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.Toast;
-
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
-
 import com.bumptech.glide.Glide;
 import com.bumptech.glide.load.engine.DiskCacheStrategy;
+import com.google.android.gms.auth.api.signin.internal.Storage;
 import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.android.gms.tasks.Task;
 import com.google.android.material.snackbar.Snackbar;
@@ -143,10 +142,10 @@ String path = taskSnapshot.getMetadata().getPath();
 
 // Download directly from StorageReference using Glide
 // (See MyAppGlideModule for Loader registration)
-
-                            Glide.with(AddGroup.this)
-                                    .load(photoRef)
-                                    .into(mPhotoPickerButton);
+//                            StorageReference ref = mFirebaseStorage.getReferenceFromUrl("https://firebasestorage.googleapis.com/v0/b/splitwiseclone-83993.appspot.com/o/group_photos%2Fgroup1?alt=media&token=afe18a8f-0d5a-4bc3-a983-c75576b3f71c");
+//                            Glide.with(AddGroup.this)
+//                                    .load(ref)
+//                                    .into(mPhotoPickerButton);
 
 //                            Uri downloadUrl = mPhotosStorageReference.getDownloadUrl().getResult();
 //        photoURL = downloadUrl.toString();

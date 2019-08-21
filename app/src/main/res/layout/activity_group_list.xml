@@ -103,17 +103,5 @@
 
 
     </androidx.swiperefreshlayout.widget.SwipeRefreshLayout>
-
-    <com.google.android.material.floatingactionbutton.FloatingActionButton
-        android:id="@+id/add_expense_fab"
-        style="@style/FloatingActionButtonStyle"
-        android:layout_gravity="end|center_vertical"
-        android:backgroundTint="@color/fab_background"
-        android:contentDescription="@string/add_expense"
-        android:src="@drawable/add_expense_fab"
-        app:elevation="@dimen/fab_elevation"
-        app:fabSize="normal"
-        app:pressedTranslationZ="@dimen/fab_press_translation_z" />
-
 </androidx.coordinatorlayout.widget.CoordinatorLayout>
 

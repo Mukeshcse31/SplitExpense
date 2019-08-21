@@ -1,9 +1,12 @@
 package com.google.app.splitwise_clone.model;
 
+import android.os.Parcel;
+import android.os.Parcelable;
+
 import java.util.HashMap;
 import java.util.Map;
 
-public class SingleBalance {
+public class SingleBalance implements Parcelable {
 
 private float amount;
 private String status;
@@ -17,6 +20,25 @@ private String status;
         this.amount = amount;
         this.status = status;
     }
+
+    protected SingleBalance(Parcel in){
+        amount = in.readFloat();
+        status = in.readString();
+    }
+
+
+    public static final Creator<SingleBalance> CREATOR = new Creator<SingleBalance>() {
+        @Override
+        public SingleBalance createFromParcel(Parcel in) {
+            return new SingleBalance(in);
+        }
+
+        @Override
+        public SingleBalance[] newArray(int size) {
+            return new SingleBalance[size];
+        }
+    };
+
 
     public float getAmount() {
         return amount;
@@ -32,5 +54,17 @@ private String status;
 
     public void setStatus(String status) {
         this.status = status;
+    }
+
+    @Override
+    public int describeContents() {
+        return 0;
+    }
+
+    @Override
+    public void writeToParcel(Parcel dest, int flags) {
+
+        dest.writeFloat(amount);
+        dest.writeString(status);
     }
 }
