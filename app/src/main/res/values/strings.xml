@@ -63,6 +63,9 @@
     <!--Expenses-->
     <string name="save">Save</string>
     <string name="delete">Delete</string>
+    <string name="warning_message">Are you sure,You want to delete this expense ?</string>
+    <string name="yes">Yes</string>
+    <string name="no">No</string>
     <string name="description">Description</string>
     <string name="amount">Amount</string>
     <string name="status">Status</string>

@@ -12,7 +12,7 @@ public class Expense implements Parcelable {
     private String dateSpent;
     private String memberSpent;
     private String description;
-    private float total;
+    private float total = 0.2f;
     private Map<String, SingleBalance> splitExpense = new HashMap<>();
 
 

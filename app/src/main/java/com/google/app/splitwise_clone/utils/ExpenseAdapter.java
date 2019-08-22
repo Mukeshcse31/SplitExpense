@@ -38,7 +38,7 @@ public class ExpenseAdapter extends RecyclerView.Adapter<ExpenseAdapter.ReviewVi
     private static final String TAG = ExpenseAdapter.class.getSimpleName();
 
     private static int viewHolderCount;
-    List<DataSnapshot>  mDataSnapshotList;
+    List<DataSnapshot> mDataSnapshotList;
     private OnClickListener mOnClickListener;
 
     public ExpenseAdapter(List<DataSnapshot> dataSnapshotList, OnClickListener listener) {
@@ -47,7 +47,7 @@ public class ExpenseAdapter extends RecyclerView.Adapter<ExpenseAdapter.ReviewVi
         viewHolderCount = 0;
     }
 
-    public interface OnClickListener{
+    public interface OnClickListener {
         void gotoExpenseDetails(String expenseId, int index);
     }
 
@@ -100,6 +100,7 @@ public class ExpenseAdapter extends RecyclerView.Adapter<ExpenseAdapter.ReviewVi
         /**
          * A method we wrote for convenience. This method will take an integer as input and
          * use that integer to display the appropriate text within a list item.
+         *
          * @param listIndex Position of the item in the list
          */
         void bind(final int listIndex) {
@@ -109,13 +110,22 @@ public class ExpenseAdapter extends RecyclerView.Adapter<ExpenseAdapter.ReviewVi
             Expense expense = d.getValue(Expense.class);
 
             String date = expense.getDateSpent();
-String spender = expense.getMemberSpent();
+            String spender = expense.getMemberSpent();
 
             Map<String, SingleBalance> splitExpense = expense.getSplitExpense();
             final String expense_id = d.getKey();
-            SingleBalance singleBalance = splitExpense.get("Mukesh");
-            tv_status.setText(singleBalance.getStatus() + "\n" + singleBalance.getAmount());
 
+            //TODO if the userName is not available, the expense is not shared with him
+            // so checking if the username is available, otherwiser app crashed
+            String userName = FirebaseUtils.getUserName();
+            if(splitExpense.containsKey(userName)){
+                SingleBalance singleBalance = splitExpense.get(userName);
+                tv_status.setText(singleBalance.getStatus() + "\n" + singleBalance.getAmount());
+
+            }
+            else {
+                tv_status.setText("you spent " + "\n" + expense.getTotal());
+            }
 //            for (Map.Entry<String, SingleBalance> entrySet : splitExpense.entrySet()){
 //                String name = entrySet.getKey();
 //                SingleBalance sb = entrySet.getValue();
@@ -123,7 +133,7 @@ String spender = expense.getMemberSpent();
 //            }
             dateSpent_tv.setText(date);
             tv_expenseDescription.setText(expense.getDescription());
-            tv_paidBy.setText(String.format("%s paid $%.2f",spender,expense.getTotal()));
+            tv_paidBy.setText(String.format("%s paid $%.2f", spender, expense.getTotal()));
 
             tv_expenseDescription.getRootView().setOnClickListener(new View.OnClickListener() {
                 @Override

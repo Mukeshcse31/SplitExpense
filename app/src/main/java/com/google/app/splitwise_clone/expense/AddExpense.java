@@ -1,5 +1,6 @@
 package com.google.app.splitwise_clone.expense;
 
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.os.Bundle;
 import android.text.TextUtils;
@@ -19,10 +20,12 @@ import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
+import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.text.TextUtilsCompat;
 import androidx.fragment.app.DialogFragment;
 
+import com.google.app.splitwise_clone.MainActivity;
 import com.google.app.splitwise_clone.R;
 import com.google.app.splitwise_clone.groups.AddGroup;
 import com.google.app.splitwise_clone.groups.Groups;
@@ -90,7 +93,7 @@ public class AddExpense extends AppCompatActivity implements ListView.OnItemClic
         }
 
 
-        Query query = mDatabaseReference.child("groups/group1/members");
+        Query query = mDatabaseReference.child("groups/" + group_name + "/members");
 
         query.addListenerForSingleValueEvent(new ValueEventListener() {
             @Override
@@ -181,11 +184,15 @@ public class AddExpense extends AppCompatActivity implements ListView.OnItemClic
         // Inflate the menu; this adds items to the action bar if it is present.
 
         getMenuInflater().inflate(R.menu.add_expense, menu);
+        MenuItem deleteMenu =  menu.findItem(R.id.deleteExpense);
+        MenuItem cancelMenu = menu.findItem(R.id.deleteExpense);
 
-        if (mExpense == null)
-            menu.findItem(R.id.deleteExpense).setVisible(false);
-        else
-            menu.findItem(R.id.deleteExpense).setVisible(true);
+        if (mExpense == null) {
+            deleteMenu.setVisible(false);
+            cancelMenu.setVisible(false);
+        }
+//        else
+//            menu.findItem(R.id.deleteExpense).setVisible(true);
 
         return true;
 
@@ -236,7 +243,7 @@ public class AddExpense extends AppCompatActivity implements ListView.OnItemClic
                     expense.addMember(participant, singleBalance);
 
                     //update the participant's total amount
-                    Query query = mDatabaseReference.child("groups/group1/members/" + participant);
+                    Query query = mDatabaseReference.child("groups/" + group_name + "/members/" + participant);
                     query.addListenerForSingleValueEvent(new ValueEventListener() {
                         @Override
                         public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
@@ -251,7 +258,7 @@ public class AddExpense extends AppCompatActivity implements ListView.OnItemClic
                                         String newStatus = "you owe";
                                         if (newBalance > 0)
                                             newStatus = "owes you";
-                                        mDatabaseReference.child("groups/group1/members/" + participant).setValue(new SingleBalance(newBalance, newStatus));
+                                        mDatabaseReference.child("groups/" + group_name + "/members/" + participant).setValue(new SingleBalance(newBalance, newStatus));
                                     }
                                 }
                             }
@@ -263,19 +270,52 @@ public class AddExpense extends AppCompatActivity implements ListView.OnItemClic
                         }
                     });
                 }
-                //update individual expense
-                mDatabaseReference.child("groups/group1/expenses").push().setValue(expense, new DatabaseReference.CompletionListener() {
-                    @Override
-                    public void onComplete(DatabaseError databaseError, DatabaseReference dataReference) {
-                        Toast.makeText(AddExpense.this, " added", Toast.LENGTH_LONG).show();
-                    }
-                });
+
+                if (expenseId != null) {
+                    mDatabaseReference.child("groups/" + group_name + "/expenses/" + expenseId).setValue(expense);
+                } else {
+                    //update individual expense
+                    mDatabaseReference.child("groups/" + group_name + "/expenses").push().setValue(expense, new DatabaseReference.CompletionListener() {
+                        @Override
+                        public void onComplete(DatabaseError databaseError, DatabaseReference dataReference) {
+                            Toast.makeText(AddExpense.this, " added", Toast.LENGTH_LONG).show();
+                        }
+                    });
+
+                }
                 finish();
                 break;
 
             case R.id.deleteExpense:
 
                 //code to delete the expense detail
+                //https://www.tutorialspoint.com/android/android_alert_dialoges.htm
+                AlertDialog.Builder alertDialogBuilder = new AlertDialog.Builder(this);
+                alertDialogBuilder.setMessage(getString(R.string.warning_message));
+                alertDialogBuilder.setPositiveButton(getString(R.string.yes),
+                        new DialogInterface.OnClickListener() {
+                            @Override
+                            public void onClick(DialogInterface arg0, int arg1) {
+                                //Toast.makeText(AddExpense.this,"You clicked yes button",Toast.LENGTH_LONG).show();
+                                mDatabaseReference.child("groups/" + group_name + "/expenses/" + expenseId).removeValue();
+                                finish();
+
+                            }
+                        });
+
+                alertDialogBuilder.setNegativeButton(getString(R.string.no), new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialog, int which) {
+
+                    }
+                });
+
+                AlertDialog alertDialog = alertDialogBuilder.create();
+                alertDialog.show();
+                break;
+
+            case R.id.cancelUpdate:
+                finish();
                 break;
         }
         return super.onOptionsItemSelected(item);
