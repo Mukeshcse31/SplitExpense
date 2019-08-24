@@ -20,6 +20,7 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.ImageView;
 import android.widget.TextView;
 import androidx.recyclerview.widget.RecyclerView;
 import com.google.app.splitwise_clone.R;
@@ -45,6 +46,7 @@ public class GroupsAdapter extends RecyclerView.Adapter<GroupsAdapter.ReviewView
 
     public interface OnClickListener{
         void gotoSharedGroup(String name);
+        void gotoEditGroup(int index, String name);
     }
 
     @Override
@@ -83,10 +85,11 @@ public class GroupsAdapter extends RecyclerView.Adapter<GroupsAdapter.ReviewView
         TextView tv_group_name;
         // Will display which ViewHolder is displaying this data
         TextView tv_member_status;
+        ImageView group_image;
 
         public ReviewViewHolder(View itemView) {
             super(itemView);
-
+            group_image = itemView.findViewById(R.id.group_image);
             tv_group_name = (TextView) itemView.findViewById(R.id.tv_group_name);
             tv_member_status = (TextView) itemView.findViewById(R.id.tv_member_status);
         }
@@ -96,7 +99,7 @@ public class GroupsAdapter extends RecyclerView.Adapter<GroupsAdapter.ReviewView
          * use that integer to display the appropriate text within a list item.
          * @param listIndex Position of the item in the list
          */
-        void bind(int listIndex) {
+        void bind(final int listIndex) {
 
             DataSnapshot d = mDataSnapshotList.get(listIndex);
 
@@ -115,7 +118,20 @@ public class GroupsAdapter extends RecyclerView.Adapter<GroupsAdapter.ReviewView
             tv_group_name.setText(group_name);
             tv_member_status.setText(member_status);
 
-            tv_group_name.getRootView().setOnClickListener(new View.OnClickListener() {
+
+            group_image.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    mOnClickListener.gotoEditGroup(listIndex, group_name);
+                }
+            });
+            tv_member_status.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    mOnClickListener.gotoSharedGroup(group_name);
+                }
+            });
+            tv_group_name.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
                     mOnClickListener.gotoSharedGroup(group_name);

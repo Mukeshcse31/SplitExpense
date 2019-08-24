@@ -11,7 +11,7 @@ import androidx.appcompat.app.AppCompatActivity;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
-import com.google.app.splitwise_clone.groups.Groups;
+import com.google.app.splitwise_clone.groups.GroupsList;
 import com.google.app.splitwise_clone.model.Friend;
 import com.google.app.splitwise_clone.model.SingleBalance;
 import com.google.app.splitwise_clone.utils.FriendsAdapter;
@@ -24,8 +24,6 @@ import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.Query;
 import com.google.firebase.database.ValueEventListener;
 
-import java.util.ArrayList;
-import java.util.List;
 import java.util.Map;
 
 public class Friends extends AppCompatActivity {
@@ -126,7 +124,7 @@ public class Friends extends AppCompatActivity {
 //                        mDatabaseReference.child("friends/" + id).setValue(f);
                             }
                         }
-                        Intent intent = new Intent(Friends.this, Groups.class);
+                        Intent intent = new Intent(Friends.this, GroupsList.class);
                         intent.putExtra("friendId", id);
                         startActivity(intent);
 
@@ -139,7 +137,7 @@ public class Friends extends AppCompatActivity {
                 break;
 
             case R.id.gotoGroups:
-                Intent intent = new Intent(Friends.this, Groups.class);
+                Intent intent = new Intent(Friends.this, GroupsList.class);
                 startActivity(intent);
                 break;
 

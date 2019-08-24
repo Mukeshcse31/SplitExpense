@@ -25,6 +25,7 @@ import com.google.android.material.snackbar.Snackbar;
 import com.google.android.material.textfield.TextInputLayout;
 import com.google.app.splitwise_clone.model.Friend;
 import com.google.app.splitwise_clone.model.InstantMessage;
+import com.google.app.splitwise_clone.utils.FirebaseUtils;
 import com.google.firebase.auth.AuthResult;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
@@ -44,9 +45,7 @@ public class MainActivity extends AppCompatActivity {
     public static final String USERNAME_KEY = "username";
     public static final String PASSWORD_KEY = "password";
     private DatabaseReference mDatabaseReference;
-
     static final String TAG = "Registration";
-
     private AutoCompleteTextView mEmailView;
     private AutoCompleteTextView mUsernameView;
     private TextInputLayout mUserNameLayout;
@@ -69,6 +68,8 @@ public class MainActivity extends AppCompatActivity {
         String displayName = prefs.getString(DISPLAY_NAME_KEY, "");
         String email = prefs.getString(USERNAME_KEY, "");
         String password = prefs.getString(PASSWORD_KEY, "");
+
+        FirebaseUtils.updateDB("group1");
 
         if (TextUtils.isEmpty(email)) {
             setContentView(R.layout.activity_register);

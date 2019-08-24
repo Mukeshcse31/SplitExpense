@@ -1,7 +1,6 @@
 package com.google.app.splitwise_clone.groups;
 
 import android.content.Intent;
-import android.content.SharedPreferences;
 import android.net.Uri;
 import android.os.Bundle;
 import android.text.TextUtils;
@@ -10,24 +9,24 @@ import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.AutoCompleteTextView;
-import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.Toast;
+
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
+
 import com.bumptech.glide.Glide;
-import com.bumptech.glide.load.engine.DiskCacheStrategy;
-import com.google.android.gms.auth.api.signin.internal.Storage;
+import com.google.android.gms.tasks.OnFailureListener;
 import com.google.android.gms.tasks.OnSuccessListener;
-import com.google.android.gms.tasks.Task;
 import com.google.android.material.snackbar.Snackbar;
-import com.google.app.splitwise_clone.AddFriend;
 import com.google.app.splitwise_clone.R;
+import com.google.app.splitwise_clone.expense.ExpenseList;
 import com.google.app.splitwise_clone.model.Friend;
 import com.google.app.splitwise_clone.model.Group;
 import com.google.app.splitwise_clone.model.SingleBalance;
+import com.google.app.splitwise_clone.utils.FirebaseUtils;
 import com.google.app.splitwise_clone.utils.GroupMembersAdapter;
 import com.google.app.splitwise_clone.utils.GroupsAdapter;
 import com.google.app.splitwise_clone.utils.NonGroupMembersAdapter;
@@ -41,20 +40,12 @@ import com.google.firebase.database.ValueEventListener;
 import com.google.firebase.storage.FirebaseStorage;
 import com.google.firebase.storage.StorageReference;
 import com.google.firebase.storage.UploadTask;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.Iterator;
-import java.util.List;
-import java.util.Map;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.Iterator;
-import java.util.List;
-import java.util.Map;
-import java.util.Set;
 
-import static com.google.app.splitwise_clone.MainActivity.DISPLAY_NAME_KEY;
-import static com.google.app.splitwise_clone.MainActivity.SPLIT_PREFS;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.Iterator;
+import java.util.List;
+import java.util.Map;
 
 public class AddGroup extends AppCompatActivity implements GroupMembersAdapter.OnClickListener,
         NonGroupMembersAdapter.OnClickListener {
@@ -63,7 +54,6 @@ public class AddGroup extends AppCompatActivity implements GroupMembersAdapter.O
     private DatabaseReference mDatabaseReference;
     private FirebaseStorage mFirebaseStorage;
     private StorageReference mPhotosStorageReference;
-private String photoURL = "";
     private ChildEventListener mChildEventListener;
     private static final int RC_PHOTO_PICKER = 2;
     private static final String TAG = AddGroup.class.getSimpleName();
@@ -72,6 +62,11 @@ private String photoURL = "";
     private RecyclerView members_rv;
     private RecyclerView nonmembers_rv;
     private ImageView mPhotoPickerButton;
+    private String group_name;
+    private Group mGroup;
+    private Map<String, String> all_members = new HashMap<>();
+    private Map<String, String> group_members = new HashMap<>();
+    private Map<String, String> nongroup_members = new HashMap<>();
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -80,7 +75,7 @@ private String photoURL = "";
         getSupportActionBar().setTitle("");
         mFirebaseStorage = FirebaseStorage.getInstance();
         mDatabaseReference = FirebaseDatabase.getInstance().getReference();
-        mPhotosStorageReference = mFirebaseStorage.getReference().child("group_photos");
+        mPhotosStorageReference = mFirebaseStorage.getReference().child("images/groups");
         mGroupName = findViewById(R.id.group_name);
 //
 //        getSupportActionBar().setTitle("");
@@ -105,6 +100,13 @@ private String photoURL = "";
             }
         });
 
+        Bundle bundle = getIntent().getExtras();
+        if (bundle != null && bundle.containsKey(GroupsList.GROUP_NAME)) {
+            group_name = bundle.getString(GroupsList.GROUP_NAME);
+            if (bundle.containsKey(GroupsList.EDIT_GROUP)) {
+                mGroup = bundle.getParcelable(GroupsList.EDIT_GROUP);
+            }
+        }
     }
 
 
@@ -121,103 +123,86 @@ private String photoURL = "";
 //                finish();
 //            }
 //        } else
-            if (requestCode == RC_PHOTO_PICKER && resultCode == RESULT_OK) {
+        if (requestCode == RC_PHOTO_PICKER && resultCode == RESULT_OK) {
             Uri selectedImageUri = data.getData();
+            final String groupName = TextUtils.isEmpty(mGroupName.getText().toString()) ? "anonymous" : mGroupName.getText().toString();
 
             // Get a reference to store file at chat_photos/<FILENAME>
-            final StorageReference photoRef = mPhotosStorageReference.child("group1");
+            final StorageReference photoRef = mPhotosStorageReference.child(groupName);
 
             // Upload file to Firebase Storage
             photoRef.putFile(selectedImageUri)
                     .addOnSuccessListener(this, new OnSuccessListener<UploadTask.TaskSnapshot>() {
                         public void onSuccess(UploadTask.TaskSnapshot taskSnapshot) {
-                            // When the image has successfully uploaded, we get its download URL
-String path = taskSnapshot.getMetadata().getPath();
 
-// Reference to an image file in Cloud Storage
-//                            StorageReference storageReference = FirebaseStorage.getInstance().getReference();
-//
-//// ImageView in your Activity
-//                            ImageView imageView = findViewById(R.id.imageView);
+                            final StorageReference group1 = mPhotosStorageReference.child(groupName);
+                            final long ONE_MEGABYTE = 1024 * 1024;
+                            group1.getBytes(ONE_MEGABYTE).addOnSuccessListener(new OnSuccessListener<byte[]>() {
+                                @Override
+                                public void onSuccess(byte[] bytes) {
+//                                           https://stackoverflow.com/questions/46619510/how-can-i-download-image-on-firebase-storage
+                                    //            https://github.com/bumptech/glide/issues/458
+                                    Glide.with(AddGroup.this)
+                                            .load(bytes)
+                                            .asBitmap()
+                                            .into(mPhotoPickerButton);
 
-// Download directly from StorageReference using Glide
-// (See MyAppGlideModule for Loader registration)
-//                            StorageReference ref = mFirebaseStorage.getReferenceFromUrl("https://firebasestorage.googleapis.com/v0/b/splitwiseclone-83993.appspot.com/o/group_photos%2Fgroup1?alt=media&token=afe18a8f-0d5a-4bc3-a983-c75576b3f71c");
-//                            Glide.with(AddGroup.this)
-//                                    .load(ref)
-//                                    .into(mPhotoPickerButton);
+                                    // Data for "images/island.jpg" is returns, use this as needed
+                                    Log.i(TAG, "photo download " + mPhotosStorageReference.getPath());
+                                    mPhotoPickerButton.setContentDescription(mPhotosStorageReference.getPath() + "/" + groupName);
+                                }
+                            }).addOnFailureListener(new OnFailureListener() {
+                                @Override
+                                public void onFailure(@NonNull Exception exception) {
 
-//                            Uri downloadUrl = mPhotosStorageReference.getDownloadUrl().getResult();
-//        photoURL = downloadUrl.toString();
-                            // Set the download URL to the message box, so that the user can send it to the database
-//                            FriendlyMessage friendlyMessage = new FriendlyMessage(null, mUsername, downloadUrl.toString());
-//                            mMessagesDatabaseReference.push().setValue(friendlyMessage);
+                                    Log.i(TAG, exception.getMessage());
+                                    // Handle any errors
+                                }
+                            });
                         }
-
                     });
         }
     }
 
     private void membersViews() {
         String path1 = getString(R.string.db_users);
-        final String path2 = getString(R.string.db_groups);
-        final String currentGroup = "group1";
 
+        //get all the users
         Query query = mDatabaseReference.child(path1);
         query.addListenerForSingleValueEvent(new ValueEventListener() {
             @Override
             public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
                 if (dataSnapshot.exists()) {
-                    Map<String, String> all_member = new HashMap<>();
                     for (DataSnapshot i : dataSnapshot.getChildren()) {
                         String email = i.getKey();
                         Friend f = i.getValue(Friend.class);
-                        String name = f.getName(); //TODO check this
-                        all_member.put(name, email);//get all the users
+                        String name = f.getName();
+                        all_members.put(name, email);
                     }
 //--- - - - - - - - - - - - - -TODO if dataSnapshot.exists() check--
 
-                    final Map<String, String> all_members = all_member;
-                    Query query1 = mDatabaseReference.child(path2 + "/" + currentGroup + "/members");
-                    query1.addListenerForSingleValueEvent(new ValueEventListener() {
-                        @Override
-                        public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
-                            if (dataSnapshot.exists()) {
-                                List<String> group_membersList = new ArrayList<>();
-                                for (DataSnapshot i : dataSnapshot.getChildren()) {
-
-                                    String name = i.getKey();
-                                    group_membersList.add(name);
-                                }
-                                Map<String, String> group_members = new HashMap<>();
-                                Map<String, String> nongroup_members = new HashMap<>();
-
-                                Iterator<String> it = all_members.keySet().iterator();
-                                while (it.hasNext()) {
-                                    String userName = it.next();
-                                    if (group_membersList.contains(userName)) {
-                                        group_members.put(userName, all_members.get(userName));
-                                    } else {
-                                        nongroup_members.put(userName, all_members.get(userName));
-                                    }
-                                }
-
-                                mGroupMembersAdapter = new GroupMembersAdapter(group_members, AddGroup.this);
-                                members_rv.setAdapter(mGroupMembersAdapter);
-
-                                mNonGroupMembersAdapter = new NonGroupMembersAdapter(nongroup_members, AddGroup.this);
-                                nonmembers_rv.setAdapter(mNonGroupMembersAdapter);
-
-                            }
-
+                    if (mGroup != null) {
+                        Map<String, SingleBalance> members = mGroup.getMembers();
+                        Iterator it = members.entrySet().iterator();
+                        while (it.hasNext()) {
+                            Map.Entry pair = (Map.Entry) it.next();
+                            String name = (String) pair.getKey();
+                            group_members.put(name, name); //TODO update this to have email id of the user
+                            it.remove(); // avoids a ConcurrentModificationException
                         }
 
-                        @Override
-                        public void onCancelled(@NonNull DatabaseError databaseError) {
-
+                    } else {
+                    }
+                    Iterator<String> it = all_members.keySet().iterator();
+                    while (it.hasNext()) {
+                        String userName = it.next();
+                        if (group_members.containsKey(userName)) {
+//                            group_members.put(userName, all_members.get(userName));
+                        } else {
+                            nongroup_members.put(userName, all_members.get(userName));
                         }
-                    });
-
+                    }
+                    updateAdapters();
                 }
             }
 
@@ -230,75 +215,29 @@ String path = taskSnapshot.getMetadata().getPath();
 
     }
 
+    private void updateAdapters() {
+        mGroupMembersAdapter = new GroupMembersAdapter(group_members, AddGroup.this);
+        members_rv.setAdapter(mGroupMembersAdapter);
+
+        mNonGroupMembersAdapter = new NonGroupMembersAdapter(nongroup_members, AddGroup.this);
+        nonmembers_rv.setAdapter(mNonGroupMembersAdapter);
+    }
 
     @Override
     public void removeFriendFromGroup(final String name) {
 
-        Query query = mDatabaseReference.child("groups/group1/members");
-        query.addListenerForSingleValueEvent(new ValueEventListener() {
-            @Override
-            public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
-                Map<String, SingleBalance> groupMembers = new HashMap<>();
-                if (dataSnapshot.exists()) {
-                    for (DataSnapshot i : dataSnapshot.getChildren()) {
-
-                        String name1 = i.getKey();
-                        groupMembers.put(name1, i.getValue(SingleBalance.class));
-
-                    }
-                    groupMembers.remove(name);
-                }
-                mDatabaseReference.child("groups/group1/members").setValue(groupMembers, new DatabaseReference.CompletionListener() {
-                    @Override
-                    public void onComplete(DatabaseError databaseError, DatabaseReference dataReference) {
-                        Toast.makeText(AddGroup.this, name + " removed", Toast.LENGTH_LONG).show();
-                    }
-                });
-            }
-
-            @Override
-            public void onCancelled(@NonNull DatabaseError databaseError) {
-
-            }
-        });
-
-        membersViews();
+        nongroup_members.put(name, group_members.get(name));
+        group_members.remove(name);
+        updateAdapters();
 
     }
 
     @Override
     public void addFriendToGroup(final String name) {
 
-        Query query = mDatabaseReference.child("groups/group1/members");
-        query.addListenerForSingleValueEvent(new ValueEventListener() {
-            @Override
-            public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
-                Map<String, SingleBalance> groupMembers = new HashMap<>();
-                if (dataSnapshot.exists()) {
-                    for (DataSnapshot i : dataSnapshot.getChildren()) {
-
-                        String name1 = i.getKey();
-                        groupMembers.put(name1, i.getValue(SingleBalance.class));
-
-                    }
-                    groupMembers.put(name, new SingleBalance());
-
-                }
-                mDatabaseReference.child("groups/group1/members").setValue(groupMembers, new DatabaseReference.CompletionListener() {
-                    @Override
-                    public void onComplete(DatabaseError databaseError, DatabaseReference dataReference) {
-                        Toast.makeText(AddGroup.this, name + " added", Toast.LENGTH_LONG).show();
-                    }
-                });
-            }
-
-            @Override
-            public void onCancelled(@NonNull DatabaseError databaseError) {
-
-            }
-        });
-
-        membersViews();
+        group_members.put(name, nongroup_members.get(name));
+        nongroup_members.remove(name);
+        updateAdapters();
     }
 
 
@@ -326,18 +265,26 @@ String path = taskSnapshot.getMetadata().getPath();
                         } else {
                             //add the group creator as a member when the group is created
                             Group grp = new Group(name);
-                            SharedPreferences prefs = getSharedPreferences(SPLIT_PREFS, 0);
-                            String displayName = prefs.getString(DISPLAY_NAME_KEY, "");
-                            if (!TextUtils.isEmpty(displayName)) {
+                            String userName = FirebaseUtils.getUserName();
 
-                                grp.addMember(displayName, new SingleBalance());
+//                            for ()//TODO add all the members'
+                            Iterator it = group_members.entrySet().iterator();
+                            while (it.hasNext()) {
+
+                                Map.Entry pair = (Map.Entry) it.next();
+                                String groupMemberName = (String) pair.getKey();
+                                grp.addMember(groupMemberName, new SingleBalance());
+
                             }
-                            if(!TextUtils.isEmpty(photoURL)) grp.setPhotoUrl(photoURL);
+                            grp.addMember(userName, new SingleBalance());
+
+                            grp.setPhotoUrl(mPhotoPickerButton.getContentDescription().toString());
+                            grp.setOwner(userName);
                             mDatabaseReference.child("groups/" + name).setValue(grp, new DatabaseReference.CompletionListener() {
                                 @Override
                                 public void onComplete(DatabaseError databaseError, DatabaseReference dataReference) {
                                     final Snackbar snackBar = Snackbar.make(findViewById(android.R.id.content),
-                                            getString(R.string.friend_added), Snackbar.LENGTH_LONG);
+                                            getString(R.string.group_added), Snackbar.LENGTH_LONG);
 
                                     snackBar.setAction(getString(R.string.close), new View.OnClickListener() {
                                         @Override
@@ -369,31 +316,5 @@ String path = taskSnapshot.getMetadata().getPath();
         }
         return super.onOptionsItemSelected(item);
     }
-
-
-//    private void attachDatabaseReadListener() {
-//        if (mChildEventListener == null) {
-//            mChildEventListener = new ChildEventListener() {
-//                @Override
-//                public void onChildAdded(DataSnapshot dataSnapshot, String s) {
-//                    FriendlyMessage friendlyMessage = dataSnapshot.getValue(FriendlyMessage.class);
-//                    mMessageAdapter.add(friendlyMessage);
-//                }
-//
-//                public void onChildChanged(DataSnapshot dataSnapshot, String s) {}
-//                public void onChildRemoved(DataSnapshot dataSnapshot) {}
-//                public void onChildMoved(DataSnapshot dataSnapshot, String s) {}
-//                public void onCancelled(DatabaseError databaseError) {}
-//            };
-//            mMessagesDatabaseReference.addChildEventListener(mChildEventListener);
-//        }
-//    }
-//
-//    private void detachDatabaseReadListener() {
-//        if (mChildEventListener != null) {
-//            mMessagesDatabaseReference.removeEventListener(mChildEventListener);
-//            mChildEventListener = null;
-//        }
-//    }
 
 }

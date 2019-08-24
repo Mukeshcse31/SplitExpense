@@ -36,7 +36,7 @@ public class GroupMembersAdapter extends RecyclerView.Adapter<GroupMembersAdapte
 
     private static final String TAG = GroupMembersAdapter.class.getSimpleName();
 
-    private static int viewHolderCount;
+//    private static int viewHolderCount;
     private Set membersSet;
     Iterator<String> it;
     private Context mContext;
@@ -46,11 +46,13 @@ private OnClickListener mOnClickListener;
     public GroupMembersAdapter(Map<String, String> group_members, Context context) {
         mOnClickListener = (OnClickListener) context;
         this.group_members = group_members;
+
         membersSet = group_members.keySet();
         it = membersSet.iterator();
-        Set<Map.Entry<String, String>> ee = group_members.entrySet();
-        ee.size();
-        viewHolderCount = 0;
+
+//        Set<Map.Entry<String, String>> ee = group_members.entrySet();
+//        ee.size();
+//        viewHolderCount = 0;
     }
 
     public interface OnClickListener{
@@ -70,9 +72,8 @@ private OnClickListener mOnClickListener;
 
 //        viewHolder.tv_review.setText("ViewHolder index: " + viewHolderCount);
 
-        viewHolderCount++;
-        Log.d(TAG, "onCreateViewHolder: number of ViewHolders created: "
-                + viewHolderCount);
+//        viewHolderCount++;
+//        Log.d(TAG, "onCreateViewHolder: number of ViewHolders created: " + viewHolderCount);
         return viewHolder;
     }
 
@@ -107,13 +108,14 @@ private OnClickListener mOnClickListener;
         /**
          * A method we wrote for convenience. This method will take an integer as input and
          * use that integer to display the appropriate text within a list item.
+         *
          * @param listIndex Position of the item in the list
          */
         void bind(int listIndex) {
 
             final String member_name = it.next();
             String email = group_members.get(member_name);
-String temp = member_name + tv_friend_name.getContext().getString(R.string.new_line) + email;
+            String temp = member_name + tv_friend_name.getContext().getString(R.string.new_line) + email;
             tv_friend_name.setText(temp);
             member_iv.setOnClickListener(new View.OnClickListener() {
                 @Override
@@ -123,6 +125,9 @@ String temp = member_name + tv_friend_name.getContext().getString(R.string.new_l
             });
 
         }
-
     }
-}
+        public void setData(Map<String, String> members){
+            group_members = members;
+notifyDataSetChanged();
+        }
+    }

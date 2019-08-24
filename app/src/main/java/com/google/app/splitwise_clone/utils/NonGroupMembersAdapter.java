@@ -123,4 +123,8 @@ public class NonGroupMembersAdapter extends RecyclerView.Adapter<NonGroupMembers
         }
 
     }
+    public void setData(Map<String, String> members){
+        nonGroup_members = members;
+        notifyDataSetChanged();
+    }
 }

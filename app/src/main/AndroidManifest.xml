@@ -27,7 +27,7 @@
         <activity android:name=".AddFriend"
             android:parentActivityName=".Expenses">
         </activity>
-        <activity android:name=".groups.Groups">
+        <activity android:name=".groups.GroupsList">
         </activity>
 
         <activity android:name=".expense.AddExpense"></activity>

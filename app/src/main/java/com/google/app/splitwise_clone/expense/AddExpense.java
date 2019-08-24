@@ -1,13 +1,11 @@
 package com.google.app.splitwise_clone.expense;
 
 import android.content.DialogInterface;
-import android.content.Intent;
 import android.os.Bundle;
 import android.text.TextUtils;
 import android.util.Log;
 import android.util.SparseBooleanArray;
 import android.view.Menu;
-import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.AdapterView;
@@ -19,34 +17,22 @@ import android.widget.Spinner;
 import android.widget.Toast;
 
 import androidx.annotation.NonNull;
-import androidx.annotation.Nullable;
 import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
-import androidx.core.text.TextUtilsCompat;
 import androidx.fragment.app.DialogFragment;
 
-import com.google.app.splitwise_clone.MainActivity;
 import com.google.app.splitwise_clone.R;
-import com.google.app.splitwise_clone.groups.AddGroup;
-import com.google.app.splitwise_clone.groups.Groups;
 import com.google.app.splitwise_clone.model.Expense;
 import com.google.app.splitwise_clone.model.SingleBalance;
 import com.google.app.splitwise_clone.utils.DatePickerFragment;
-import com.google.app.splitwise_clone.utils.GroupsAdapter;
-import com.google.app.splitwise_clone.utils.MultiSpinner;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.Query;
 import com.google.firebase.database.ValueEventListener;
-
-import org.w3c.dom.Text;
-
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.Calendar;
-import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
@@ -232,43 +218,44 @@ public class AddExpense extends AppCompatActivity implements ListView.OnItemClic
                     float amountSpentForOthers = 0.0f;
                     String amountStatus = "you spent";
                     if (TextUtils.equals(spender, participant)) {
-                        amountSpentForOthers = amount / participants.size();
+                        amountForUser = amount - (amount / participants.size());
 
                     } else {
                         amountForUser = -(amount / participants.size());
                         amountStatus = "you owe";
                     }
-                    final SingleBalance singleBalance = new SingleBalance(amountForUser, amountStatus);
-                    final float amountSpentForOthers1 = amountSpentForOthers;
+                    SingleBalance singleBalance = new SingleBalance(amountForUser, amountStatus);
+//                    final float amountSpentForOthers1 = amountForUser;
                     expense.addMember(participant, singleBalance);
 
                     //update the participant's total amount
-                    Query query = mDatabaseReference.child("groups/" + group_name + "/members/" + participant);
-                    query.addListenerForSingleValueEvent(new ValueEventListener() {
-                        @Override
-                        public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
-                            if (dataSnapshot.exists()) {
-                                float existingBalance = 0.0f;
-                                for (DataSnapshot i : dataSnapshot.getChildren()) {
-
-                                    //if key is amount
-                                    if (TextUtils.equals(i.getKey(), "amount")) {
-                                        existingBalance = Float.parseFloat(i.getValue().toString());
-                                        float newBalance = existingBalance + singleBalance.getAmount() - amountSpentForOthers1;
-                                        String newStatus = "you owe";
-                                        if (newBalance > 0)
-                                            newStatus = "owes you";
-                                        mDatabaseReference.child("groups/" + group_name + "/members/" + participant).setValue(new SingleBalance(newBalance, newStatus));
-                                    }
-                                }
-                            }
-                        }
-
-                        @Override
-                        public void onCancelled(@NonNull DatabaseError databaseError) {
-
-                        }
-                    });
+//                    Query query = mDatabaseReference.child("groups/" + group_name + "/members/" + participant);
+//                    query.addListenerForSingleValueEvent(new ValueEventListener() {
+//                        @Override
+//                        public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+//                            if (dataSnapshot.exists()) {
+//                                float existingBalance = 0.0f;
+//                                for (DataSnapshot i : dataSnapshot.getChildren()) {
+//
+//                                    //if key is amount
+//                                    if (TextUtils.equals(i.getKey(), "amount")) {
+//                                        existingBalance = Float.parseFloat(i.getValue().toString());
+//                                        float newBalance = amountSpentForOthers1
+////                                        float newBalance = existingBalance + singleBalance.getAmount() - amountSpentForOthers1;
+//                                        String newStatus = "you owe";
+//                                        if (newBalance > 0)
+//                                            newStatus = "owes you";
+//                                        mDatabaseReference.child("groups/" + group_name + "/members/" + participant).setValue(new SingleBalance(newBalance, newStatus));
+//                                    }
+//                                }
+//                            }
+//                        }
+//
+//                        @Override
+//                        public void onCancelled(@NonNull DatabaseError databaseError) {
+//
+//                        }
+//                    });
                 }
 
                 if (expenseId != null) {
