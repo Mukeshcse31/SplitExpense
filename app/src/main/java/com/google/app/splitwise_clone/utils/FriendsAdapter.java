@@ -26,7 +26,6 @@ import com.google.app.splitwise_clone.R;
 import com.google.app.splitwise_clone.model.SingleBalance;
 
 import java.util.Iterator;
-import java.util.List;
 import java.util.Map;
 import java.util.Set;
 

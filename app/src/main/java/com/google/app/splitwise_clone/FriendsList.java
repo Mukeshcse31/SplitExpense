@@ -1,6 +1,7 @@
 package com.google.app.splitwise_clone;
 
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.Menu;
@@ -26,7 +27,7 @@ import com.google.firebase.database.ValueEventListener;
 
 import java.util.Map;
 
-public class Friends extends AppCompatActivity {
+public class FriendsList extends AppCompatActivity {
 
     private DatabaseReference mDatabaseReference;
     private FirebaseAuth.AuthStateListener mAuthStateListener;
@@ -79,7 +80,7 @@ public class Friends extends AppCompatActivity {
 //                        mDatabaseReference.child("friends/" + id).setValue(f);
                     }
 
-                    mFriendsAdapter = new FriendsAdapter(allbalances, Friends.this);
+                    mFriendsAdapter = new FriendsAdapter(allbalances, FriendsList.this);
                     friends_rv.setAdapter(mFriendsAdapter);
                 }
             }
@@ -96,7 +97,7 @@ public class Friends extends AppCompatActivity {
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
         // Inflate the menu; this adds items to the action bar if it is present.
-        getMenuInflater().inflate(R.menu.add_friends, menu);
+        getMenuInflater().inflate(R.menu.friends_list, menu);
         return true;
     }
 
@@ -124,7 +125,7 @@ public class Friends extends AppCompatActivity {
 //                        mDatabaseReference.child("friends/" + id).setValue(f);
                             }
                         }
-                        Intent intent = new Intent(Friends.this, GroupsList.class);
+                        Intent intent = new Intent(FriendsList.this, GroupsList.class);
                         intent.putExtra("friendId", id);
                         startActivity(intent);
 
@@ -137,8 +138,18 @@ public class Friends extends AppCompatActivity {
                 break;
 
             case R.id.gotoGroups:
-                Intent intent = new Intent(Friends.this, GroupsList.class);
+                Intent intent = new Intent(FriendsList.this, GroupsList.class);
                 startActivity(intent);
+                break;
+
+                //Sign Out
+            case R.id.signout:
+                FirebaseAuth mAuth = FirebaseAuth.getInstance();
+                mAuth.signOut();
+                SharedPreferences prefs = getSharedPreferences(MainActivity.SPLIT_PREFS, 0);
+                prefs.edit().remove(MainActivity.USERNAME_KEY).commit();
+                prefs.edit().remove(MainActivity.PASSWORD_KEY).commit();
+                finish();
                 break;
 
         }

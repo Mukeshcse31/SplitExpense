@@ -1,5 +1,6 @@
 package com.google.app.splitwise_clone.groups;
 
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.net.Uri;
 import android.os.Bundle;
@@ -11,24 +12,21 @@ import android.view.View;
 import android.widget.AutoCompleteTextView;
 import android.widget.ImageView;
 import android.widget.Toast;
-
 import androidx.annotation.NonNull;
+import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
-
 import com.bumptech.glide.Glide;
 import com.google.android.gms.tasks.OnFailureListener;
 import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.android.material.snackbar.Snackbar;
 import com.google.app.splitwise_clone.R;
-import com.google.app.splitwise_clone.expense.ExpenseList;
 import com.google.app.splitwise_clone.model.Friend;
 import com.google.app.splitwise_clone.model.Group;
 import com.google.app.splitwise_clone.model.SingleBalance;
 import com.google.app.splitwise_clone.utils.FirebaseUtils;
 import com.google.app.splitwise_clone.utils.GroupMembersAdapter;
-import com.google.app.splitwise_clone.utils.GroupsAdapter;
 import com.google.app.splitwise_clone.utils.NonGroupMembersAdapter;
 import com.google.firebase.database.ChildEventListener;
 import com.google.firebase.database.DataSnapshot;
@@ -40,11 +38,8 @@ import com.google.firebase.database.ValueEventListener;
 import com.google.firebase.storage.FirebaseStorage;
 import com.google.firebase.storage.StorageReference;
 import com.google.firebase.storage.UploadTask;
-
-import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Iterator;
-import java.util.List;
 import java.util.Map;
 
 public class AddGroup extends AppCompatActivity implements GroupMembersAdapter.OnClickListener,
@@ -57,13 +52,13 @@ public class AddGroup extends AppCompatActivity implements GroupMembersAdapter.O
     private ChildEventListener mChildEventListener;
     private static final int RC_PHOTO_PICKER = 2;
     private static final String TAG = AddGroup.class.getSimpleName();
-    private GroupMembersAdapter mGroupMembersAdapter;
-    private NonGroupMembersAdapter mNonGroupMembersAdapter;
+
     private RecyclerView members_rv;
     private RecyclerView nonmembers_rv;
     private ImageView mPhotoPickerButton;
     private String group_name;
     private Group mGroup;
+    private String photoUrl="";
     private Map<String, String> all_members = new HashMap<>();
     private Map<String, String> group_members = new HashMap<>();
     private Map<String, String> nongroup_members = new HashMap<>();
@@ -72,14 +67,11 @@ public class AddGroup extends AppCompatActivity implements GroupMembersAdapter.O
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.fragment_add_group);
-        getSupportActionBar().setTitle("");
+        getSupportActionBar().setTitle(getString(R.string.new_group));
         mFirebaseStorage = FirebaseStorage.getInstance();
         mDatabaseReference = FirebaseDatabase.getInstance().getReference();
         mPhotosStorageReference = mFirebaseStorage.getReference().child("images/groups");
         mGroupName = findViewById(R.id.group_name);
-//
-//        getSupportActionBar().setTitle("");
-//        mDatabaseReference = FirebaseDatabase.getInstance().getReference();
         members_rv = (RecyclerView) findViewById(R.id.members_rv);
         nonmembers_rv = findViewById(R.id.nonmembers_rv);
         mPhotoPickerButton = findViewById(R.id.photoPickerButton);
@@ -103,6 +95,7 @@ public class AddGroup extends AppCompatActivity implements GroupMembersAdapter.O
         Bundle bundle = getIntent().getExtras();
         if (bundle != null && bundle.containsKey(GroupsList.GROUP_NAME)) {
             group_name = bundle.getString(GroupsList.GROUP_NAME);
+            getSupportActionBar().setTitle(group_name);
             if (bundle.containsKey(GroupsList.EDIT_GROUP)) {
                 mGroup = bundle.getParcelable(GroupsList.EDIT_GROUP);
             }
@@ -149,7 +142,8 @@ public class AddGroup extends AppCompatActivity implements GroupMembersAdapter.O
 
                                     // Data for "images/island.jpg" is returns, use this as needed
                                     Log.i(TAG, "photo download " + mPhotosStorageReference.getPath());
-                                    mPhotoPickerButton.setContentDescription(mPhotosStorageReference.getPath() + "/" + groupName);
+                                    photoUrl = mPhotosStorageReference.getPath() + "/" + groupName;
+//                                    mPhotoPickerButton.setContentDescription();
                                 }
                             }).addOnFailureListener(new OnFailureListener() {
                                 @Override
@@ -182,6 +176,7 @@ public class AddGroup extends AppCompatActivity implements GroupMembersAdapter.O
 //--- - - - - - - - - - - - - -TODO if dataSnapshot.exists() check--
 
                     if (mGroup != null) {
+                        mGroupName.setText(mGroup.getName());
                         Map<String, SingleBalance> members = mGroup.getMembers();
                         Iterator it = members.entrySet().iterator();
                         while (it.hasNext()) {
@@ -193,6 +188,7 @@ public class AddGroup extends AppCompatActivity implements GroupMembersAdapter.O
 
                     } else {
                     }
+                    //collect all the non-group members
                     Iterator<String> it = all_members.keySet().iterator();
                     while (it.hasNext()) {
                         String userName = it.next();
@@ -216,6 +212,8 @@ public class AddGroup extends AppCompatActivity implements GroupMembersAdapter.O
     }
 
     private void updateAdapters() {
+        GroupMembersAdapter mGroupMembersAdapter;
+        NonGroupMembersAdapter mNonGroupMembersAdapter;
         mGroupMembersAdapter = new GroupMembersAdapter(group_members, AddGroup.this);
         members_rv.setAdapter(mGroupMembersAdapter);
 
@@ -245,6 +243,25 @@ public class AddGroup extends AppCompatActivity implements GroupMembersAdapter.O
     public boolean onCreateOptionsMenu(Menu menu) {
         // Inflate the menu; this adds items to the action bar if it is present.
         getMenuInflater().inflate(R.menu.add_group, menu);
+
+        MenuItem addMenu =  menu.findItem(R.id.addGroup);
+        MenuItem deleteMenu =  menu.findItem(R.id.deleteGroup);
+        MenuItem saveMenu = menu.findItem(R.id.saveGroup);
+
+        deleteMenu.setVisible(false);
+        saveMenu.setVisible(false);
+        if (mGroup == null) {
+
+            addMenu.setVisible(true);
+        }
+        else{
+            addMenu.setVisible(false);
+            if(TextUtils.equals(mGroup.getOwner(), FirebaseUtils.getUserName())){
+                deleteMenu.setVisible(true);
+                saveMenu.setVisible(true);
+            }
+        }
+
         return true;
     }
 
@@ -257,17 +274,15 @@ public class AddGroup extends AppCompatActivity implements GroupMembersAdapter.O
                 query.addListenerForSingleValueEvent(new ValueEventListener() {
                     @Override
                     public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
-                        int id = 1;
                         if (dataSnapshot.exists()) {
                             mGroupName.setError(getString(R.string.group_exists));
                             Toast.makeText(AddGroup.this, "Group already exists", Toast.LENGTH_LONG).show();
 
                         } else {
-                            //add the group creator as a member when the group is created
                             Group grp = new Group(name);
                             String userName = FirebaseUtils.getUserName();
 
-//                            for ()//TODO add all the members'
+//                          // add all the group members to the group
                             Iterator it = group_members.entrySet().iterator();
                             while (it.hasNext()) {
 
@@ -276,9 +291,10 @@ public class AddGroup extends AppCompatActivity implements GroupMembersAdapter.O
                                 grp.addMember(groupMemberName, new SingleBalance());
 
                             }
+                            //add the group creator as a member when the group is created
                             grp.addMember(userName, new SingleBalance());
 
-                            grp.setPhotoUrl(mPhotoPickerButton.getContentDescription().toString());
+                            grp.setPhotoUrl(photoUrl);
                             grp.setOwner(userName);
                             mDatabaseReference.child("groups/" + name).setValue(grp, new DatabaseReference.CompletionListener() {
                                 @Override
@@ -310,6 +326,39 @@ public class AddGroup extends AppCompatActivity implements GroupMembersAdapter.O
                 });
 
                 break;
+
+            case R.id.saveGroup:
+
+                finish();
+                break;
+
+            case R.id.deleteGroup:
+
+                //code to delete the group
+                //https://www.tutorialspoint.com/android/android_alert_dialoges.htm
+                AlertDialog.Builder alertDialogBuilder = new AlertDialog.Builder(this);
+                alertDialogBuilder.setMessage(getString(R.string.group_delete_warning));
+                alertDialogBuilder.setPositiveButton(getString(R.string.yes),
+                        new DialogInterface.OnClickListener() {
+                            @Override
+                            public void onClick(DialogInterface arg0, int arg1) {
+                                mDatabaseReference.child("groups/" + group_name).removeValue();
+                                finish();
+
+                            }
+                        });
+
+                alertDialogBuilder.setNegativeButton(getString(R.string.no), new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialog, int which) {
+
+                    }
+                });
+
+                AlertDialog alertDialog = alertDialogBuilder.create();
+                alertDialog.show();
+                break;
+
             case R.id.gotoGroupList:
                 finish();
                 break;

@@ -26,7 +26,6 @@ import android.widget.TextView;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.google.app.splitwise_clone.R;
-import com.google.app.splitwise_clone.model.SingleBalance;
 
 import java.util.Iterator;
 import java.util.Map;

@@ -31,7 +31,7 @@
         </activity>
 
         <activity android:name=".expense.AddExpense"></activity>
-        <activity android:name=".Friends"
+        <activity android:name=".FriendsList"
             android:parentActivityName=".MainActivity">
         </activity>
         <activity android:name=".expense.ExpenseList"/>

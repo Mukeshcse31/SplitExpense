@@ -39,16 +39,22 @@ public class GroupsList extends AppCompatActivity implements GroupsAdapter.OnCli
         setContentView(R.layout.activity_group_list);
 
 
-        getSupportActionBar().setTitle("");
+        getSupportActionBar().setTitle(getString(R.string.group_list));
         mDatabaseReference = FirebaseDatabase.getInstance().getReference();
         groups_rv = (RecyclerView) findViewById(R.id.groups_rv);
         LinearLayoutManager layoutManager = new LinearLayoutManager(this);
         groups_rv.setLayoutManager(layoutManager);
+
+    }
+
+    private void populateGroupList(){
+
         Query query = mDatabaseReference.child("groups");
 
         query.addListenerForSingleValueEvent(new ValueEventListener() {
             @Override
             public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+                dataSnapshotGroupList.clear();
                 if (dataSnapshot.exists()) {
                     for (DataSnapshot i : dataSnapshot.getChildren()) {
                         dataSnapshotGroupList.add(i);
@@ -65,7 +71,6 @@ public class GroupsList extends AppCompatActivity implements GroupsAdapter.OnCli
             }
         });
     }
-
 
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
@@ -103,5 +108,11 @@ public class GroupsList extends AppCompatActivity implements GroupsAdapter.OnCli
         intent.putExtra(EDIT_GROUP, group);
         startActivity(intent);
 
+    }
+
+    @Override
+    public void onResume() {
+        super.onResume();
+        populateGroupList();
     }
 }

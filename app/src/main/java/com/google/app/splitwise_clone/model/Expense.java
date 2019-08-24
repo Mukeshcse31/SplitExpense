@@ -1,6 +1,5 @@
 package com.google.app.splitwise_clone.model;
 
-import android.graphics.Movie;
 import android.os.Parcel;
 import android.os.Parcelable;
 

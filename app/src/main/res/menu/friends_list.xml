@@ -14,4 +14,10 @@
         app:showAsAction="always"
         android:orderInCategory="1"/>
 
+
+    <item
+        android:id="@+id/signout"
+        android:title="@string/signout"
+        android:orderInCategory="1"/>
+
 </menu>

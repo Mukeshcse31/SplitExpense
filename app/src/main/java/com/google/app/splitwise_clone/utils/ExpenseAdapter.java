@@ -26,7 +26,6 @@ import androidx.recyclerview.widget.RecyclerView;
 
 import com.google.app.splitwise_clone.R;
 import com.google.app.splitwise_clone.model.Expense;
-import com.google.app.splitwise_clone.model.Group;
 import com.google.app.splitwise_clone.model.SingleBalance;
 import com.google.firebase.database.DataSnapshot;
 

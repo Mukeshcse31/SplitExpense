@@ -1,13 +1,9 @@
 package com.google.app.splitwise_clone.utils;
 
-import android.text.TextUtils;
 import android.util.Log;
-import android.widget.ArrayAdapter;
 
 import androidx.annotation.NonNull;
 
-import com.google.app.splitwise_clone.expense.AddExpense;
-import com.google.app.splitwise_clone.expense.ExpenseList;
 import com.google.app.splitwise_clone.model.Expense;
 import com.google.app.splitwise_clone.model.SingleBalance;
 import com.google.firebase.auth.FirebaseAuth;

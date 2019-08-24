@@ -283,7 +283,6 @@ public class AddExpense extends AppCompatActivity implements ListView.OnItemClic
                         new DialogInterface.OnClickListener() {
                             @Override
                             public void onClick(DialogInterface arg0, int arg1) {
-                                //Toast.makeText(AddExpense.this,"You clicked yes button",Toast.LENGTH_LONG).show();
                                 mDatabaseReference.child("groups/" + group_name + "/expenses/" + expenseId).removeValue();
                                 finish();
 

@@ -3,9 +3,6 @@ package com.google.app.splitwise_clone.model;
 import android.os.Parcel;
 import android.os.Parcelable;
 
-import java.util.HashMap;
-import java.util.Map;
-
 public class SingleBalance implements Parcelable {
 
 private float amount;
