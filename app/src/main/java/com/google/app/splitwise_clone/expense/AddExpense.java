@@ -23,8 +23,10 @@ import androidx.fragment.app.DialogFragment;
 
 import com.google.app.splitwise_clone.R;
 import com.google.app.splitwise_clone.model.Expense;
+import com.google.app.splitwise_clone.model.Group;
 import com.google.app.splitwise_clone.model.SingleBalance;
 import com.google.app.splitwise_clone.utils.DatePickerFragment;
+import com.google.app.splitwise_clone.utils.FirebaseUtils;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
@@ -33,6 +35,8 @@ import com.google.firebase.database.Query;
 import com.google.firebase.database.ValueEventListener;
 import java.util.ArrayList;
 import java.util.Calendar;
+import java.util.HashMap;
+import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 
@@ -206,46 +210,67 @@ public class AddExpense extends AppCompatActivity implements ListView.OnItemClic
                 String spentDate = date_btn.getText().toString();
                 String description = mDescription.getText().toString();
                 float amount = Float.valueOf(mAmount.getText().toString());
-                List<String> participants = getExpenseParticipants();
+                final List<String> participants = getExpenseParticipants();
                 String spender = (String) spinner2.getSelectedItem();
                 Log.i(TAG, "Expense Added");
                 Expense expense = new Expense(spentDate, spender, description, amount);
-
-                for (int i = 0; i < participants.size(); i++) {
-
-                    final String participant = participants.get(i);
-                    float amountForUser = amount;
-                    float amountSpentForOthers = 0.0f;
-                    String amountStatus = "you spent";
-                    if (TextUtils.equals(spender, participant)) {
-                        amountForUser = amount - (amount / participants.size());
-
-                    } else {
-                        amountForUser = -(amount / participants.size());
-                        amountStatus = "you owe";
-                    }
-                    SingleBalance singleBalance = new SingleBalance(amountForUser, amountStatus);
-//                    final float amountSpentForOthers1 = amountForUser;
-                    expense.addMember(participant, singleBalance);
-
-                    //update the participant's total amount
-//                    Query query = mDatabaseReference.child("groups/" + group_name + "/members/" + participant);
+//                Map<String, Float> splitDues = new HashMap<>();
+//                for (int j = 0; j < participants.size(); j++) {
+//                        splitDues.put(participants.get(j),0.0f);
+//                    }
+//
+//                for (int i = 0; i < participants.size(); i++) {
+//
+//                    final String participant = participants.get(i);
+//                    float amountForUser = amount;
+//                    float amountSpentForOthers = 0.0f;
+//                    String amountStatus = "you spent";
+//                    if (TextUtils.equals(spender, participant)) {
+//                        amountForUser = amount - (amount / participants.size());
+//
+//                    } else {
+//                        amountForUser = -(amount / participants.size());
+//                        amountStatus = "you owe";
+//                    }
+//                    SingleBalance singleBalance = new SingleBalance(amountForUser, amountStatus, participant);
+////                    final float amountSpentForOthers1 = amountForUser;
+//                    expense.addMember(participant, singleBalance);
+//
+//                    //update the participant's total amount
+//                    Query query = mDatabaseReference.child("groups/" + group_name + "/members");
 //                    query.addListenerForSingleValueEvent(new ValueEventListener() {
 //                        @Override
 //                        public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
 //                            if (dataSnapshot.exists()) {
 //                                float existingBalance = 0.0f;
 //                                for (DataSnapshot i : dataSnapshot.getChildren()) {
+//                                    Map<String, Object> members = (Map)i.getValue();
+//                                    Map<String, Float> splitDues = new HashMap<>();
+//                                    if(members.containsKey("splitDues")){
+//                                        splitDues = (Map<String, Float>) members.get("splitDues");
+//                                    }
+//                                    else{
+//                                        for (int j = 0; j < participants.size(); j++) {
+//                                            splitDues.put(participants.get(j),0.0f);
+//                                        }
+//                                    }
+//                                    members.put("splitDues", splitDues);
 //
+////                                    Iterator it = members.entrySet().iterator();
+////                                    while(it.hasNext()){
+////
+////                                        Map.Entry pair = (Map.Entry) it.next();
+////                                        String name = (String) pair.getKey();
+////                                    }
 //                                    //if key is amount
 //                                    if (TextUtils.equals(i.getKey(), "amount")) {
 //                                        existingBalance = Float.parseFloat(i.getValue().toString());
-//                                        float newBalance = amountSpentForOthers1
+////                                        float newBalance = amountSpentForOthers;
 ////                                        float newBalance = existingBalance + singleBalance.getAmount() - amountSpentForOthers1;
-//                                        String newStatus = "you owe";
-//                                        if (newBalance > 0)
-//                                            newStatus = "owes you";
-//                                        mDatabaseReference.child("groups/" + group_name + "/members/" + participant).setValue(new SingleBalance(newBalance, newStatus));
+////                                        String newStatus = "you owe";
+////                                        if (newBalance > 0)
+////                                            newStatus = "owes you";
+////                                        mDatabaseReference.child("groups/" + group_name + "/members/" + participant).setValue(new SingleBalance(newBalance, newStatus));
 //                                    }
 //                                }
 //                            }
@@ -256,7 +281,7 @@ public class AddExpense extends AppCompatActivity implements ListView.OnItemClic
 //
 //                        }
 //                    });
-                }
+//                }
 
                 if (expenseId != null) {
                     mDatabaseReference.child("groups/" + group_name + "/expenses/" + expenseId).setValue(expense);
@@ -270,6 +295,11 @@ public class AddExpense extends AppCompatActivity implements ListView.OnItemClic
                     });
 
                 }
+
+                //TODO update split dues of all the expense participants
+//                FirebaseUtils.updateDB(group_name);
+                //TODO update the group firebaseUtils.updateDB
+
                 finish();
                 break;
 

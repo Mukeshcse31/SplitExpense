@@ -21,15 +21,18 @@ import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.Task;
 import com.google.android.material.snackbar.Snackbar;
 import com.google.android.material.textfield.TextInputLayout;
-import com.google.app.splitwise_clone.model.Friend;
+import com.google.app.splitwise_clone.model.User;
 import com.google.app.splitwise_clone.utils.FirebaseUtils;
 import com.google.firebase.auth.AuthResult;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.auth.UserProfileChangeRequest;
+import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
+import com.google.firebase.database.Query;
+import com.google.firebase.database.ValueEventListener;
 
 public class MainActivity extends AppCompatActivity {
 
@@ -63,7 +66,7 @@ public class MainActivity extends AppCompatActivity {
         String email = prefs.getString(USERNAME_KEY, "");
         String password = prefs.getString(PASSWORD_KEY, "");
 
-        FirebaseUtils.updateDB("group1");
+//        FirebaseUtils.updateDB("group1");
 
         if (TextUtils.isEmpty(email)) {
             setContentView(R.layout.activity_register);
@@ -173,7 +176,7 @@ public class MainActivity extends AppCompatActivity {
                             showErrorDialog(getString(R.string.error_registration) + "\n" + task.getException().getMessage());
                         } else {
 
-                            String displayName = mUsernameView.getText().toString();
+                            final String displayName = mUsernameView.getText().toString();
                             //update the user's profile for the display Name
 //                            https://firebase.google.com/docs/auth/android/manage-users
                             FirebaseUser user = FirebaseAuth.getInstance().getCurrentUser();
@@ -193,32 +196,36 @@ public class MainActivity extends AppCompatActivity {
                                         }
                                     });
 
-                            Friend friend = new Friend(2, displayName, email);
+                            //TODO check if the user is already added by other user.
+                            //if already added, don't add new user record so as to save the friend's link
+                            Query query = mDatabaseReference.child("users/" + displayName);
+                            query.addListenerForSingleValueEvent(new ValueEventListener() {
+                                 @Override
+                                 public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+                                     if (dataSnapshot.exists()) {
+Log.i(TAG, displayName + " is already added by another user");
+                                     }
+                                     else{
+                                         User friend = new User(displayName, email);
+                                         mDatabaseReference.child("users/" + displayName).setValue(friend, new DatabaseReference.CompletionListener() {
+                                             @Override
+                                             public void onComplete(DatabaseError databaseError, DatabaseReference dataReference) {
 
-                            mDatabaseReference.child("users/" + displayName).setValue(friend, new DatabaseReference.CompletionListener() {
+                                                 if(databaseError!= null){
+                                                     Log.e(TAG, databaseError.getDetails());
+                                                 }
+                                                 if (databaseError != null) Log.i(TAG, databaseError.getDetails());
+                                                 showSnackBar(getString(R.string.signup_success));
+                                                 finish();
+                                             }
+                                         });
+                                     }
+                                 }
                                 @Override
-                                public void onComplete(DatabaseError databaseError, DatabaseReference dataReference) {
+                                public void onCancelled(@NonNull DatabaseError databaseError) {
 
-                                    if(databaseError!= null){
-                                        Log.e(TAG, databaseError.getDetails());
-                                    }
-//https://stackoverflow.com/questions/30729312/how-to-dismiss-a-snackbar-using-its-own-action-button
-                                    final Snackbar snackBar = Snackbar.make(findViewById(android.R.id.content),
-                                            getString(R.string.signup_success), Snackbar.LENGTH_LONG);
-
-                                    snackBar.setAction(getString(R.string.close), new View.OnClickListener() {
-                                        @Override
-                                        public void onClick(View v) {
-                                            // Call your action method here
-                                            snackBar.dismiss();
-                                        }
-                                    });
-                                    snackBar.show();
-                                    if (databaseError != null)
-                                        Log.i(TAG, databaseError.getDetails());
-                                    finish();
                                 }
-                            });
+                             });
                             saveUserCredentials(email, password);
                             gotoNextPage();
                         }
@@ -236,7 +243,19 @@ public class MainActivity extends AppCompatActivity {
 
     }
 
+public void showSnackBar(String message){
 
+//https://stackoverflow.com/questions/30729312/how-to-dismiss-a-snackbar-using-its-own-action-button
+    final Snackbar snackBar = Snackbar.make(findViewById(android.R.id.content), message, Snackbar.LENGTH_LONG);
+    snackBar.setAction(getString(R.string.close), new View.OnClickListener() {
+        @Override
+        public void onClick(View v) {
+            // Call your action method here
+            snackBar.dismiss();
+        }
+    });
+    snackBar.show();
+}
     // TODO: Create an alert dialog to show in case registration failed
     private void showErrorDialog(String message) {
 
@@ -301,6 +320,8 @@ public class MainActivity extends AppCompatActivity {
                             Log.d(TAG, "user Login failed", task.getException());
                             showErrorDialog(getString(R.string.error_Login) + "\n" + task.getException().getMessage());
                         } else {
+
+                            showSnackBar(FirebaseUtils.getUserName() + " signed in");
                             saveUserCredentials(email, password);
                             gotoNextPage();
 
@@ -311,7 +332,7 @@ public class MainActivity extends AppCompatActivity {
 //                                    int id = 1;
 //                                    if (dataSnapshot.exists()) {
 //                                        for (DataSnapshot i : dataSnapshot.getChildren()) {
-//                                            Friend friend = i.getValue(Friend.class);
+//                                            User friend = i.getValue(User.class);
 //                                            String displayName = friend.getName();
 //                                            SharedPreferences prefs = getSharedPreferences(SPLIT_PREFS, 0);
 //                                            prefs.edit().putString(DISPLAY_NAME_KEY, displayName).apply();

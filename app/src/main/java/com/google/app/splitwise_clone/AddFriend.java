@@ -12,7 +12,8 @@ import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 
 import com.google.android.material.snackbar.Snackbar;
-import com.google.app.splitwise_clone.model.Friend;
+import com.google.app.splitwise_clone.model.User;
+import com.google.app.splitwise_clone.utils.FirebaseUtils;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
@@ -46,33 +47,27 @@ public class AddFriend extends AppCompatActivity {
 
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
+        final String userName = FirebaseUtils.getUserName();
         switch (item.getItemId()) {
-            case R.id.saveFriend:
-                final String name = mFriendName.getText().toString();
-                final String email = mFriendEmail.getText().toString().toLowerCase();//convert email to lowercase
+            case R.id.addFriend:
+                final String friendName = mFriendName.getText().toString();
+                final String friendEmail = mFriendEmail.getText().toString().toLowerCase();//convert email to lowercase
 
 //                https://stackoverflow.com/questions/51607449/what-is-the-different-betwen-equalto-and-startat-endat-in-firebase-and-whe/51610286
-                Query query = mDatabaseReference.child("users").orderByChild("email").startAt(email).endAt(email);
+                Query query = mDatabaseReference.child("users").orderByChild("email").startAt(friendEmail).endAt(friendEmail);
                 query.addListenerForSingleValueEvent(new ValueEventListener() {
                     @Override
                     public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
-                        int id = 1;
+//                        int id = 1;
                         if (dataSnapshot.exists()) {
                             mFriendEmail.setError(getString(R.string.email_exists));
                             Toast.makeText(AddFriend.this, "Email already exists", Toast.LENGTH_LONG).show();
 
                         } else {
-
-                            int friendId = 1;
-                            if (getIntent().hasExtra("friendId")) {
-                                friendId = getIntent().getIntExtra("friendId", 0);
-                                friendId++;
-                            }
-                            //friends can be added only to the respective groups
-                            //TODO add to the group
-                            Friend msg = new Friend(friendId, name, email);
-
-                            mDatabaseReference.child("users/" + friendId).setValue(msg, new DatabaseReference.CompletionListener() {
+                            //a new user to be added
+                            User user = new User(friendName, friendEmail);
+                            user.addAsFriend(userName);
+                            mDatabaseReference.child("users/" + friendName).setValue(user, new DatabaseReference.CompletionListener() {
                                 @Override
                                 public void onComplete(DatabaseError databaseError, DatabaseReference dataReference) {
 //https://stackoverflow.com/questions/30729312/how-to-dismiss-a-snackbar-using-its-own-action-button
@@ -92,6 +87,8 @@ public class AddFriend extends AppCompatActivity {
                                     finish();
                                 }
                             });
+                            //the new friend is to be added to the userName
+                            mDatabaseReference.child("users/" + userName + "/friends/" + friendName).setValue(true);
                         }
                     }
 

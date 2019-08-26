@@ -105,7 +105,6 @@ public class GroupsAdapter extends RecyclerView.Adapter<GroupsAdapter.ReviewView
 
             Group group = d.getValue(Group.class);
             Map<String, SingleBalance> members = group.getMembers();
-//            final String group_name = group.getName();
             final String group_name = d.getKey();
             String member_status = "";
 

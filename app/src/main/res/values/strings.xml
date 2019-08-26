@@ -29,7 +29,7 @@
         completions."
     </string>
 
-    <!--Add Friend-->
+    <!--Add User-->
     <string name="sample_message">Hello!</string>
     <string name="add">Add</string>
     <string name="cancel">Cancel</string>

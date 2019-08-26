@@ -20,10 +20,6 @@
             </intent-filter>
         </activity>
 
-        <activity android:name=".Expenses">
-
-        </activity>
-
         <activity android:name=".AddFriend"
             android:parentActivityName=".Expenses">
         </activity>

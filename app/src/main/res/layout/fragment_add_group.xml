@@ -73,6 +73,7 @@
         android:id="@+id/tv_members"
         android:text="@string/members"
         app:layout_constraintTop_toBottomOf="@id/addGroupLinearLayout"
+        app:layout_constraintBottom_toTopOf="@+id/members_rv"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:paddingStart="@dimen/padding_small"
@@ -84,15 +85,18 @@
     <androidx.recyclerview.widget.RecyclerView
         android:id="@+id/members_rv"
         style="@style/RecyclerViewStyle"
-        app:layout_constraintTop_toBottomOf="@id/tv_members"
+        android:layout_height="wrap_content"
+        android:clipToPadding="false"
+        app:layout_behavior="@string/appbar_scrolling_view_behavior"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_behavior="@string/appbar_scrolling_view_behavior" />
+        app:layout_constraintTop_toBottomOf="@+id/tv_members" />
 
 
     <TextView
         android:id="@+id/tv_nonmembers"
         android:layout_width="match_parent"
         app:layout_constraintTop_toBottomOf="@id/members_rv"
+        app:layout_constraintBottom_toTopOf="@+id/nonmembers_rv"
         android:layout_height="wrap_content"
         android:paddingTop="@dimen/padding_small"
         android:text="@string/non_members"

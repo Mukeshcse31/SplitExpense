@@ -4,15 +4,14 @@ import android.content.Intent;
 import android.os.Bundle;
 import android.view.Menu;
 import android.view.MenuItem;
-
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
-
 import com.google.app.splitwise_clone.R;
 import com.google.app.splitwise_clone.expense.ExpenseList;
 import com.google.app.splitwise_clone.model.Group;
+import com.google.app.splitwise_clone.utils.FirebaseUtils;
 import com.google.app.splitwise_clone.utils.GroupsAdapter;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
@@ -48,8 +47,8 @@ public class GroupsList extends AppCompatActivity implements GroupsAdapter.OnCli
     }
 
     private void populateGroupList(){
-
-        Query query = mDatabaseReference.child("groups");
+        String userName = FirebaseUtils.getUserName();
+        Query query = mDatabaseReference.child("groups").orderByChild("members/" + userName + "/name").equalTo(userName);
 
         query.addListenerForSingleValueEvent(new ValueEventListener() {
             @Override
@@ -59,12 +58,10 @@ public class GroupsList extends AppCompatActivity implements GroupsAdapter.OnCli
                     for (DataSnapshot i : dataSnapshot.getChildren()) {
                         dataSnapshotGroupList.add(i);
                     }
-
                     mGroupsAdapter = new GroupsAdapter(dataSnapshotGroupList, GroupsList.this);
                     groups_rv.setAdapter(mGroupsAdapter);
                 }
             }
-
             @Override
             public void onCancelled(@NonNull DatabaseError databaseError) {
 

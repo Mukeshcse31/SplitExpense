@@ -26,24 +26,28 @@ import com.google.app.splitwise_clone.R;
 import com.google.app.splitwise_clone.model.SingleBalance;
 
 import java.util.Iterator;
+import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
 public class FriendsAdapter extends RecyclerView.Adapter<FriendsAdapter.ReviewViewHolder> {
 
     private static final String TAG = FriendsAdapter.class.getSimpleName();
-
+private String userName;
     private static int viewHolderCount;
+    List<String> friends;
     private Set friendsSet;
     Iterator<String> it;
-    private Map<String, SingleBalance> mBalance;
+    private Map<String, Map<String, Float>> expenseMatrix;
 
-    public FriendsAdapter(Map<String, SingleBalance> mBalance, Context context) {
-        this.mBalance = mBalance;
+    public FriendsAdapter(List<String> mFriends, Map<String, Map<String, Float>> mBalance, Context context) {
+        userName = FirebaseUtils.getUserName();
+        this.expenseMatrix = mBalance;
+        this.friends = mFriends;
         friendsSet = mBalance.keySet();
         it = friendsSet.iterator();
-        Set<Map.Entry<String, SingleBalance>> ee = mBalance.entrySet();
-        ee.size();
+//        Set<Map.Entry<String, SingleBalance>> ee = mBalance.entrySet();
+//        ee.size();
         viewHolderCount = 0;
     }
     @Override
@@ -73,7 +77,7 @@ public class FriendsAdapter extends RecyclerView.Adapter<FriendsAdapter.ReviewVi
 
     @Override
     public int getItemCount() {
-        return mBalance.size();
+        return friends.size();
     }
 
     class ReviewViewHolder extends RecyclerView.ViewHolder {
@@ -97,16 +101,14 @@ public class FriendsAdapter extends RecyclerView.Adapter<FriendsAdapter.ReviewVi
          */
         void bind(int listIndex) {
 
-            String friend_name = it.next();
-            SingleBalance details = mBalance.get(friend_name);
-            tv_friend_name.setText(friend_name);
+            String friendName = friends.get(listIndex);
+            float amount = expenseMatrix.get(userName).get(friendName);
+            tv_friend_name.setText(friendName);
 
-            String stat = String.valueOf(details.getAmount());
-            if(Integer.parseInt(stat) > 0)
-                stat = "owes you \n";
-            else
-                stat = "you owe \n";
-            stat += details.getAmount();
+            String stat = "owes you \n";
+            if(amount > 0)
+                stat = "you owe\n";
+            stat += amount;
             tv_status.setText(stat);
         }
 
