@@ -218,23 +218,25 @@ public class AddExpense extends AppCompatActivity implements ListView.OnItemClic
 //                for (int j = 0; j < participants.size(); j++) {
 //                        splitDues.put(participants.get(j),0.0f);
 //                    }
-//
-//                for (int i = 0; i < participants.size(); i++) {
-//
-//                    final String participant = participants.get(i);
-//                    float amountForUser = amount;
-//                    float amountSpentForOthers = 0.0f;
-//                    String amountStatus = "you spent";
-//                    if (TextUtils.equals(spender, participant)) {
-//                        amountForUser = amount - (amount / participants.size());
-//
-//                    } else {
-//                        amountForUser = -(amount / participants.size());
-//                        amountStatus = "you owe";
-//                    }
-//                    SingleBalance singleBalance = new SingleBalance(amountForUser, amountStatus, participant);
-////                    final float amountSpentForOthers1 = amountForUser;
-//                    expense.addMember(participant, singleBalance);
+
+                for (int i = 0; i < participants.size(); i++) {
+
+                    final String participant = participants.get(i);
+                    float amountForUser = amount;
+                    float amountSpentForOthers = 0.0f;
+                    String amountStatus = "you spent";
+                    if (TextUtils.equals(spender, participant)) {
+                        amountForUser = amount - (amount / participants.size());
+
+                    } else {
+                        amountForUser = -(amount / participants.size());
+                        amountStatus = "you owe";
+                    }
+                    SingleBalance singleBalance = new SingleBalance(amountForUser, amountStatus, participant);
+//                    final float amountSpentForOthers1 = amountForUser;
+                    expense.addMember(participant, singleBalance);
+                }
+
 //
 //                    //update the participant's total amount
 //                    Query query = mDatabaseReference.child("groups/" + group_name + "/members");

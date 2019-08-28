@@ -11,6 +11,7 @@ public class Group implements Parcelable {
     private String name;
     private String photoUrl;
     private String owner;
+    private Float totalAmount;
     private Map<String, SingleBalance> members = new HashMap<>();
     private Map<String, Expense> expenses = new HashMap<>();
 
@@ -33,6 +34,7 @@ public class Group implements Parcelable {
         name = in.readString();
         photoUrl = in.readString();
         owner = in.readString();
+        totalAmount = in.readFloat();
         members = new HashMap<String, SingleBalance>();
         in.readMap(members, SingleBalance.class.getClassLoader());
         expenses = new HashMap<String, Expense>();
@@ -61,6 +63,14 @@ public class Group implements Parcelable {
 
     public void setOwner(String owner) {
         this.owner = owner;
+    }
+
+    public Float getTotalAmount() {
+        return totalAmount;
+    }
+
+    public void setTotalAmount(Float totalAmount) {
+        this.totalAmount = totalAmount;
     }
 
     public void setPhotoUrl(String photoUrl) {
@@ -108,6 +118,7 @@ public class Group implements Parcelable {
         dest.writeString(name);
         dest.writeString(photoUrl);
         dest.writeString(owner);
+        dest.writeFloat(totalAmount);
         dest.writeMap(members);
         dest.writeMap(expenses);
     }

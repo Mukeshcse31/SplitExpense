@@ -10,8 +10,9 @@ public class User {
 //    private int id;
     private String name;
     private String email;
+    private Float amount;
     private Map<String, Boolean> friends = new HashMap<>();
-    private Map<String, SingleBalance> balances = new HashMap<>();
+    private Map<String, Float> balances = new HashMap<>();
 
     public User() {
     }
@@ -38,6 +39,14 @@ public class User {
         this.name = name;
     }
 
+    public Float getAmount() {
+        return amount;
+    }
+
+    public void setAmount(Float amount) {
+        this.amount = amount;
+    }
+
     public Map<String, Boolean> getFriends() {
         return friends;
     }
@@ -55,11 +64,11 @@ public class User {
                 friends.remove(friendName);
     }
 
-    public Map<String, SingleBalance> getBalances() {
+    public Map<String, Float> getBalances() {
         return balances;
     }
 
-    public void setBalances(Map<String, SingleBalance> balances) {
+    public void setBalances(Map<String, Float> balances) {
         this.balances = balances;
     }
 }

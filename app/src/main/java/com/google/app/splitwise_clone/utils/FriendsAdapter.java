@@ -35,17 +35,18 @@ public class FriendsAdapter extends RecyclerView.Adapter<FriendsAdapter.ReviewVi
     private static final String TAG = FriendsAdapter.class.getSimpleName();
 private String userName;
     private static int viewHolderCount;
-    List<String> friends;
+//    List<String> friends;
     private Set friendsSet;
-    Iterator<String> it;
-    private Map<String, Map<String, Float>> expenseMatrix;
+    Iterator it;
+    private Map<String, Float> expenseMatrix;
 
-    public FriendsAdapter(List<String> mFriends, Map<String, Map<String, Float>> mBalance, Context context) {
+    public FriendsAdapter(Map<String, Float> mBalance, Context context) {
         userName = FirebaseUtils.getUserName();
         this.expenseMatrix = mBalance;
-        this.friends = mFriends;
-        friendsSet = mBalance.keySet();
-        it = friendsSet.iterator();
+        it = expenseMatrix.entrySet().iterator();
+//        this.friends = mFriends;
+//        friendsSet = mBalance.keySet();
+//        it = friendsSet.iterator();
 //        Set<Map.Entry<String, SingleBalance>> ee = mBalance.entrySet();
 //        ee.size();
         viewHolderCount = 0;
@@ -77,7 +78,7 @@ private String userName;
 
     @Override
     public int getItemCount() {
-        return friends.size();
+        return expenseMatrix.size();
     }
 
     class ReviewViewHolder extends RecyclerView.ViewHolder {
@@ -101,13 +102,17 @@ private String userName;
          */
         void bind(int listIndex) {
 
-            String friendName = friends.get(listIndex);
-            float amount = expenseMatrix.get(userName).get(friendName);
+Map.Entry pair = (Map.Entry) it.next();
+String friendName = (String) pair.getKey();
+
+//            String friendName = friends.get(listIndex);
+//            float amount = expenseMatrix.get(userName).get(friendName);
+            float amount = (Float) pair.getValue();
             tv_friend_name.setText(friendName);
 
-            String stat = "owes you \n";
+            String stat = "you owe \n";
             if(amount > 0)
-                stat = "you owe\n";
+                stat = "owes you\n";
             stat += amount;
             tv_status.setText(stat);
         }
