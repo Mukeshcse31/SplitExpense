@@ -15,8 +15,6 @@ public class Group implements Parcelable {
     private Map<String, SingleBalance> members = new HashMap<>();
     private Map<String, Expense> expenses = new HashMap<>();
 
-
-
     public Group() {
     }
 

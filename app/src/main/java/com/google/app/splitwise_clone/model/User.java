@@ -12,13 +12,12 @@ public class User {
     private String email;
     private Float amount;
     private Map<String, Boolean> friends = new HashMap<>();
-    private Map<String, Float> balances = new HashMap<>();
+private Balance balances;
 
     public User() {
     }
 
     public User(String name, String email) {
-//        this.id = id;
         this.name = name;
         this.email = email;
     }
@@ -64,11 +63,12 @@ public class User {
                 friends.remove(friendName);
     }
 
-    public Map<String, Float> getBalances() {
+    public Balance getBalances() {
         return balances;
     }
 
-    public void setBalances(Map<String, Float> balances) {
+    public void setBalances(Balance balances) {
         this.balances = balances;
     }
+
 }

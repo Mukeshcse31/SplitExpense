@@ -25,6 +25,9 @@ import androidx.recyclerview.widget.RecyclerView;
 import com.google.app.splitwise_clone.R;
 import com.google.app.splitwise_clone.model.SingleBalance;
 
+import org.w3c.dom.Text;
+
+import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
@@ -34,21 +37,18 @@ public class FriendsAdapter extends RecyclerView.Adapter<FriendsAdapter.ReviewVi
 
     private static final String TAG = FriendsAdapter.class.getSimpleName();
 private String userName;
+private Context mContext;
     private static int viewHolderCount;
 //    List<String> friends;
     private Set friendsSet;
     Iterator it;
-    private Map<String, Float> expenseMatrix;
+    private Map<String, Map<String, Float>> expenseMatrix;
 
-    public FriendsAdapter(Map<String, Float> mBalance, Context context) {
+    public FriendsAdapter(Map<String, Map<String, Float>> mBalance, Context context) {
         userName = FirebaseUtils.getUserName();
         this.expenseMatrix = mBalance;
+        mContext = context;
         it = expenseMatrix.entrySet().iterator();
-//        this.friends = mFriends;
-//        friendsSet = mBalance.keySet();
-//        it = friendsSet.iterator();
-//        Set<Map.Entry<String, SingleBalance>> ee = mBalance.entrySet();
-//        ee.size();
         viewHolderCount = 0;
     }
     @Override
@@ -73,6 +73,8 @@ private String userName;
     @Override
     public void onBindViewHolder(ReviewViewHolder holder, int position) {
         Log.d(TAG, "#" + position);
+
+//        holder.setIsRecyclable(false);
         holder.bind(position);
     }
 
@@ -101,19 +103,27 @@ private String userName;
          * @param listIndex Position of the item in the list
          */
         void bind(int listIndex) {
+            String stat="";
+            Map.Entry pair = (Map.Entry) it.next();
+            String friendName = (String) pair.getKey();
 
-Map.Entry pair = (Map.Entry) it.next();
-String friendName = (String) pair.getKey();
+            Map<String, Float> allGroups = new HashMap<>();
+            allGroups = (Map<String, Float>) pair.getValue();
 
-//            String friendName = friends.get(listIndex);
-//            float amount = expenseMatrix.get(userName).get(friendName);
-            float amount = (Float) pair.getValue();
+//create text view for each group
+            Iterator it2 = allGroups.entrySet().iterator();
+            while (it2.hasNext()){
+                Map.Entry pair2 = (Map.Entry) it2.next();
+                String groupName = (String) pair2.getKey();
+                Float amount = (float) pair2.getValue();
+                String stat1 = "you owe ";
+                if(amount > 0)
+                    stat1 = "owes you ";
+                stat += stat1 + amount + " from group " + groupName + "\n";
+
+            }
+
             tv_friend_name.setText(friendName);
-
-            String stat = "you owe \n";
-            if(amount > 0)
-                stat = "owes you\n";
-            stat += amount;
             tv_status.setText(stat);
         }
 

@@ -47,7 +47,7 @@
                     <ImageView
                         style="@style/appLogoStyle"
                         android:contentDescription="@string/app_name"
-                        android:src="@drawable/people_selected"
+                        android:src="@drawable/person"
                         app:layout_collapseMode="parallax"
                         android:layout_weight="1"/>
 

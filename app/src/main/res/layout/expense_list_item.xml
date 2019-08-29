@@ -39,7 +39,7 @@
             android:layout_marginTop="@dimen/margin_4"
             android:layout_weight="3"
             android:contentDescription="@string/group_image"
-            android:src="@drawable/people_selected" />
+            android:src="@drawable/person" />
 
         <LinearLayout
             android:layout_width="wrap_content"
