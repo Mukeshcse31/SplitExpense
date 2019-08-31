@@ -2,22 +2,29 @@ package com.google.app.splitwise_clone;
 
 import android.content.Intent;
 import android.content.SharedPreferences;
+import android.net.Uri;
 import android.os.Bundle;
 import android.text.TextUtils;
 import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
+import android.view.View;
+import android.widget.ImageView;
 
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.cardview.widget.CardView;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
+import com.bumptech.glide.Glide;
+import com.google.android.gms.tasks.OnFailureListener;
+import com.google.android.gms.tasks.OnSuccessListener;
+import com.google.app.splitwise_clone.groups.AddGroup;
 import com.google.app.splitwise_clone.groups.GroupsList;
 import com.google.app.splitwise_clone.model.Balance;
 import com.google.app.splitwise_clone.model.Expense;
 import com.google.app.splitwise_clone.model.Group;
-import com.google.app.splitwise_clone.model.User;
 import com.google.app.splitwise_clone.model.SingleBalance;
 import com.google.app.splitwise_clone.utils.FirebaseUtils;
 import com.google.app.splitwise_clone.utils.FriendsAdapter;
@@ -28,9 +35,10 @@ import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.Query;
 import com.google.firebase.database.ValueEventListener;
-
-import org.w3c.dom.Text;
-
+import com.google.firebase.storage.FileDownloadTask;
+import com.google.firebase.storage.FirebaseStorage;
+import com.google.firebase.storage.StorageReference;
+import com.google.firebase.storage.UploadTask;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Iterator;
@@ -39,12 +47,18 @@ import java.util.Map;
 
 public class FriendsList extends AppCompatActivity {
 
+    private FirebaseStorage mFirebaseStorage;
     private DatabaseReference mDatabaseReference;
+    private StorageReference mPhotosStorageReference;
     private FirebaseAuth.AuthStateListener mAuthStateListener;
     private FirebaseAuth.IdTokenListener mIdTokenListener;
     private String userName = "anonymous";
+    private ImageView profilePicture;
+//    private CardView imageCard;
+    private static final int RC_PHOTO_PICKER = 2;
     List<String> friends = new ArrayList<>();
     List<String> groupMember = new ArrayList<>();
+    private Map<String, String> friendsImageMap = new HashMap<>();
     Map<String, Float> amountSpentByMember = null;
     Map<String, Float> amountDueByMember = null;
     Map<String, Map<String, Float>> expenseMatrix = null;
@@ -58,6 +72,35 @@ public class FriendsList extends AppCompatActivity {
     private Group group;
     float totalGroupExpense = 0.2f;
     Float amountSpentByUser = 0.2f;
+
+
+    @Override
+    protected void onCreate(Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
+        setContentView(R.layout.activity_friend_list);
+        mFirebaseStorage = FirebaseStorage.getInstance();
+
+        userName = FirebaseUtils.getUserName();
+        profilePicture = findViewById(R.id.profilePicture);
+//        imageCard = findViewById(R.id.roundCardView);
+        getSupportActionBar().setTitle(userName);
+        mDatabaseReference = FirebaseDatabase.getInstance().getReference();
+        friends_rv = (RecyclerView) findViewById(R.id.friends_rv);
+
+        LinearLayoutManager layoutManager = new LinearLayoutManager(this);
+        friends_rv.setLayoutManager(layoutManager);
+        profilePicture.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+
+                Intent intent = new Intent(Intent.ACTION_GET_CONTENT);
+                intent.setType("image/jpeg");
+                intent.putExtra(Intent.EXTRA_LOCAL_ONLY, true);
+                startActivityForResult(Intent.createChooser(intent, "Complete action using"), RC_PHOTO_PICKER);
+            }
+        });
+        loadUserImage();
+    }
 
     public void updateUsersAmount() {
 
@@ -108,7 +151,33 @@ public class FriendsList extends AppCompatActivity {
                     balance.setAmount(amountSpentByUser);
                     amountGroup.remove(userName);
                     balance.setGroups(amountGroup);
-                    mFriendsAdapter = new FriendsAdapter(amountGroup, FriendsList.this);
+
+//                    //Get the user's profile image Urls
+//                    Iterator it = amountGroup.entrySet().iterator();
+//
+//                    while(it.hasNext()){
+//                        Map.Entry  pair = (Map.Entry) it.next();
+//                        final String friendName = (String) pair.getKey();
+//                        Query query = mDatabaseReference.child("users/" + friendName + "/imageUrl");
+//                        friendsImageMap.put(friendName, "");
+//                        query.addListenerForSingleValueEvent(new ValueEventListener() {
+//                            @Override
+//                            public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+//
+//                                if (dataSnapshot.exists()) {
+//                                    String imagePath = (String) dataSnapshot.getValue();
+//                                    friendsImageMap.put(friendName, imagePath);
+//                                }
+////                                else
+//                            }
+//                            @Override
+//                            public void onCancelled(@NonNull DatabaseError databaseError) {
+//                            }
+//                        });
+//
+//                    }
+
+                    mFriendsAdapter = new FriendsAdapter(amountGroup,friendsImageMap, FriendsList.this);
                     friends_rv.setAdapter(mFriendsAdapter);
                     mDatabaseReference.child("users/" + userName + "/balances/").setValue(balance);
                     Log.i(TAG, "total calculation");
@@ -120,7 +189,6 @@ public class FriendsList extends AppCompatActivity {
             }
         });
     }
-
 
     //update a single specified group
     public void updateGroup(final String groupName) {
@@ -218,7 +286,6 @@ public class FriendsList extends AppCompatActivity {
                     //write group total and members into DB
                     mDatabaseReference.child("groups/" + groupName + "/members/").setValue(members);
                     mDatabaseReference.child("groups/" + groupName + "/totalAmount/").setValue(totalGroupExpense);
-
                 }
             }
 
@@ -226,22 +293,6 @@ public class FriendsList extends AppCompatActivity {
             public void onCancelled(@NonNull DatabaseError databaseError) {
             }
         });
-
-    }
-
-    @Override
-    protected void onCreate(Bundle savedInstanceState) {
-        super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_friend_list);
-
-        userName = FirebaseUtils.getUserName();
-
-        getSupportActionBar().setTitle(userName);
-        mDatabaseReference = FirebaseDatabase.getInstance().getReference();
-        friends_rv = (RecyclerView) findViewById(R.id.friends_rv);
-
-        LinearLayoutManager layoutManager = new LinearLayoutManager(this);
-        friends_rv.setLayoutManager(layoutManager);
     }
 
 
@@ -284,8 +335,98 @@ public class FriendsList extends AppCompatActivity {
     }
 
     @Override
+    public void onActivityResult(int requestCode, int resultCode, Intent data) {
+        super.onActivityResult(requestCode, resultCode, data);
+
+        //update users' profile picture
+        if (requestCode == RC_PHOTO_PICKER && resultCode == RESULT_OK) {
+            Uri selectedImageUri = data.getData();
+
+            // Get a reference to store file at chat_photos/<FILENAME>
+            mPhotosStorageReference = mFirebaseStorage.getReference().child("images/users");
+            final StorageReference photoRef = mPhotosStorageReference.child(userName);
+
+            // Upload file to Firebase Storage
+            photoRef.putFile(selectedImageUri)
+                    .addOnSuccessListener(this, new OnSuccessListener<UploadTask.TaskSnapshot>() {
+                        public void onSuccess(UploadTask.TaskSnapshot taskSnapshot) {
+
+                            //update the path of image in the DB users'
+                            mDatabaseReference = FirebaseDatabase.getInstance().getReference();
+                            mDatabaseReference.child("users/" + userName + "/imageUrl").setValue(photoRef.getPath());
+
+                            final StorageReference group1 = mPhotosStorageReference.child("images/users/" + userName);
+                            final long ONE_MEGABYTE = 1024 * 1024;
+                            group1.getBytes(ONE_MEGABYTE).addOnSuccessListener(new OnSuccessListener<byte[]>() {
+                                @Override
+                                public void onSuccess(byte[] bytes) {
+//                                           https://stackoverflow.com/questions/46619510/how-can-i-download-image-on-firebase-storage
+                                    //            https://github.com/bumptech/glide/issues/458
+                                    Glide.with(FriendsList.this)
+                                            .load(bytes)
+                                            .asBitmap()
+                                            .into(profilePicture);
+
+//                                    Log.i(TAG, "photo download " + mPhotosStorageReference.getPath());
+                                }
+                            }).addOnFailureListener(new OnFailureListener() {
+                                @Override
+                                public void onFailure(@NonNull Exception exception) {
+
+                                    Log.i(TAG, exception.getMessage());
+                                    // Handle any errors
+                                }
+                            });
+                        }
+                    });
+        }
+    }
+
+    private void loadUserImage(){
+
+        Query query = mDatabaseReference.child("users/" + userName + "/imageUrl");
+        query.addListenerForSingleValueEvent(new ValueEventListener() {
+            @Override
+            public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+
+                if (dataSnapshot.exists()) {
+                    String imagePath = (String) dataSnapshot.getValue();
+                    if(TextUtils.isEmpty(imagePath)) return;
+
+//                    https://firebase.google.com/docs/storage/android/download-files
+                    mPhotosStorageReference = mFirebaseStorage.getReference();
+                    StorageReference islandRef = mPhotosStorageReference.child(imagePath);
+
+                    final long ONE_MEGABYTE = 1024 * 1024;
+                    islandRef.getBytes(ONE_MEGABYTE).addOnSuccessListener(new OnSuccessListener<byte[]>() {
+                        @Override
+                        public void onSuccess(byte[] bytes) {
+                            // Data for "images/island.jpg" is returns, use this as needed
+                            Glide.with(FriendsList.this)
+                                    .load(bytes)
+                                    .asBitmap()
+                                    .into(profilePicture);
+                        }
+                    }).addOnFailureListener(new OnFailureListener() {
+                        @Override
+                        public void onFailure(@NonNull Exception exception) {
+                            // Handle any errors
+                            Log.i(TAG, exception.toString());
+                        }
+                    });
+                }
+            }
+            @Override
+            public void onCancelled(@NonNull DatabaseError databaseError) {
+            }
+        });
+    }
+
+
+    @Override
     public void onResume() {
         super.onResume();
+
         updateGroup("group1");
         updateGroup("group2");
         updateUsersAmount();

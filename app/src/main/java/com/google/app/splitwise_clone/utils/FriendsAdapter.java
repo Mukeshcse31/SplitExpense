@@ -20,10 +20,22 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.ImageView;
 import android.widget.TextView;
+
+import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
+
+import com.bumptech.glide.Glide;
+import com.google.android.gms.tasks.OnFailureListener;
+import com.google.android.gms.tasks.OnSuccessListener;
+import com.google.app.splitwise_clone.FriendsList;
 import com.google.app.splitwise_clone.R;
 import com.google.app.splitwise_clone.model.SingleBalance;
+import com.google.firebase.database.DatabaseReference;
+import com.google.firebase.database.FirebaseDatabase;
+import com.google.firebase.storage.FirebaseStorage;
+import com.google.firebase.storage.StorageReference;
 
 import org.w3c.dom.Text;
 
@@ -37,18 +49,23 @@ public class FriendsAdapter extends RecyclerView.Adapter<FriendsAdapter.ReviewVi
 
     private static final String TAG = FriendsAdapter.class.getSimpleName();
 private String userName;
+    private StorageReference mPhotosStorageReference;
+    private FirebaseStorage mFirebaseStorage;
 private Context mContext;
     private static int viewHolderCount;
-//    List<String> friends;
     private Set friendsSet;
+    private Map<String, String> friendsImageMap = new HashMap<>();
     Iterator it;
     private Map<String, Map<String, Float>> expenseMatrix;
 
-    public FriendsAdapter(Map<String, Map<String, Float>> mBalance, Context context) {
+    public FriendsAdapter(Map<String, Map<String, Float>> mBalance, Map<String, String> images, Context context) {
         userName = FirebaseUtils.getUserName();
         this.expenseMatrix = mBalance;
+        friendsImageMap = images;
         mContext = context;
         it = expenseMatrix.entrySet().iterator();
+        mFirebaseStorage = FirebaseStorage.getInstance();
+        mPhotosStorageReference= mFirebaseStorage.getReference();
         viewHolderCount = 0;
     }
     @Override
@@ -61,9 +78,6 @@ private Context mContext;
 
         View view = inflater.inflate(layoutIdForListItem, viewGroup, shouldAttachToParentImmediately);
         ReviewViewHolder viewHolder = new ReviewViewHolder(view);
-
-//        viewHolder.tv_review.setText("ViewHolder index: " + viewHolderCount);
-
         viewHolderCount++;
         Log.d(TAG, "onCreateViewHolder: number of ViewHolders created: "
                 + viewHolderCount);
@@ -89,10 +103,12 @@ private Context mContext;
         TextView tv_friend_name;
         // Will display which ViewHolder is displaying this data
         TextView tv_status;
+        ImageView friendImage;
 
         public ReviewViewHolder(View itemView) {
             super(itemView);
 
+            friendImage = itemView.findViewById(R.id.friendImage);
             tv_friend_name = (TextView) itemView.findViewById(R.id.tv_friend_name);
             tv_status = (TextView) itemView.findViewById(R.id.tv_status);
         }
@@ -106,7 +122,7 @@ private Context mContext;
             String stat="";
             Map.Entry pair = (Map.Entry) it.next();
             String friendName = (String) pair.getKey();
-
+            loadImage(friendName);
             Map<String, Float> allGroups = new HashMap<>();
             allGroups = (Map<String, Float>) pair.getValue();
 
@@ -127,5 +143,26 @@ private Context mContext;
             tv_status.setText(stat);
         }
 
+        private void loadImage(String friendName){
+
+            final StorageReference imageRef = mPhotosStorageReference.child("images/users/" + friendName);
+            final long ONE_MEGABYTE = 1024 * 1024;
+            imageRef.getBytes(ONE_MEGABYTE).addOnSuccessListener(new OnSuccessListener<byte[]>() {
+                @Override
+                public void onSuccess(byte[] bytes) {
+                    Glide.with(mContext)
+                            .load(bytes)
+                            .asBitmap()
+                            .into(friendImage);
+                }
+            }).addOnFailureListener(new OnFailureListener() {
+                @Override
+                public void onFailure(@NonNull Exception exception) {
+
+                    Log.i(TAG, exception.getMessage());
+                    // Handle any errors
+                }
+            });
+        }
     }
 }

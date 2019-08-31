@@ -27,6 +27,7 @@
         android:padding="@dimen/margin_4">
 
         <ImageView
+            android:id="@+id/friendImage"
             android:layout_width="20dp"
             android:layout_height="16dp"
             android:layout_marginTop="@dimen/margin_4"

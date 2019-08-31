@@ -139,8 +139,8 @@ public class AddGroup extends AppCompatActivity implements GroupMembersAdapter.O
                             group1.getBytes(ONE_MEGABYTE).addOnSuccessListener(new OnSuccessListener<byte[]>() {
                                 @Override
                                 public void onSuccess(byte[] bytes) {
-//                                           https://stackoverflow.com/questions/46619510/how-can-i-download-image-on-firebase-storage
-                                    //            https://github.com/bumptech/glide/issues/458
+                                    //  https://stackoverflow.com/questions/46619510/how-can-i-download-image-on-firebase-storage
+                                    //  https://github.com/bumptech/glide/issues/458
                                     Glide.with(AddGroup.this)
                                             .load(bytes)
                                             .asBitmap()

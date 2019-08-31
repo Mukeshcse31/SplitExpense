@@ -11,6 +11,7 @@ public class User {
     private String name;
     private String email;
     private Float amount;
+    private String imageUrl;
     private Map<String, Boolean> friends = new HashMap<>();
 private Balance balances;
 
@@ -44,6 +45,14 @@ private Balance balances;
 
     public void setAmount(Float amount) {
         this.amount = amount;
+    }
+
+    public String getImageUrl() {
+        return imageUrl;
+    }
+
+    public void setImageUrl(String imageUrl) {
+        this.imageUrl = imageUrl;
     }
 
     public Map<String, Boolean> getFriends() {
