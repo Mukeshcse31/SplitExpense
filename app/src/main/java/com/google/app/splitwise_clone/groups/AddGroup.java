@@ -41,8 +41,8 @@ import com.google.firebase.storage.FirebaseStorage;
 import com.google.firebase.storage.StorageReference;
 import com.google.firebase.storage.UploadTask;
 
-import org.w3c.dom.Text;
-
+import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.Map;
@@ -57,11 +57,11 @@ public class AddGroup extends AppCompatActivity implements GroupMembersAdapter.O
     private ChildEventListener mChildEventListener;
     private static final int RC_PHOTO_PICKER = 2;
     private static final String TAG = AddGroup.class.getSimpleName();
-
+    private Uri selectedImageUri;
     private RecyclerView members_rv;
     private RecyclerView nonmembers_rv;
     private ImageView mPhotoPickerButton;
-    private String group_name, user_name;
+    private String group_name, userName;
     private Group mGroup;
     private String photoUrl = "";
     private Map<String, String> all_members = new HashMap<>();
@@ -81,7 +81,7 @@ public class AddGroup extends AppCompatActivity implements GroupMembersAdapter.O
         members_rv = (RecyclerView) findViewById(R.id.members_rv);
         nonmembers_rv = findViewById(R.id.nonmembers_rv);
         mPhotoPickerButton = findViewById(R.id.photoPickerButton);
-        user_name = FirebaseUtils.getUserName();
+        userName = FirebaseUtils.getUserName();
         LinearLayoutManager layoutManager = new LinearLayoutManager(this);
         members_rv.setLayoutManager(layoutManager);
         LinearLayoutManager layoutManager1 = new LinearLayoutManager(this);
@@ -90,10 +90,17 @@ public class AddGroup extends AppCompatActivity implements GroupMembersAdapter.O
         mPhotoPickerButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                Intent intent = new Intent(Intent.ACTION_GET_CONTENT);
-                intent.setType("image/jpeg");
-                intent.putExtra(Intent.EXTRA_LOCAL_ONLY, true);
-                startActivityForResult(Intent.createChooser(intent, "Complete action using"), RC_PHOTO_PICKER);
+
+                //Check if the group Name is empty
+                if (TextUtils.isEmpty(mGroupName.getText().toString())) {
+                    mGroupName.setError(getString(R.string.groupname_warning));
+                } else {
+
+                    Intent intent = new Intent(Intent.ACTION_GET_CONTENT);
+                    intent.setType("image/jpeg");
+                    intent.putExtra(Intent.EXTRA_LOCAL_ONLY, true);
+                    startActivityForResult(Intent.createChooser(intent, "Complete action using"), RC_PHOTO_PICKER);
+                }
             }
         });
 
@@ -123,7 +130,7 @@ public class AddGroup extends AppCompatActivity implements GroupMembersAdapter.O
 //            }
 //        } else
         if (requestCode == RC_PHOTO_PICKER && resultCode == RESULT_OK) {
-            Uri selectedImageUri = data.getData();
+            selectedImageUri = data.getData();
             final String groupName = TextUtils.isEmpty(mGroupName.getText().toString()) ? "anonymous" : mGroupName.getText().toString();
 
             // Get a reference to store file at chat_photos/<FILENAME>
@@ -180,7 +187,7 @@ public class AddGroup extends AppCompatActivity implements GroupMembersAdapter.O
                         String email = f.getEmail();
                         all_members.put(name, email);
 
-                        if (TextUtils.equals(user_name, name)) {
+                        if (TextUtils.equals(userName, name)) {
                             all_friends = f.getFriends();
                         }
                     }
@@ -191,7 +198,7 @@ public class AddGroup extends AppCompatActivity implements GroupMembersAdapter.O
                     while (it.hasNext()) {
                         Map.Entry pair = (Map.Entry) it.next();
                         String name = (String) pair.getKey();
-                        if (TextUtils.equals(user_name, name)) continue;
+                        if (TextUtils.equals(userName, name)) continue;
                         if (!all_friends.containsKey(name)) {
                             all_members.remove(name);
                         }
@@ -206,13 +213,34 @@ public class AddGroup extends AppCompatActivity implements GroupMembersAdapter.O
                         while (it.hasNext()) {
                             Map.Entry pair = (Map.Entry) it.next();
                             String name = (String) pair.getKey();
-                            String email = (String) pair.getValue();
+                            SingleBalance sb = (SingleBalance) pair.getValue();
+                            String email = sb.getEmail();
                             group_members.put(name, email);//TODO update this to have the member's email id
-                            it.remove(); // avoids a ConcurrentModificationException
+//                            it.remove(); // avoids a ConcurrentModificationException
                         }
 
+                        //load image
+                        final StorageReference imageRef = mPhotosStorageReference.child(group_name);
+                        final long ONE_MEGABYTE = 1024 * 1024;
+                        imageRef.getBytes(ONE_MEGABYTE).addOnSuccessListener(new OnSuccessListener<byte[]>() {
+                            @Override
+                            public void onSuccess(byte[] bytes) {
+                                Glide.with(AddGroup.this)
+                                        .load(bytes)
+                                        .asBitmap()
+                                        .into(mPhotoPickerButton);
+                            }
+                        }).addOnFailureListener(new OnFailureListener() {
+                            @Override
+                            public void onFailure(@NonNull Exception exception) {
+
+                                Log.i(TAG, exception.getMessage());
+                                // Handle any errors
+                            }
+                        });
+
                     } else {//add the username by default
-                        group_members.put(user_name, all_members.get(user_name));
+                        group_members.put(userName, all_members.get(userName));
 
                     }
                     //collect all the non-group members
@@ -280,7 +308,7 @@ public class AddGroup extends AppCompatActivity implements GroupMembersAdapter.O
             addMenu.setVisible(true);
         } else {
             addMenu.setVisible(false);
-            if (TextUtils.equals(mGroup.getOwner(), user_name)) {
+            if (TextUtils.equals(mGroup.getOwner(), userName)) {
                 deleteMenu.setVisible(true);
                 saveMenu.setVisible(true);
             }
@@ -304,7 +332,6 @@ public class AddGroup extends AppCompatActivity implements GroupMembersAdapter.O
 
                         } else {
                             Group grp = new Group(name);
-                            String userName = FirebaseUtils.getUserName();
 
 //                          // add all the group members to the group
                             Iterator it = group_members.entrySet().iterator();
@@ -312,7 +339,10 @@ public class AddGroup extends AppCompatActivity implements GroupMembersAdapter.O
 
                                 Map.Entry pair = (Map.Entry) it.next();
                                 String groupMemberName = (String) pair.getKey();
-                                grp.addMember(groupMemberName, new SingleBalance(groupMemberName));
+                                String email = (String) pair.getValue();
+                                SingleBalance sb = new SingleBalance(groupMemberName);
+                                sb.setEmail(email);
+                                grp.addMember(groupMemberName, sb);
 
                             }
                             //add the group creator as a member when the group is created
@@ -350,7 +380,115 @@ public class AddGroup extends AppCompatActivity implements GroupMembersAdapter.O
                 break;
 
             case R.id.saveGroup:
+                Group newGroup = new Group();
+                try {
+                    newGroup = (Group) mGroup.clone();
+                } catch (CloneNotSupportedException e) {
+                    e.printStackTrace();
+                }
 
+                final String newGroupNname = mGroupName.getText().toString();
+                newGroup.setName(newGroupNname);
+
+                // add all the new group members to the group
+                Iterator it = group_members.entrySet().iterator();
+                while (it.hasNext()) {
+                    Map.Entry pair = (Map.Entry) it.next();
+                    String groupMemberName = (String) pair.getKey();
+                    if (!newGroup.getMembers().containsKey(groupMemberName)) {
+                        String email = (String) pair.getValue();
+                        SingleBalance sb = new SingleBalance(groupMemberName);
+                        sb.setEmail(email);
+                        newGroup.addMember(groupMemberName, sb);
+                    }
+                }
+
+//                if non members are in the group, set them as active No
+                it = nongroup_members.entrySet().iterator();
+                while (it.hasNext()) {
+                    Map.Entry pair = (Map.Entry) it.next();
+                    String groupMemberName = (String) pair.getKey();
+                    if (newGroup.getMembers().containsKey(groupMemberName)) {
+                        newGroup.getMembers().get(groupMemberName).setActive("No");
+                    }
+                }
+
+                //update the image if the image name is updated after changing the image
+                String prev_imageName = "";
+                photoUrl = TextUtils.isEmpty(photoUrl) ? newGroup.getPhotoUrl() : photoUrl; //if the image is not changed and group name changed
+                if (!TextUtils.isEmpty(photoUrl)) {
+                    String[] imageName = photoUrl.split("/");
+                    prev_imageName = imageName[imageName.length - 1];
+                    if (!TextUtils.equals(prev_imageName, newGroupNname)) {
+                        imageName[imageName.length - 1] = newGroupNname;
+//                        final StorageReference photoRef = mPhotosStorageReference.child(String.join("/", imageName));
+
+                        final StorageReference imageRef = mPhotosStorageReference.child(prev_imageName);
+                        final long ONE_MEGABYTE = 1024 * 1024;
+                        imageRef.getBytes(ONE_MEGABYTE).addOnSuccessListener(new OnSuccessListener<byte[]>() {
+                            @Override
+                            public void onSuccess(byte[] bytes) {
+                                final StorageReference photoRef = mPhotosStorageReference.child(newGroupNname);
+
+                                // Upload file to Firebase Storage
+                                photoRef.putBytes(bytes)
+                                        .addOnSuccessListener(AddGroup.this, new OnSuccessListener<UploadTask.TaskSnapshot>() {
+                                            public void onSuccess(UploadTask.TaskSnapshot taskSnapshot) {
+                                                Log.i(TAG, "new Image uploaded");
+                                            }
+                                        });
+                            }
+                        }).addOnFailureListener(new OnFailureListener() {
+                            @Override
+                            public void onFailure(@NonNull Exception exception) {
+
+                                Log.i(TAG, exception.getMessage());
+                                // Handle any errors
+                            }
+                        });
+
+                        newGroup.setPhotoUrl(String.join("/", imageName));
+                    }
+                    else{
+                        final StorageReference photoRef = mPhotosStorageReference.child(newGroupNname);
+                        // Upload file to Firebase Storage
+                        photoRef.putFile(selectedImageUri)
+                                .addOnSuccessListener(this, new OnSuccessListener<UploadTask.TaskSnapshot>() {
+                                    public void onSuccess(UploadTask.TaskSnapshot taskSnapshot) {
+                                        Log.i(TAG, "new Image uploaded");
+                                    }
+                                });
+                    }
+                }
+
+                //Add the clone of the old group with the updated values
+                mDatabaseReference.child("groups/" + newGroupNname).setValue(newGroup, new DatabaseReference.CompletionListener() {
+                    @Override
+                    public void onComplete(DatabaseError databaseError, DatabaseReference dataReference) {
+                        final Snackbar snackBar = Snackbar.make(findViewById(android.R.id.content),
+                                getString(R.string.saved_group), Snackbar.LENGTH_LONG);
+
+                        snackBar.setAction(getString(R.string.close), new View.OnClickListener() {
+                            @Override
+                            public void onClick(View v) {
+                                // Call your action method here
+                                snackBar.dismiss();
+                            }
+                        });
+                        snackBar.show();
+                        if (databaseError != null)
+                            Log.i(TAG, databaseError.getDetails());
+                        finish();
+                    }
+                });
+
+                //delete the old photo storage
+                if (!TextUtils.equals(prev_imageName, newGroupNname)) {
+                    mPhotosStorageReference.child(prev_imageName).delete();
+
+                    //Delete the old group
+                    mDatabaseReference.child("groups/" + group_name).removeValue();
+                }
                 finish();
                 break;
 

@@ -12,6 +12,8 @@ public class SingleBalance implements Parcelable {
 private float amount;
 private String status;
 private String name;
+private String email;
+private String active;
 private Map<String, Float> splitDues = new HashMap<>();
 
 public SingleBalance(){
@@ -21,6 +23,7 @@ public SingleBalance(){
         this.amount = 0.0f;
         this.status = "no expenses";
         this.name = key;
+        this.active = "Yes";
 
     }
 
@@ -28,12 +31,15 @@ public SingleBalance(){
         this.amount = amount;
         this.status = status;
         this.name = key;
+        this.active = "Yes";
     }
 
     protected SingleBalance(Parcel in){
         amount = in.readFloat();
         status = in.readString();
         name = in.readString();
+        email = in.readString();
+        active = in.readString();
         splitDues = new HashMap<String, Float>();
         in.readMap(splitDues, HashMap.class.getClassLoader());
 
@@ -76,6 +82,22 @@ public SingleBalance(){
         this.status = status;
     }
 
+    public String getEmail() {
+        return email;
+    }
+
+    public void setEmail(String email) {
+        this.email = email;
+    }
+
+    public String getActive() {
+        return active;
+    }
+
+    public void setActive(String active) {
+        this.active = active;
+    }
+
     public Map<String, Float> getSplitDues() {
         return splitDues;
     }
@@ -95,6 +117,8 @@ public SingleBalance(){
         dest.writeFloat(amount);
         dest.writeString(status);
         dest.writeString(name);
+        dest.writeString(email);
+        dest.writeString(active);
         dest.writeMap(splitDues);
     }
 }

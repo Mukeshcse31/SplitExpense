@@ -6,7 +6,7 @@ import android.os.Parcelable;
 import java.util.HashMap;
 import java.util.Map;
 
-public class Group implements Parcelable {
+public class Group implements Parcelable, Cloneable {
 
     private String name;
     private String photoUrl;
@@ -20,11 +20,16 @@ public class Group implements Parcelable {
 
     public Group(String name) {
         this.name = name;
+        totalAmount = .2f;
     }
 
     public Group(String name, Map<String, SingleBalance> members) {
         this.name = name;
         this.members = members;
+    }
+
+    public Object clone()throws CloneNotSupportedException{
+        return super.clone();
     }
 
     protected Group(Parcel in){

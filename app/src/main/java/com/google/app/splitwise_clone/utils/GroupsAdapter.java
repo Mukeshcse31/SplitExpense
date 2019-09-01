@@ -22,18 +22,28 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
 import android.widget.TextView;
+
+import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
+
+import com.bumptech.glide.Glide;
+import com.google.android.gms.tasks.OnFailureListener;
+import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.app.splitwise_clone.R;
 import com.google.app.splitwise_clone.model.Group;
 import com.google.app.splitwise_clone.model.SingleBalance;
 import com.google.firebase.database.DataSnapshot;
+import com.google.firebase.storage.FirebaseStorage;
+import com.google.firebase.storage.StorageReference;
+
 import java.util.List;
 import java.util.Map;
 
 public class GroupsAdapter extends RecyclerView.Adapter<GroupsAdapter.ReviewViewHolder> {
 
     private static final String TAG = GroupsAdapter.class.getSimpleName();
-
+    private StorageReference mPhotosStorageReference;
+    private FirebaseStorage mFirebaseStorage;
     private static int viewHolderCount;
     List<DataSnapshot>  mDataSnapshotList;
     private OnClickListener mOnClickListener;
@@ -41,6 +51,8 @@ public class GroupsAdapter extends RecyclerView.Adapter<GroupsAdapter.ReviewView
     public GroupsAdapter(List<DataSnapshot> dataSnapshotList, OnClickListener listener) {
         mDataSnapshotList = dataSnapshotList;
         mOnClickListener = listener;
+        mFirebaseStorage = FirebaseStorage.getInstance();
+        mPhotosStorageReference= mFirebaseStorage.getReference();
         viewHolderCount = 0;
     }
 
@@ -106,6 +118,7 @@ public class GroupsAdapter extends RecyclerView.Adapter<GroupsAdapter.ReviewView
             Group group = d.getValue(Group.class);
             Map<String, SingleBalance> members = group.getMembers();
             final String group_name = d.getKey();
+            loadImage(group_name);
             String member_status = "";
 
             for (Map.Entry<String, SingleBalance> entrySet : members.entrySet()){
@@ -138,5 +151,26 @@ public class GroupsAdapter extends RecyclerView.Adapter<GroupsAdapter.ReviewView
             });
         }
 
+        private void loadImage(String groupName){
+
+            final StorageReference imageRef = mPhotosStorageReference.child("images/groups/" + groupName);
+            final long ONE_MEGABYTE = 1024 * 1024;
+            imageRef.getBytes(ONE_MEGABYTE).addOnSuccessListener(new OnSuccessListener<byte[]>() {
+                @Override
+                public void onSuccess(byte[] bytes) {
+                    Glide.with(group_image.getContext())
+                            .load(bytes)
+                            .asBitmap()
+                            .into(group_image);
+                }
+            }).addOnFailureListener(new OnFailureListener() {
+                @Override
+                public void onFailure(@NonNull Exception exception) {
+
+                    Log.i(TAG, exception.getMessage());
+                    // Handle any errors
+                }
+            });
+        }
     }
 }

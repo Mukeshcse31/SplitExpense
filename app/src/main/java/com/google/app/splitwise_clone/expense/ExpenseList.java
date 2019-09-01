@@ -1,9 +1,12 @@
 package com.google.app.splitwise_clone.expense;
 
 import android.content.Intent;
+import android.media.Image;
 import android.os.Bundle;
+import android.text.TextUtils;
 import android.util.Log;
 import android.view.View;
+import android.widget.ImageView;
 import android.widget.Toast;
 
 import androidx.annotation.NonNull;
@@ -11,7 +14,11 @@ import androidx.appcompat.app.AppCompatActivity;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
+import com.bumptech.glide.Glide;
+import com.google.android.gms.tasks.OnFailureListener;
+import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
+import com.google.app.splitwise_clone.FriendsList;
 import com.google.app.splitwise_clone.R;
 import com.google.app.splitwise_clone.model.Expense;
 import com.google.app.splitwise_clone.utils.ExpenseAdapter;
@@ -21,6 +28,8 @@ import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.Query;
 import com.google.firebase.database.ValueEventListener;
+import com.google.firebase.storage.FirebaseStorage;
+import com.google.firebase.storage.StorageReference;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -28,12 +37,15 @@ import java.util.List;
 public class ExpenseList extends AppCompatActivity implements ExpenseAdapter.OnClickListener {
 
     private DatabaseReference mDatabaseReference;
+    private FirebaseStorage mFirebaseStorage;
+    private StorageReference mPhotosStorageReference;
     private String TAG = ExpenseList.class.getSimpleName();
     List<DataSnapshot> expenseSnapshotList;
     private ExpenseAdapter mExpenseAdapter;
     private RecyclerView expenses_rv;
     private FloatingActionButton mFloatingActionButton;
     private String group_name;
+    private ImageView groupImage;
     public static String GROUP_NAME = "group_name";
     public static String EDIT_EXPENSE = "edit_expense";
     public static String EDIT_EXPENSEID = "edit_expenseID";
@@ -53,6 +65,8 @@ public class ExpenseList extends AppCompatActivity implements ExpenseAdapter.OnC
         mFloatingActionButton = findViewById(R.id.add_expense_fab);
         LinearLayoutManager layoutManager = new LinearLayoutManager(this);
         expenses_rv.setLayoutManager(layoutManager);
+        groupImage = findViewById(R.id.groupImage);
+        mFirebaseStorage = FirebaseStorage.getInstance();
 
         Intent intent = getIntent();
         if (intent.hasExtra("group_name")) {
@@ -69,6 +83,7 @@ public class ExpenseList extends AppCompatActivity implements ExpenseAdapter.OnC
                 startActivity(intent);
             }
         });
+        loadGroupImage(group_name);
     }
 
     @Override
@@ -130,5 +145,46 @@ public class ExpenseList extends AppCompatActivity implements ExpenseAdapter.OnC
     public void onResume() {
         super.onResume();
         populateExpenseList();
+    }
+
+
+    private void loadGroupImage(String group_name){
+
+        Query query = mDatabaseReference.child("groups/" + group_name + "/photoUrl");
+        query.addListenerForSingleValueEvent(new ValueEventListener() {
+            @Override
+            public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+
+                if (dataSnapshot.exists()) {
+                    String imagePath = (String) dataSnapshot.getValue();
+                    if(TextUtils.isEmpty(imagePath)) return;
+
+//                    https://firebase.google.com/docs/storage/android/download-files
+                    mPhotosStorageReference = mFirebaseStorage.getReference();
+                    StorageReference islandRef = mPhotosStorageReference.child(imagePath);
+
+                    final long ONE_MEGABYTE = 1024 * 1024;
+                    islandRef.getBytes(ONE_MEGABYTE).addOnSuccessListener(new OnSuccessListener<byte[]>() {
+                        @Override
+                        public void onSuccess(byte[] bytes) {
+                            // Data for "images/island.jpg" is returns, use this as needed
+                            Glide.with(ExpenseList.this)
+                                    .load(bytes)
+                                    .asBitmap()
+                                    .into(groupImage);
+                        }
+                    }).addOnFailureListener(new OnFailureListener() {
+                        @Override
+                        public void onFailure(@NonNull Exception exception) {
+                            // Handle any errors
+                            Log.i(TAG, exception.toString());
+                        }
+                    });
+                }
+            }
+            @Override
+            public void onCancelled(@NonNull DatabaseError databaseError) {
+            }
+        });
     }
 }
