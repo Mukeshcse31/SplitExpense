@@ -17,6 +17,7 @@ import android.widget.Spinner;
 import android.widget.Toast;
 
 import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
 import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.fragment.app.DialogFragment;
@@ -25,6 +26,7 @@ import com.google.app.splitwise_clone.R;
 import com.google.app.splitwise_clone.model.Expense;
 import com.google.app.splitwise_clone.model.Group;
 import com.google.app.splitwise_clone.model.SingleBalance;
+import com.google.app.splitwise_clone.notification.SendNotificationLogic;
 import com.google.app.splitwise_clone.utils.DatePickerFragment;
 import com.google.app.splitwise_clone.utils.FirebaseUtils;
 import com.google.firebase.database.DataSnapshot;
@@ -33,6 +35,7 @@ import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.Query;
 import com.google.firebase.database.ValueEventListener;
+
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.HashMap;
@@ -44,6 +47,7 @@ public class AddExpense extends AppCompatActivity implements ListView.OnItemClic
 
     private DatabaseReference mDatabaseReference;
     private String TAG = AddExpense.class.getSimpleName();
+    String userName;
     ListView listView;
     Spinner spinner2;
     private static String[] groupMembers;
@@ -52,11 +56,22 @@ public class AddExpense extends AppCompatActivity implements ListView.OnItemClic
     private Expense mExpense;
     private String group_name, expenseId = null;
 
+    List<String> groupMember = new ArrayList<>();
+    private Map<String, String> friendsImageMap = new HashMap<>();
+    Map<String, Float> amountSpentByMember = null;
+    Map<String, Float> amountDueByMember = null;
+    Map<String, Map<String, Float>> expenseMatrix = null;
+    List<String> friends = new ArrayList<>();
+    private Map<String, SingleBalance> members;
+    Map<String, Expense> expenses;
+    private Group group;
+    float totalGroupExpense = 0.2f;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_expense_details);
-
+        userName = FirebaseUtils.getUserName();
         date_btn = findViewById(R.id.date_btn);
         mDescription = findViewById(R.id.expense_description);
         mAmount = findViewById(R.id.expense_amount);
@@ -141,6 +156,7 @@ public class AddExpense extends AppCompatActivity implements ListView.OnItemClic
                 }
             }
 
+            //members who share the expense
             Map<String, SingleBalance> splitExpense = mExpense.getSplitExpense();
             for (int i = 0; i < groupMembers.length; i++)
                 if (splitExpense.containsKey(groupMembers[i]))
@@ -174,7 +190,7 @@ public class AddExpense extends AppCompatActivity implements ListView.OnItemClic
         // Inflate the menu; this adds items to the action bar if it is present.
 
         getMenuInflater().inflate(R.menu.add_expense, menu);
-        MenuItem deleteMenu =  menu.findItem(R.id.deleteExpense);
+        MenuItem deleteMenu = menu.findItem(R.id.deleteExpense);
         MenuItem cancelMenu = menu.findItem(R.id.deleteExpense);
 
         if (mExpense == null) {
@@ -285,22 +301,40 @@ public class AddExpense extends AppCompatActivity implements ListView.OnItemClic
 //                    });
 //                }
 
-                if (expenseId != null) {
-                    mDatabaseReference.child("groups/" + group_name + "/expenses/" + expenseId).setValue(expense);
-                } else {
-                    //update individual expense
+
+                String notificationMessage = "";
+                String notificationTitle = "";
+                if (expenseId != null) {//update individual expense
+                    mDatabaseReference.child("groups/" + group_name + "/expenses/" + expenseId).setValue(expense, new DatabaseReference.CompletionListener() {
+                        @Override
+                        public void onComplete(@Nullable DatabaseError databaseError, @NonNull DatabaseReference databaseReference) {
+                            updateGroup(group_name);
+                        }
+                    });
+                    notificationTitle = getString(R.string.expense_edited);
+                    notificationMessage = String.format("%s edited the expense for %s to %f in the group %s", userName, description, amount, group_name);
+                } else {//add expense
+
                     mDatabaseReference.child("groups/" + group_name + "/expenses").push().setValue(expense, new DatabaseReference.CompletionListener() {
                         @Override
                         public void onComplete(DatabaseError databaseError, DatabaseReference dataReference) {
+                            updateGroup(group_name);
                             Toast.makeText(AddExpense.this, " added", Toast.LENGTH_LONG).show();
                         }
                     });
-
+                    notificationTitle = getString(R.string.expense_added);
+                    notificationMessage = String.format("%s added %f for %s in the group %s", userName, amount, description, group_name);
                 }
 
-                //TODO update split dues of all the expense participants
-//                FirebaseUtils.updateDB(group_name);
-                //TODO update the group firebaseUtils.updateDB
+                //Send Notification
+                SendNotificationLogic notification = new SendNotificationLogic(this);
+                //loop through the people sharing expense
+                for (int i = 0; i < participants.size(); i++) {
+                    if (!TextUtils.equals(userName, participants.get(i))) {
+                        notification.setData(participants.get(i), notificationTitle, notificationMessage);
+                        notification.send();
+                    }
+                }
 
                 finish();
                 break;
@@ -316,6 +350,7 @@ public class AddExpense extends AppCompatActivity implements ListView.OnItemClic
                             @Override
                             public void onClick(DialogInterface arg0, int arg1) {
                                 mDatabaseReference.child("groups/" + group_name + "/expenses/" + expenseId).removeValue();
+                                updateGroup(group_name);
                                 finish();
 
                             }
@@ -346,4 +381,111 @@ public class AddExpense extends AppCompatActivity implements ListView.OnItemClic
         int day = c.get(Calendar.DAY_OF_MONTH);
         date_btn.setText(String.format("%d-%02d-%02d", year, month, day));
     }
+
+    //update a single specified group
+    public void updateGroup(final String groupName) {
+
+        amountSpentByMember = new HashMap<>();
+        amountDueByMember = new HashMap<>();
+        expenseMatrix = new HashMap<>();
+
+        //update the participant's total amount
+        final DatabaseReference mDatabaseReference;
+        mDatabaseReference = FirebaseDatabase.getInstance().getReference();
+
+        //Get all the group members
+        Query query = mDatabaseReference.child("groups/" + groupName);
+
+        query.addListenerForSingleValueEvent(new ValueEventListener() {
+            @Override
+            public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+
+                if (dataSnapshot.exists()) {
+                    Map<String, Float> splitDues = new HashMap<>();
+                    group = dataSnapshot.getValue(Group.class);
+                    expenses = group.getExpenses();
+                    members = group.getMembers();
+
+                    //Get all the group members
+                    Iterator itMbr = members.entrySet().iterator();
+                    while (itMbr.hasNext()) {
+                        Map.Entry pairMbr = (Map.Entry) itMbr.next();
+                        String grouMbr = (String) pairMbr.getKey();
+                        splitDues.put(grouMbr, 0.0f);
+                    }
+
+                    //build the expense matrix for all the members
+                    itMbr = members.entrySet().iterator();
+                    while (itMbr.hasNext()) {
+                        Map.Entry pairMbr = (Map.Entry) itMbr.next();
+                        String grouMbr = (String) pairMbr.getKey();
+                        groupMember.add(grouMbr);
+                        SingleBalance sb = new SingleBalance(0.0f, "amount owed", grouMbr);
+                        sb.setSplitDues(new HashMap<String, Float>(splitDues));
+                        members.put(grouMbr, (SingleBalance) sb);
+                    }
+
+//loop through all the expense
+                    Iterator it1 = expenses.entrySet().iterator();
+                    while (it1.hasNext()) {
+                        Map.Entry pairExp = (Map.Entry) it1.next();
+                        Expense expense = (Expense) pairExp.getValue();
+                        String spender = expense.getMemberSpent();
+                        Map<String, SingleBalance> splitExpense = expense.getSplitExpense();
+
+                        //amount due by individuals
+                        Iterator it = splitExpense.entrySet().iterator();
+                        while (it.hasNext()) {
+                            Map.Entry pair = (Map.Entry) it.next();
+                            String name = (String) pair.getKey();
+                            SingleBalance balance = (SingleBalance) pair.getValue();
+                            float amount = balance.getAmount();
+
+                            if (TextUtils.equals(spender, name)) {
+//don't do anything, get the amount due with other members below
+                                //this is calculated by amountSpentByMember
+                            }
+//                                    matrix
+//                                    m1	-	m2-100	m3+15	m4-200
+//                                    m2	-	m1+100	m3-200	m4+50
+//                                    m3	-	m1+100	m2+40	m4+98
+//                                    m4	-	m1+100	m2-90	m3-20
+//
+                            else {//Expense Matrix
+                                Map<String, Float> borrowerSplit = members.get(name).getSplitDues();
+                                Map<String, Float> lenderSplit = members.get(spender).getSplitDues();
+                                lenderSplit.put(name, lenderSplit.get(name) - amount); //as the amount is in debt
+                                borrowerSplit.put(spender, borrowerSplit.get(spender) + amount);
+
+                                members.get(spender).setSplitDues(new HashMap<String, Float>(lenderSplit));
+                                members.get(name).setSplitDues(new HashMap<String, Float>(borrowerSplit));
+
+                            }
+                            it.remove(); // avoids a ConcurrentModificationException
+                        }
+
+                        //total expense in the group
+                        totalGroupExpense += expense.getTotal();
+
+                        //add the amount spent by the members
+                        float amountSpentByMember = members.get(spender).getAmount() + expense.getTotal();
+                        members.get(spender).setAmount(amountSpentByMember);
+                        members.get(spender).setStatus("you owe");
+                        if (amountSpentByMember > 0)
+                            members.get(spender).setStatus("others owe you");
+                    }
+
+                    //write group total and members into DB
+                    mDatabaseReference.child("groups/" + groupName + "/members/").setValue(members);
+                    mDatabaseReference.child("groups/" + groupName + "/totalAmount/").setValue(totalGroupExpense);
+                }
+            }
+
+            @Override
+            public void onCancelled(@NonNull DatabaseError databaseError) {
+            }
+        });
+    }
+
+
 }

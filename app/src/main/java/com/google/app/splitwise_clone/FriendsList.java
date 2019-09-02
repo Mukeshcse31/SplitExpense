@@ -26,6 +26,7 @@ import com.google.app.splitwise_clone.model.Balance;
 import com.google.app.splitwise_clone.model.Expense;
 import com.google.app.splitwise_clone.model.Group;
 import com.google.app.splitwise_clone.model.SingleBalance;
+import com.google.app.splitwise_clone.notification.SendNotificationLogic;
 import com.google.app.splitwise_clone.utils.FirebaseUtils;
 import com.google.app.splitwise_clone.utils.FriendsAdapter;
 import com.google.firebase.auth.FirebaseAuth;
@@ -57,21 +58,19 @@ public class FriendsList extends AppCompatActivity {
     private static final int RC_PHOTO_PICKER = 2;
 
     List<String> groupMember = new ArrayList<>();
+    private Map<String, SingleBalance> members;
+    private Map<String, Float> splitDues = new HashMap<>();
+    Map<String, Float> balances;
+
     private Map<String, String> friendsImageMap = new HashMap<>();
     Map<String, Float> amountSpentByMember = null;
     Map<String, Float> amountDueByMember = null;
     Map<String, Map<String, Float>> expenseMatrix = null;
     List<String> friends = new ArrayList<>();
-    private Map<String, SingleBalance> members;
 
     private String TAG = "Friendslist_Page";
     private RecyclerView friends_rv;
     private FriendsAdapter mFriendsAdapter;
-    Map<String, Expense> expenses;
-    private Map<String, Float> splitDues = new HashMap<>();
-    Map<String, Float> balances;
-    private Group group;
-    float totalGroupExpense = 0.2f;
     Float amountSpentByUser = 0.2f;
 
 
@@ -157,111 +156,6 @@ public class FriendsList extends AppCompatActivity {
                     friends_rv.setAdapter(mFriendsAdapter);
                     mDatabaseReference.child("users/" + userName + "/balances/").setValue(balance);
                     Log.i(TAG, "total calculation");
-                }
-            }
-
-            @Override
-            public void onCancelled(@NonNull DatabaseError databaseError) {
-            }
-        });
-    }
-
-    //update a single specified group
-    public void updateGroup(final String groupName) {
-
-        amountSpentByMember = new HashMap<>();
-        amountDueByMember = new HashMap<>();
-        expenseMatrix = new HashMap<>();
-
-        //update the participant's total amount
-        final DatabaseReference mDatabaseReference;
-        mDatabaseReference = FirebaseDatabase.getInstance().getReference();
-
-        //Get all the group members
-        Query query = mDatabaseReference.child("groups/" + groupName);
-
-        query.addListenerForSingleValueEvent(new ValueEventListener() {
-            @Override
-            public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
-
-                if (dataSnapshot.exists()) {
-                    Map<String, Float> splitDues = new HashMap<>();
-                    group = dataSnapshot.getValue(Group.class);
-                    expenses = group.getExpenses();
-                    members = group.getMembers();
-
-                    //Get all the group members
-                    Iterator itMbr = members.entrySet().iterator();
-                    while (itMbr.hasNext()) {
-                        Map.Entry pairMbr = (Map.Entry) itMbr.next();
-                        String grouMbr = (String) pairMbr.getKey();
-                        splitDues.put(grouMbr, 0.0f);
-                    }
-
-                    //build the expense matrix for all the members
-                    itMbr = members.entrySet().iterator();
-                    while (itMbr.hasNext()) {
-                        Map.Entry pairMbr = (Map.Entry) itMbr.next();
-                        String grouMbr = (String) pairMbr.getKey();
-                        groupMember.add(grouMbr);
-                        SingleBalance sb = new SingleBalance(0.0f, "amount owed", grouMbr);
-                        sb.setSplitDues(new HashMap<String, Float>(splitDues));
-                        members.put(grouMbr, (SingleBalance) sb);
-                    }
-
-//loop through all the expense
-                    Iterator it1 = expenses.entrySet().iterator();
-                    while (it1.hasNext()) {
-                        Map.Entry pairExp = (Map.Entry) it1.next();
-                        Expense expense = (Expense) pairExp.getValue();
-                        String spender = expense.getMemberSpent();
-                        Map<String, SingleBalance> splitExpense = expense.getSplitExpense();
-
-                        //amount due by individuals
-                        Iterator it = splitExpense.entrySet().iterator();
-                        while (it.hasNext()) {
-                            Map.Entry pair = (Map.Entry) it.next();
-                            String name = (String) pair.getKey();
-                            SingleBalance balance = (SingleBalance) pair.getValue();
-                            float amount = balance.getAmount();
-
-                            if (TextUtils.equals(spender, name)) {
-//don't do anything, get the amount due with other members below
-                                //this is calculated by amountSpentByMember
-                            }
-//                                    matrix
-//                                    m1	-	m2-100	m3+15	m4-200
-//                                    m2	-	m1+100	m3-200	m4+50
-//                                    m3	-	m1+100	m2+40	m4+98
-//                                    m4	-	m1+100	m2-90	m3-20
-//
-                            else {//Expense Matrix
-                                Map<String, Float> borrowerSplit = members.get(name).getSplitDues();
-                                Map<String, Float> lenderSplit = members.get(spender).getSplitDues();
-                                lenderSplit.put(name, lenderSplit.get(name) - amount); //as the amount is in debt
-                                borrowerSplit.put(spender, borrowerSplit.get(spender) + amount);
-
-                                members.get(spender).setSplitDues(new HashMap<String, Float>(lenderSplit));
-                                members.get(name).setSplitDues(new HashMap<String, Float>(borrowerSplit));
-
-                            }
-                            it.remove(); // avoids a ConcurrentModificationException
-                        }
-
-                        //total expense in the group
-                        totalGroupExpense += expense.getTotal();
-
-                        //add the amount spent by the members
-                        float amountSpentByMember = members.get(spender).getAmount() + expense.getTotal();
-                        members.get(spender).setAmount(amountSpentByMember);
-                        members.get(spender).setStatus("you owe");
-                        if (amountSpentByMember > 0)
-                            members.get(spender).setStatus("others owe you");
-                    }
-
-                    //write group total and members into DB
-                    mDatabaseReference.child("groups/" + groupName + "/members/").setValue(members);
-                    mDatabaseReference.child("groups/" + groupName + "/totalAmount/").setValue(totalGroupExpense);
                 }
             }
 
@@ -402,9 +296,6 @@ public class FriendsList extends AppCompatActivity {
     @Override
     public void onResume() {
         super.onResume();
-
-        updateGroup("group1");
-        updateGroup("group2");
         updateUsersAmount();
     }
 

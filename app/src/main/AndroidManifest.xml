@@ -40,6 +40,16 @@
 
         <service android:name=".widget.BalanceService" />
 
+<!--        https://blog.usejournal.com/send-device-to-device-push-notifications-without-server-side-code-238611c143-->
+        <service
+            android:name=".notification.MyFirebaseMessagingService"
+            android:permission="com.google.android.c2dm.permission.SEND">
+            <intent-filter>
+                <action android:name="com.google.firebase.INSTANCE_ID_EVENT" />
+                <action android:name="com.google.firebase.MESSAGING_EVENT" />
+                <action android:name="com.google.android.c2dm.intent.RECEIVE" />
+            </intent-filter>
+        </service>
 
         <receiver android:name=".widget.BalanceWidgetProvider">
             <intent-filter>
