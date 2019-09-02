@@ -4,7 +4,8 @@ import android.util.Log;
 
 import androidx.annotation.NonNull;
 
-import com.google.app.splitwise_clone.model.Expense;
+import com.google.app.splitwise_clone.model.Balance;
+import com.google.app.splitwise_clone.model.Group;
 import com.google.app.splitwise_clone.model.SingleBalance;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
@@ -23,7 +24,8 @@ import java.util.Map;
 
 public class FirebaseUtils {
 
-    private static String TAG="TOTAL";
+    private static String TAG = "TOTAL";
+    static Float amountSpentByUser = 0.2f;
 
     public static String getUserName() {
         FirebaseUser user = FirebaseAuth.getInstance().getCurrentUser();
@@ -33,6 +35,4 @@ public class FirebaseUtils {
         }
         return displayName;
     }
-
-
 }

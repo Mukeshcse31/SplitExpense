@@ -240,7 +240,7 @@ Log.i(TAG, displayName + " is already added by another user");
         SharedPreferences prefs = getSharedPreferences(SPLIT_PREFS, 0);
         prefs.edit().putString(USERNAME_KEY, email).apply();
         prefs.edit().putString(PASSWORD_KEY, password).apply();
-
+        prefs.edit().putString(DISPLAY_NAME_KEY, FirebaseUtils.getUserName()).apply();
     }
 
 public void showSnackBar(String message){

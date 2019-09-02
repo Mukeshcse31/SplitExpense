@@ -32,6 +32,25 @@
         </activity>
         <activity android:name=".expense.ExpenseList"/>
         <activity android:name=".groups.AddGroup"/>
+
+
+        <service
+            android:name=".widget.GridWidgetService"
+            android:permission="android.permission.BIND_REMOTEVIEWS" />
+
+        <service android:name=".widget.BalanceService" />
+
+
+        <receiver android:name=".widget.BalanceWidgetProvider">
+            <intent-filter>
+                <action android:name="android.appwidget.action.APPWIDGET_UPDATE"/>
+            </intent-filter>
+            <meta-data android:name="android.appwidget.provider"
+                android:resource="@xml/widget_balanceinfo">
+
+            </meta-data>
+        </receiver>
+
     </application>
 
 </manifest>

@@ -54,19 +54,20 @@ public class FriendsList extends AppCompatActivity {
     private FirebaseAuth.IdTokenListener mIdTokenListener;
     private String userName = "anonymous";
     private ImageView profilePicture;
-//    private CardView imageCard;
     private static final int RC_PHOTO_PICKER = 2;
-    List<String> friends = new ArrayList<>();
+
     List<String> groupMember = new ArrayList<>();
     private Map<String, String> friendsImageMap = new HashMap<>();
     Map<String, Float> amountSpentByMember = null;
     Map<String, Float> amountDueByMember = null;
     Map<String, Map<String, Float>> expenseMatrix = null;
+    List<String> friends = new ArrayList<>();
+    private Map<String, SingleBalance> members;
+
     private String TAG = "Friendslist_Page";
     private RecyclerView friends_rv;
     private FriendsAdapter mFriendsAdapter;
     Map<String, Expense> expenses;
-    private Map<String, SingleBalance> members;
     private Map<String, Float> splitDues = new HashMap<>();
     Map<String, Float> balances;
     private Group group;
@@ -151,31 +152,6 @@ public class FriendsList extends AppCompatActivity {
                     balance.setAmount(amountSpentByUser);
                     amountGroup.remove(userName);
                     balance.setGroups(amountGroup);
-
-//                    //Get the user's profile image Urls
-//                    Iterator it = amountGroup.entrySet().iterator();
-//
-//                    while(it.hasNext()){
-//                        Map.Entry  pair = (Map.Entry) it.next();
-//                        final String friendName = (String) pair.getKey();
-//                        Query query = mDatabaseReference.child("users/" + friendName + "/imageUrl");
-//                        friendsImageMap.put(friendName, "");
-//                        query.addListenerForSingleValueEvent(new ValueEventListener() {
-//                            @Override
-//                            public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
-//
-//                                if (dataSnapshot.exists()) {
-//                                    String imagePath = (String) dataSnapshot.getValue();
-//                                    friendsImageMap.put(friendName, imagePath);
-//                                }
-////                                else
-//                            }
-//                            @Override
-//                            public void onCancelled(@NonNull DatabaseError databaseError) {
-//                            }
-//                        });
-//
-//                    }
 
                     mFriendsAdapter = new FriendsAdapter(amountGroup,friendsImageMap, FriendsList.this);
                     friends_rv.setAdapter(mFriendsAdapter);
