@@ -221,12 +221,15 @@ public class AddExpense extends AppCompatActivity implements ListView.OnItemClic
 
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
+
+        final List<String> participants = getExpenseParticipants();
         switch (item.getItemId()) {
+
             case R.id.saveExpense:
                 String spentDate = date_btn.getText().toString();
                 String description = mDescription.getText().toString();
                 float amount = Float.valueOf(mAmount.getText().toString());
-                final List<String> participants = getExpenseParticipants();
+
                 String spender = (String) spinner2.getSelectedItem();
                 Log.i(TAG, "Expense Added");
                 Expense expense = new Expense(spentDate, spender, description, amount);
@@ -252,55 +255,6 @@ public class AddExpense extends AppCompatActivity implements ListView.OnItemClic
 //                    final float amountSpentForOthers1 = amountForUser;
                     expense.addMember(participant, singleBalance);
                 }
-
-//
-//                    //update the participant's total amount
-//                    Query query = mDatabaseReference.child("groups/" + group_name + "/members");
-//                    query.addListenerForSingleValueEvent(new ValueEventListener() {
-//                        @Override
-//                        public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
-//                            if (dataSnapshot.exists()) {
-//                                float existingBalance = 0.0f;
-//                                for (DataSnapshot i : dataSnapshot.getChildren()) {
-//                                    Map<String, Object> members = (Map)i.getValue();
-//                                    Map<String, Float> splitDues = new HashMap<>();
-//                                    if(members.containsKey("splitDues")){
-//                                        splitDues = (Map<String, Float>) members.get("splitDues");
-//                                    }
-//                                    else{
-//                                        for (int j = 0; j < participants.size(); j++) {
-//                                            splitDues.put(participants.get(j),0.0f);
-//                                        }
-//                                    }
-//                                    members.put("splitDues", splitDues);
-//
-////                                    Iterator it = members.entrySet().iterator();
-////                                    while(it.hasNext()){
-////
-////                                        Map.Entry pair = (Map.Entry) it.next();
-////                                        String name = (String) pair.getKey();
-////                                    }
-//                                    //if key is amount
-//                                    if (TextUtils.equals(i.getKey(), "amount")) {
-//                                        existingBalance = Float.parseFloat(i.getValue().toString());
-////                                        float newBalance = amountSpentForOthers;
-////                                        float newBalance = existingBalance + singleBalance.getAmount() - amountSpentForOthers1;
-////                                        String newStatus = "you owe";
-////                                        if (newBalance > 0)
-////                                            newStatus = "owes you";
-////                                        mDatabaseReference.child("groups/" + group_name + "/members/" + participant).setValue(new SingleBalance(newBalance, newStatus));
-//                                    }
-//                                }
-//                            }
-//                        }
-//
-//                        @Override
-//                        public void onCancelled(@NonNull DatabaseError databaseError) {
-//
-//                        }
-//                    });
-//                }
-
 
                 String notificationMessage = "";
                 String notificationTitle = "";
@@ -351,6 +305,19 @@ public class AddExpense extends AppCompatActivity implements ListView.OnItemClic
                             public void onClick(DialogInterface arg0, int arg1) {
                                 mDatabaseReference.child("groups/" + group_name + "/expenses/" + expenseId).removeValue();
                                 updateGroup(group_name);
+
+                                //Send Notification
+                                SendNotificationLogic notification = new SendNotificationLogic(AddExpense.this);
+                                //loop through the people sharing expense
+
+                                for (int i = 0; i < participants.size(); i++) {
+                                    if (!TextUtils.equals(userName, participants.get(i))) {
+                                        notification.setData(participants.get(i), getString(R.string.expense_deleted),
+                                                String.format("%s deleted the expense for %s %f",userName, mExpense.getDescription(),mExpense.getTotal()));
+                                        notification.send();
+                                    }
+                                }
+
                                 finish();
 
                             }

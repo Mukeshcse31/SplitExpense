@@ -12,7 +12,8 @@
         android:roundIcon="@mipmap/ic_launcher_round"
         android:supportsRtl="true"
         android:theme="@style/Theme.Design.Light">
-        <activity android:name=".MainActivity">
+        <activity android:name=".MainActivity"
+            android:launchMode="singleTop">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
 
@@ -32,11 +33,6 @@
         </activity>
         <activity android:name=".expense.ExpenseList"/>
         <activity android:name=".groups.AddGroup"/>
-
-
-        <service
-            android:name=".widget.GridWidgetService"
-            android:permission="android.permission.BIND_REMOTEVIEWS" />
 
         <service android:name=".widget.BalanceService" />
 

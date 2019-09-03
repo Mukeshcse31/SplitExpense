@@ -22,6 +22,7 @@ import com.google.android.gms.tasks.Task;
 import com.google.android.material.snackbar.Snackbar;
 import com.google.android.material.textfield.TextInputLayout;
 import com.google.app.splitwise_clone.model.User;
+import com.google.app.splitwise_clone.notification.MyFirebaseMessagingService;
 import com.google.app.splitwise_clone.utils.FirebaseUtils;
 import com.google.firebase.auth.AuthResult;
 import com.google.firebase.auth.FirebaseAuth;
@@ -33,6 +34,7 @@ import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.Query;
 import com.google.firebase.database.ValueEventListener;
+import com.google.firebase.messaging.FirebaseMessaging;
 
 public class MainActivity extends AppCompatActivity {
 
@@ -321,30 +323,11 @@ public void showSnackBar(String message){
                             showErrorDialog(getString(R.string.error_Login) + "\n" + task.getException().getMessage());
                         } else {
 
-                            showSnackBar(FirebaseUtils.getUserName() + " signed in");
+                            String userName = FirebaseUtils.getUserName();
+                            showSnackBar( userName + " signed in");
                             saveUserCredentials(email, password);
                             gotoNextPage();
-
-//                            Query query = mDatabaseReference.child("users").orderByChild("email").startAt(email).endAt(email);
-//                            query.addListenerForSingleValueEvent(new ValueEventListener() {
-//                                @Override
-//                                public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
-//                                    int id = 1;
-//                                    if (dataSnapshot.exists()) {
-//                                        for (DataSnapshot i : dataSnapshot.getChildren()) {
-//                                            User friend = i.getValue(User.class);
-//                                            String displayName = friend.getName();
-//                                            SharedPreferences prefs = getSharedPreferences(SPLIT_PREFS, 0);
-//                                            prefs.edit().putString(DISPLAY_NAME_KEY, displayName).apply();
-//                                            gotoNextPage();
-//                                        }
-//                                    }
-//                                }
-//                                @Override
-//                                public void onCancelled(@NonNull DatabaseError databaseError) {
-//
-//                                }
-//                            });
+                            FirebaseMessaging.getInstance().subscribeToTopic(userName);
                         }
                     }
                 });

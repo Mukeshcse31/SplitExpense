@@ -30,11 +30,13 @@ public class MyFirebaseMessagingService extends FirebaseMessagingService {
     private final String ADMIN_CHANNEL_ID ="admin_channel";
     private static final String TAG = MyFirebaseMessagingService.class.getSimpleName();
     private static String SUBSCRIBE_TO = "userABC";
+    String GROUP_KEY_WORK_EMAIL = "com.android.example.EXPENSE";
 
     @Override
     public void onNewToken(String token){
+
+        //whenever the user signs in, the subscribeToTopic would be updated in Sign in method
         SUBSCRIBE_TO = FirebaseUtils.getUserName();
-        SUBSCRIBE_TO = "aa";//TODO update this when the user sign-in changes
         FirebaseMessaging.getInstance().subscribeToTopic(SUBSCRIBE_TO);
         Log.i(TAG, "onTokenRefresh completed with token: " + token);
     }
@@ -67,6 +69,7 @@ public class MyFirebaseMessagingService extends FirebaseMessagingService {
                 .setContentTitle(remoteMessage.getData().get(getString(R.string.notif_title)))
                 .setContentText(remoteMessage.getData().get(getString(R.string.notif_message)))
                 .setAutoCancel(true)
+                .setGroup(GROUP_KEY_WORK_EMAIL)
                 .setSound(notificationSoundUri)
                 .setContentIntent(pendingIntent);
 
