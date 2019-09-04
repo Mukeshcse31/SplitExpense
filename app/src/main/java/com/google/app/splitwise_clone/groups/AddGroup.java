@@ -45,6 +45,7 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashMap;
 import java.util.Iterator;
+import java.util.List;
 import java.util.Map;
 
 public class AddGroup extends AppCompatActivity implements GroupMembersAdapter.OnClickListener,
@@ -63,7 +64,10 @@ public class AddGroup extends AppCompatActivity implements GroupMembersAdapter.O
     private ImageView mPhotoPickerButton;
     private String group_name, userName;
     private Group mGroup;
+    float friendsCount;
+    int friendsCounter;
     private String photoUrl = "";
+    Map<String, String> userFriends = new HashMap<>();
     private Map<String, String> all_members = new HashMap<>();
     private Map<String, Boolean> all_friends = new HashMap<>();
     private Map<String, String> group_members = new HashMap<>();
@@ -172,86 +176,45 @@ public class AddGroup extends AppCompatActivity implements GroupMembersAdapter.O
     }
 
     private void membersViews() {
-        String path1 = getString(R.string.db_users);
+        final String path1 = getString(R.string.db_users);
 
-        //get all the users
-        Query query = mDatabaseReference.child(path1);
+        //get all the friends of the user
+        Query query = mDatabaseReference.child(path1 + "/" + userName + "/friends");
         query.addListenerForSingleValueEvent(new ValueEventListener() {
             @Override
             public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
                 if (dataSnapshot.exists()) {
+                    userFriends = new HashMap<>();
+                    userFriends.put(userName, "");
+                    friendsCount = dataSnapshot.getChildrenCount() + 1;//include the user
                     for (DataSnapshot i : dataSnapshot.getChildren()) {
-
-                        User f = i.getValue(User.class);
-                        String name = f.getName();
-                        String email = f.getEmail();
-                        all_members.put(name, email);
-
-                        if (TextUtils.equals(userName, name)) {
-                            all_friends = f.getFriends();
-                        }
+                        final String friend = i.getKey();
+                        userFriends.put(friend, "");
                     }
 
-                    //TODO all_members should be the friends of the userName
-                    Map<String, String> allMembers = new HashMap<>(all_members);
-                    Iterator it = allMembers.entrySet().iterator();
+                    Iterator it = userFriends.entrySet().iterator();
                     while (it.hasNext()) {
                         Map.Entry pair = (Map.Entry) it.next();
-                        String name = (String) pair.getKey();
-                        if (TextUtils.equals(userName, name)) continue;
-                        if (!all_friends.containsKey(name)) {
-                            all_members.remove(name);
-                        }
-                        it.remove();
-                    }
-
-                    //for editing the existing group
-                    if (mGroup != null) {
-                        mGroupName.setText(mGroup.getName());
-                        Map<String, SingleBalance> members = mGroup.getMembers();
-                        it = members.entrySet().iterator();
-                        while (it.hasNext()) {
-                            Map.Entry pair = (Map.Entry) it.next();
-                            String name = (String) pair.getKey();
-                            SingleBalance sb = (SingleBalance) pair.getValue();
-                            String email = sb.getEmail();
-                            group_members.put(name, email);//TODO update this to have the member's email id
-//                            it.remove(); // avoids a ConcurrentModificationException
-                        }
-
-                        //load image
-                        final StorageReference imageRef = mPhotosStorageReference.child(group_name);
-                        final long ONE_MEGABYTE = 1024 * 1024;
-                        imageRef.getBytes(ONE_MEGABYTE).addOnSuccessListener(new OnSuccessListener<byte[]>() {
+                        final String friend = (String) pair.getKey();
+                        //Get the friends' email id
+                        Query query = mDatabaseReference.child(path1 + "/" + friend + "/email");
+                        query.addListenerForSingleValueEvent(new ValueEventListener() {
                             @Override
-                            public void onSuccess(byte[] bytes) {
-                                Glide.with(AddGroup.this)
-                                        .load(bytes)
-                                        .asBitmap()
-                                        .into(mPhotoPickerButton);
+                            public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+
+                                friendsCounter += 1;
+                                if (dataSnapshot.exists()) {
+                                    String email = (String) dataSnapshot.getValue();
+                                    userFriends.put(friend, email);
+                                    getGroupMembers();
+                                }
                             }
-                        }).addOnFailureListener(new OnFailureListener() {
-                            @Override
-                            public void onFailure(@NonNull Exception exception) {
 
-                                Log.i(TAG, exception.getMessage());
-                                // Handle any errors
+                            @Override
+                            public void onCancelled(@NonNull DatabaseError databaseError) {
                             }
                         });
-
-                    } else {//add the username by default
-                        group_members.put(userName, all_members.get(userName));
-
                     }
-                    //collect all the non-group members
-                    Iterator<String> it1 = all_members.keySet().iterator();
-                    while (it1.hasNext()) {
-
-                        String name1 = it1.next();
-                        if (!group_members.containsKey(name1))
-                            nongroup_members.put(name1, all_members.get(name1));
-                    }
-                    updateAdapters();
                 }
             }
 
@@ -261,7 +224,54 @@ public class AddGroup extends AppCompatActivity implements GroupMembersAdapter.O
             }
         });
 
+    }
 
+    private void getGroupMembers() {
+
+        if (friendsCount == friendsCounter) {
+
+            //for editing the existing group
+            if (mGroup != null) {
+                mGroupName.setText(mGroup.getName());
+                Map<String, SingleBalance> members = mGroup.getMembers();
+                Iterator it = members.entrySet().iterator();
+                while (it.hasNext()) {
+                    Map.Entry pair = (Map.Entry) it.next();
+                    String name = (String) pair.getKey();
+                    SingleBalance sb = (SingleBalance) pair.getValue();
+                    String email = sb.getEmail();
+                    group_members.put(name, email);
+//                            it.remove(); // avoids a ConcurrentModificationException
+                }
+
+                //load image
+                final StorageReference imageRef = mPhotosStorageReference.child(group_name);
+                final long ONE_MEGABYTE = 1024 * 1024;
+                imageRef.getBytes(ONE_MEGABYTE).addOnSuccessListener(new OnSuccessListener<byte[]>() {
+                    @Override
+                    public void onSuccess(byte[] bytes) {
+                        Glide.with(AddGroup.this)
+                                .load(bytes)
+                                .asBitmap()
+                                .into(mPhotoPickerButton);
+                    }
+                }).addOnFailureListener(new OnFailureListener() {
+                    @Override
+                    public void onFailure(@NonNull Exception exception) {
+
+                        Log.i(TAG, exception.getMessage());
+                        // Handle any errors
+                    }
+                });
+
+            } else {//add the username by default
+                group_members.put(userName, userFriends.get(userName));
+                nongroup_members = new HashMap<>(userFriends);
+                nongroup_members.remove(userName);
+            }
+            updateAdapters();
+
+        }
     }
 
     private void updateAdapters() {
@@ -448,8 +458,7 @@ public class AddGroup extends AppCompatActivity implements GroupMembersAdapter.O
                         });
 
                         newGroup.setPhotoUrl(String.join("/", imageName));
-                    }
-                    else{
+                    } else {
                         final StorageReference photoRef = mPhotosStorageReference.child(newGroupNname);
                         // Upload file to Firebase Storage
                         photoRef.putFile(selectedImageUri)
