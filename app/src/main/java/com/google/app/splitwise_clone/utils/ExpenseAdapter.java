@@ -109,7 +109,7 @@ public class ExpenseAdapter extends RecyclerView.Adapter<ExpenseAdapter.ReviewVi
             Expense expense = d.getValue(Expense.class);
 
             String date = expense.getDateSpent();
-            String spender = expense.getMemberSpent();
+            String payer = expense.getMemberSpent();
 
             Map<String, SingleBalance> splitExpense = expense.getSplitExpense();
             final String expense_id = d.getKey();
@@ -120,9 +120,10 @@ public class ExpenseAdapter extends RecyclerView.Adapter<ExpenseAdapter.ReviewVi
             if(splitExpense.containsKey(userName)){
                 SingleBalance singleBalance = splitExpense.get(userName);
                 tv_status.setText(singleBalance.getStatus() + "\n" + singleBalance.getAmount());
-
+                tv_paidBy.setText(String.format("%s paid $%.2f", payer, expense.getTotal()));
             }
             else {
+                tv_paidBy.setText(String.format("%s paid $%.2f", payer, expense.getTotal()));
                 tv_status.setText("you spent " + "\n" + expense.getTotal());
             }
 //            for (Map.Entry<String, SingleBalance> entrySet : splitExpense.entrySet()){
@@ -132,7 +133,7 @@ public class ExpenseAdapter extends RecyclerView.Adapter<ExpenseAdapter.ReviewVi
 //            }
             dateSpent_tv.setText(date);
             tv_expenseDescription.setText(expense.getDescription());
-            tv_paidBy.setText(String.format("%s paid $%.2f", spender, expense.getTotal()));
+            tv_paidBy.setText(String.format("%s paid $%.2f", payer, expense.getTotal()));
 
             tv_expenseDescription.getRootView().setOnClickListener(new View.OnClickListener() {
                 @Override

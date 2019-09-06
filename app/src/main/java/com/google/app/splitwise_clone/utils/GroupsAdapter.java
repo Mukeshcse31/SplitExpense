@@ -57,7 +57,7 @@ public class GroupsAdapter extends RecyclerView.Adapter<GroupsAdapter.ReviewView
     }
 
     public interface OnClickListener{
-        void gotoSharedGroup(String name);
+        void gotoSharedGroup(int index, String name);
         void gotoEditGroup(int index, String name);
     }
 
@@ -140,13 +140,13 @@ public class GroupsAdapter extends RecyclerView.Adapter<GroupsAdapter.ReviewView
             tv_member_status.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
-                    mOnClickListener.gotoSharedGroup(group_name);
+                    mOnClickListener.gotoSharedGroup(listIndex, group_name);
                 }
             });
             tv_group_name.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
-                    mOnClickListener.gotoSharedGroup(group_name);
+                    mOnClickListener.gotoSharedGroup(listIndex, group_name);
                 }
             });
         }

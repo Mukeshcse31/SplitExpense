@@ -21,6 +21,12 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:orientation="vertical">
+    <ImageView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:src="@drawable/account_image">
+
+    </ImageView>
     <TextView
         android:id="@+id/widget_balance_amount"
         android:layout_width="wrap_content"
@@ -28,6 +34,7 @@
         android:textAlignment="textStart"
         android:layout_gravity="start"
         android:textStyle="bold"
+        android:textColor="@color/white"
         tools:text="@string/no_user_signed" />
 
 </LinearLayout>

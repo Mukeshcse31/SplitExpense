@@ -3,6 +3,7 @@ package com.google.app.splitwise_clone.groups;
 import android.content.Intent;
 import android.net.Uri;
 import android.os.Bundle;
+import android.os.Parcelable;
 import android.text.TextUtils;
 import android.util.Log;
 import android.view.Menu;
@@ -51,6 +52,7 @@ public class GroupsList extends AppCompatActivity implements GroupsAdapter.OnCli
     private String TAG = GroupsList.class.getSimpleName();
     private String userName = "";
     public static String GROUP_NAME = "group_name";
+    public static String GROUP_DETAIL = "group_detail";
     public static String EDIT_GROUP = "edit_group";
     private static final int RC_PHOTO_PICKER = 2;
     private GroupsAdapter mGroupsAdapter;
@@ -125,10 +127,12 @@ public class GroupsList extends AppCompatActivity implements GroupsAdapter.OnCli
     }
 
     @Override
-    public void gotoSharedGroup(String name) {
+    public void gotoSharedGroup(int index, String name) {
 
+        DataSnapshot selectedGroup = dataSnapshotGroupList.get(index);
         Intent intent = new Intent(GroupsList.this, ExpenseList.class);
         intent.putExtra(GROUP_NAME, name);
+//        intent.putExtra(GROUP_DETAIL, (Parcelable) selectedGroup); //not required
         startActivity(intent);
 
     }
