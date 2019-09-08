@@ -97,9 +97,7 @@
         android:id="@+id/settleupFAB"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:contentDescription="@string/add_expense"
         android:src="@drawable/add_expense_fab"
-        app:backgroundTint="@color/colorAccent"
         app:elevation="@dimen/fab_elevation"
         app:fabCradleMargin="20dp"
         app:fabSize="normal"
@@ -120,6 +118,13 @@
         app:layout_anchor="@id/bottom_bar"
         app:pressedTranslationZ="@dimen/fab_press_translation_z" />
 
+    <Button
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="export"
+        android:id="@+id/export"
+        android:onClick="exportExpenses"
+        app:layout_anchor="@id/bottom_bar"/>
 
     <androidx.swiperefreshlayout.widget.SwipeRefreshLayout
         android:id="@+id/swipe_refresh_layout"

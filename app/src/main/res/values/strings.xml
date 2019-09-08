@@ -61,6 +61,7 @@
     <string name="groupname_warning">Please enter a Group Name</string>
     <string name="settledup">You are all settled up \n Tap to show settled expenses</string>
     <string name="no_expense">No Expense in this Group</string>
+    <string name="export_title">Export Expenses</string>
 
     <!--DB schema names-->
     <string name="goto_groupDetails">go to group details</string>
@@ -80,8 +81,12 @@
     <string name="add_expense">Add Expense</string>
     <string name="you_are_owed">you are owed</string>
     <string name="default_amount">$0</string>
-<string name="opted_out">OPTED OUT</string>
+    <string name="opted_out">opted out</string>
     <string name="edit_expense">edit_expense</string>
+    <string name="you">You</string>
+    <string name="you_lent">you lent</string>
+    <string name="you_borrowed">you borrowed</string>
+    <string name="paid">paid</string>
 
     <!--TextUtils-->
     <string name="send_message">send Messages</string>
@@ -91,7 +96,7 @@
 
     <string name="no_user_signed">user has not signed in</string>
 
-<!--    Notification-->
+    <!--    Notification-->
     <string name="server_key">AAAAs3JWc5U:APA91bE4JBDCWMBfb-oHZuBnmixezzdcP5MkOG3LVkjlwOpjZFVGEHOS7POx_oHxaC_D6GwKBzhbGWYBEDH_nIk6iCMAXUw_J4cow_YkJ2IapVp4XUuJ5ugdUw-wxs5jKE4vEzArvpqG</string>
     <string name="expense_added">Expense Added</string>
     <string name="expense_edited">Expense Edited</string>
@@ -99,7 +104,7 @@
     <string name="notif_title">title</string>
     <string name="notif_message">message</string>
     <string name="notif_to">to</string>
-<string name="notif_data">data</string>
+    <string name="notif_data">data</string>
     <string name="notif_Authorization">Authorization</string>
     <string name="notif_Content_Type">Content-Type</string>
     <string name="notif_contentType">application/json</string>

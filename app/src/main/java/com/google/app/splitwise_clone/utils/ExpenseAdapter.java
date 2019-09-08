@@ -38,7 +38,7 @@ import java.util.Map;
 public class ExpenseAdapter extends RecyclerView.Adapter<ExpenseAdapter.ReviewViewHolder> {
 
     private static final String TAG = ExpenseAdapter.class.getSimpleName();
-
+    public static String expensePayload;
     private static int viewHolderCount;
     String userName;
     List<DataSnapshot> mDataSnapshotList;
@@ -49,6 +49,7 @@ public class ExpenseAdapter extends RecyclerView.Adapter<ExpenseAdapter.ReviewVi
         mDataSnapshotList = dataSnapshotList;
         mOnClickListener = listener;
         userName = FirebaseUtils.getUserName();
+        expensePayload = "Date,Description,PaidBy,DebtCredit,AmountDue";
         viewHolderCount = 0;
     }
 
@@ -96,8 +97,8 @@ public class ExpenseAdapter extends RecyclerView.Adapter<ExpenseAdapter.ReviewVi
             super(itemView);
 
             dateSpent_tv = itemView.findViewById(R.id.dateSpent_tv);
-            tv_expenseDescription = (TextView) itemView.findViewById(R.id.tv_expenseDescription);
-            tv_paidBy = (TextView) itemView.findViewById(R.id.tv_paidBy);
+            tv_expenseDescription = itemView.findViewById(R.id.tv_expenseDescription);
+            tv_paidBy = itemView.findViewById(R.id.tv_paidBy);
 
             tv_debt_credit = itemView.findViewById(R.id.tv_debt_credit);
             tv_amount = itemView.findViewById(R.id.tv_amount);
@@ -117,9 +118,10 @@ public class ExpenseAdapter extends RecyclerView.Adapter<ExpenseAdapter.ReviewVi
 
             String date = expense.getDateSpent();
             String payer = expense.getPayer();
+            String description = expense.getDescription();
             float totalAmount = expense.getTotal();
-            String debtCredit = "you borrowed";
-
+            String debtCredit = mContext.getString(R.string.you_borrowed);
+            String amountDueStr = mContext.getString(R.string.default_amount);
             //1. date
             SimpleDateFormat df = new SimpleDateFormat("yyyy-mm-dd");
             SimpleDateFormat df1 = new SimpleDateFormat("MMM");
@@ -133,34 +135,37 @@ public class ExpenseAdapter extends RecyclerView.Adapter<ExpenseAdapter.ReviewVi
             dateSpent_tv.setText(dateString);
 
             //2. description
-            tv_expenseDescription.setText(expense.getDescription());
+            tv_expenseDescription.setText(description);
 
             if (TextUtils.equals(payer, userName)) {
-                payer = "You";
-                debtCredit = "you lent";
+                payer = mContext.getString(R.string.you);
+                debtCredit = mContext.getString(R.string.you_lent);
             }
 
             //3.paid By
-            tv_paidBy.setText(String.format("%s paid $%.2f", payer, totalAmount));
+            String paidBy = String.format("%s %s $%.2f",
+                    payer, mContext.getString(R.string.paid), totalAmount);
+            tv_paidBy.setText(paidBy);
 
             //TODO if the userName is not available, the expense is not shared with him
-            // so checking if the username is available, otherwiser app crashed
+            // so checking if the username is available
             Map<String, SingleBalance> splitExpense = expense.getSplitExpense();
 
-            if(splitExpense.containsKey(userName)) {
+            if (splitExpense.containsKey(userName)) {
                 SingleBalance sb = splitExpense.get(userName);
                 float amountDue = sb.getAmount();
 
 
                 if (amountDue < 0) {
-                    tv_debt_credit.setTextColor(mContext.getColor(R.color.red));
-                    tv_amount.setTextColor(mContext.getColor(R.color.red));
+                    tv_debt_credit.setTextColor(mContext.getColor(R.color.orange));
+                    tv_amount.setTextColor(mContext.getColor(R.color.orange));
                 }
                 //4. your credit
                 tv_debt_credit.setText(debtCredit);
 
                 //5. amount due
-                tv_amount.setText(String.format("$%.2f", amountDue));
+                amountDueStr = String.format("$%.2f", Math.abs(amountDue));
+                tv_amount.setText(amountDueStr);
             }
 
             //click event handler to edit
@@ -171,6 +176,10 @@ public class ExpenseAdapter extends RecyclerView.Adapter<ExpenseAdapter.ReviewVi
                     mOnClickListener.gotoExpenseDetails(expense_id, listIndex);
                 }
             });
+
+            //update the payload
+            expensePayload += String.format("\n%s,%s,%s,%s,%s",
+                    dateString.replace("\n", ""), description, paidBy, debtCredit, amountDueStr);
         }
     }
 }

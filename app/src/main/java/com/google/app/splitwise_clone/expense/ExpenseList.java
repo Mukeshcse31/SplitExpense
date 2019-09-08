@@ -1,5 +1,6 @@
 package com.google.app.splitwise_clone.expense;
 
+import android.app.IntentService;
 import android.content.Intent;
 import android.media.Image;
 import android.os.Bundle;
@@ -138,12 +139,12 @@ public class ExpenseList extends AppCompatActivity implements ExpenseAdapter.OnC
 
         }
         Task deleteTask = mDatabaseReference.child("groups/" + group_name + "/expenses/").setValue(null);
-deleteTask.addOnSuccessListener(new OnSuccessListener() {
-    @Override
-    public void onSuccess(Object o) {
-        populateExpenseList();
-    }
-});
+        deleteTask.addOnSuccessListener(new OnSuccessListener() {
+            @Override
+            public void onSuccess(Object o) {
+                populateExpenseList();
+            }
+        });
 
 //        Iterator it = expenseSnapshotList.iterator();
 //        while (it.hasNext()) {
@@ -222,8 +223,7 @@ deleteTask.addOnSuccessListener(new OnSuccessListener() {
                 if (archivedExpenseSnapshotList.size() == 0) {
                     noExpenses_tv.setVisibility(View.VISIBLE);
                     settleup_tv.setVisibility(View.GONE);
-                }
-                else
+                } else
                     settleup_tv.setVisibility(View.VISIBLE);
             }
 
@@ -346,5 +346,21 @@ deleteTask.addOnSuccessListener(new OnSuccessListener() {
             public void onCancelled(@NonNull DatabaseError databaseError) {
             }
         });
+    }
+
+    public void exportExpenses(View view) {
+
+        String expensePayload = ExpenseAdapter.expensePayload;
+        Log.i(TAG, ExpenseAdapter.expensePayload);
+
+
+        Intent sharingIntent = new Intent(android.content.Intent.ACTION_SEND);
+        sharingIntent.setType("text/plain");
+        sharingIntent.putExtra(android.content.Intent.EXTRA_SUBJECT, group_name);
+        sharingIntent.putExtra(android.content.Intent.EXTRA_TEXT, expensePayload);
+
+        //verify that this intent can be launched before starting
+        if (sharingIntent.resolveActivity(getPackageManager()) != null)
+            startActivity(Intent.createChooser(sharingIntent, getResources().getString(R.string.export_title)));
     }
 }
