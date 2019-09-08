@@ -4,4 +4,5 @@
     <integer name="login">100</integer>
     <integer name="password_length">6</integer>
     <integer name="register_form_finished">200</integer>
+    <integer name="expense_description_length">50</integer>
 </resources>

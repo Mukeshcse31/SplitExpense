@@ -12,12 +12,14 @@ import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.constraintlayout.widget.ConstraintLayout;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.bumptech.glide.Glide;
 import com.google.android.gms.tasks.OnFailureListener;
 import com.google.android.gms.tasks.OnSuccessListener;
+import com.google.android.gms.tasks.Task;
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
 import com.google.app.splitwise_clone.FriendsList;
 import com.google.app.splitwise_clone.R;
@@ -46,14 +48,14 @@ public class ExpenseList extends AppCompatActivity implements ExpenseAdapter.OnC
     private FirebaseStorage mFirebaseStorage;
     private StorageReference mPhotosStorageReference;
     private String TAG = ExpenseList.class.getSimpleName();
-    List<DataSnapshot> expenseSnapshotList;
+    List<DataSnapshot> expenseSnapshotList, archivedExpenseSnapshotList;
     private ExpenseAdapter mExpenseAdapter;
     private RecyclerView expenses_rv;
-    private FloatingActionButton mFloatingActionButton;
+    private FloatingActionButton mFloatingActionButton, settleup;
     private String group_name;
     private ImageView groupImage;
     private String userName = "";
-    private TextView user_balance, user_summary;
+    private TextView user_balance, user_summary, noExpenses_tv, settleup_tv;
     public static String GROUP_NAME = "group_name";
     public static String EDIT_EXPENSE = "edit_expense";
     public static String EDIT_EXPENSEID = "edit_expenseID";
@@ -70,10 +72,15 @@ public class ExpenseList extends AppCompatActivity implements ExpenseAdapter.OnC
         setContentView(R.layout.activity_expense_list);
         mDatabaseReference = FirebaseDatabase.getInstance().getReference();
 
+        settleup_tv = findViewById(R.id.settleup_tv);
+        noExpenses_tv = findViewById(R.id.noExpenses_tv);
+
         user_balance = findViewById(R.id.user_balance);
         user_summary = findViewById(R.id.user_summary);
         expenses_rv = (RecyclerView) findViewById(R.id.expenses_rv);
         mFloatingActionButton = findViewById(R.id.add_expense_fab);
+        settleup = findViewById(R.id.settleupFAB);
+
         LinearLayoutManager layoutManager = new LinearLayoutManager(this);
         expenses_rv.setLayoutManager(layoutManager);
         groupImage = findViewById(R.id.groupImage);
@@ -85,7 +92,7 @@ public class ExpenseList extends AppCompatActivity implements ExpenseAdapter.OnC
             group_name = intent.getStringExtra("group_name");
             getSupportActionBar().setTitle(group_name);
 //            Toast.makeText(this, "Expense list - " + group_name, Toast.LENGTH_LONG).show();
-            populateExpenseList();
+//            populateExpenseList(); called in onResume method
         }
 
         mFloatingActionButton.setOnClickListener(new View.OnClickListener() {
@@ -96,8 +103,58 @@ public class ExpenseList extends AppCompatActivity implements ExpenseAdapter.OnC
                 startActivity(intent);
             }
         });
+
+        settleup.setOnClickListener(new View.OnClickListener() {
+
+            @Override
+            public void onClick(View view) {
+                settleUpExpenses();
+            }
+        });
         loadGroupImage(group_name);
+
+        settleup_tv.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                populateSettledUpExpenses();
+            }
+        });
     }
+
+    //populate all the archived expenses
+    public void populateSettledUpExpenses() {
+        settleup_tv.setVisibility(View.GONE);
+        expenses_rv.setVisibility(View.VISIBLE);
+        mExpenseAdapter = new ExpenseAdapter(archivedExpenseSnapshotList, ExpenseList.this);
+        expenses_rv.setAdapter(mExpenseAdapter);
+    }
+
+    public void settleUpExpenses() {
+
+        //add all the expenses to archivedExpenses for later use
+        for (DataSnapshot d : expenseSnapshotList) {
+            Expense expense = d.getValue(Expense.class);
+            mDatabaseReference.child("groups/" + group_name + "/archivedExpenses/").push().setValue(expense);
+
+        }
+        Task deleteTask = mDatabaseReference.child("groups/" + group_name + "/expenses/").setValue(null);
+deleteTask.addOnSuccessListener(new OnSuccessListener() {
+    @Override
+    public void onSuccess(Object o) {
+        populateExpenseList();
+    }
+});
+
+//        Iterator it = expenseSnapshotList.iterator();
+//        while (it.hasNext()) {
+//            Map.Entry pair = (Map.Entry) it.next();
+//            String expCode = (String) pair.getKey();
+//            Expense exp = (Expense) pair.getValue();
+//            mDatabaseReference.child("groups/" + group_name + "/archivedExpenses/" + expCode).setValue(exp);
+//
+//        }
+    }
+
 
     @Override
     public void gotoExpenseDetails(String expenseId, int index) {
@@ -114,20 +171,60 @@ public class ExpenseList extends AppCompatActivity implements ExpenseAdapter.OnC
 
     private void populateExpenseList() {
         Query query = mDatabaseReference.child("groups/" + group_name + "/expenses");
+//.orderByChild("active").equalTo("Yes") is not required as settle up is implemented
+        query.addListenerForSingleValueEvent(new ValueEventListener() {
+            @Override
+            public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+
+                expenseSnapshotList = new ArrayList<>();
+                if (dataSnapshot.exists()) {
+                    for (DataSnapshot i : dataSnapshot.getChildren()) {
+                        expenseSnapshotList.add(i);
+                    }
+                }
+                //TODO display either no expense or settled up
+                if (expenseSnapshotList.size() == 0) {
+                    settleup_tv.setVisibility(View.VISIBLE);
+                    expenses_rv.setVisibility(View.GONE);
+                    getArchivedExpense();
+
+
+                } else {
+                    settleup_tv.setVisibility(View.GONE);
+                    noExpenses_tv.setVisibility(View.GONE);
+                    expenses_rv.setVisibility(View.VISIBLE);
+                    mExpenseAdapter = new ExpenseAdapter(expenseSnapshotList, ExpenseList.this);
+                    expenses_rv.setAdapter(mExpenseAdapter);
+                }
+            }
+
+
+            @Override
+            public void onCancelled(@NonNull DatabaseError databaseError) {
+
+            }
+        });
+    }
+
+    private void getArchivedExpense() {
+        Query query = mDatabaseReference.child("groups/" + group_name + "/archivedExpenses");
 
         query.addListenerForSingleValueEvent(new ValueEventListener() {
             @Override
             public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+                archivedExpenseSnapshotList = new ArrayList<>();
                 if (dataSnapshot.exists()) {
-                    expenseSnapshotList = new ArrayList<>();
                     for (DataSnapshot i : dataSnapshot.getChildren()) {
-                        expenseSnapshotList.add(i);
+                        archivedExpenseSnapshotList.add(i);
                     }
-
-                    mExpenseAdapter = new ExpenseAdapter(expenseSnapshotList, ExpenseList.this);
-                    expenses_rv.setAdapter(mExpenseAdapter);
-
                 }
+
+                if (archivedExpenseSnapshotList.size() == 0) {
+                    noExpenses_tv.setVisibility(View.VISIBLE);
+                    settleup_tv.setVisibility(View.GONE);
+                }
+                else
+                    settleup_tv.setVisibility(View.VISIBLE);
             }
 
             @Override
@@ -136,6 +233,7 @@ public class ExpenseList extends AppCompatActivity implements ExpenseAdapter.OnC
             }
         });
     }
+
 
     @Override
     protected void onRestoreInstanceState(Bundle savedInstanceState) {
@@ -162,50 +260,52 @@ public class ExpenseList extends AppCompatActivity implements ExpenseAdapter.OnC
         populateExpenseList();
     }
 
-private void populateAppBar(){
+    private void populateAppBar() {
 
 //get the user's splitDues
-    Query query = mDatabaseReference.child("groups/" + group_name + "/members/" + userName + "/splitDues");
-    query.addListenerForSingleValueEvent(new ValueEventListener() {
-        @Override
-        public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
-            if (dataSnapshot.exists()) {
-                String summary = "";
+        Query query = mDatabaseReference.child("groups/" + group_name + "/members/" + userName + "/splitDues");
+        query.addListenerForSingleValueEvent(new ValueEventListener() {
+            @Override
+            public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+                if (dataSnapshot.exists()) {
+                    String summary = "";
 //                                float balanceAmount = (float) sb.getAmount();
-                Map<String, Float> dues = (Map<String, Float>) dataSnapshot.getValue();
-                Iterator it = dues.entrySet().iterator();
-                while (it.hasNext()) {
+                    Map<String, Float> dues = (Map<String, Float>) dataSnapshot.getValue();
+                    Iterator it = dues.entrySet().iterator();
+                    while (it.hasNext()) {
 
-                    Map.Entry pair = (Map.Entry) it.next();
-                    String friendName = (String) pair.getKey();
-                    String status = "spent";
-                    float amount = Float.parseFloat(String.valueOf(pair.getValue()));
-                    if (amount > 0) status = "owes you";
-                    summary += String.format("%s %s %f \n", friendName, status, Math.abs(amount));
+                        Map.Entry pair = (Map.Entry) it.next();
+                        String friendName = (String) pair.getKey();
+                        String status = "spent";
+                        float amount = Float.parseFloat(String.valueOf(pair.getValue()));
+                        if (amount > 0) status = "owes you";
+                        summary += String.format("%s %s %f \n", friendName, status, Math.abs(amount));
+                    }
+                    user_summary.setText(summary);
                 }
-                user_summary.setText(summary);
             }
-        }
-        @Override
-        public void onCancelled(@NonNull DatabaseError databaseError) {
-        }
-    });
 
-    //get the user's splitDues
-    Query query1 = mDatabaseReference.child("groups/" + group_name + "/members/" + userName + "/amount");
-    query1.addListenerForSingleValueEvent(new ValueEventListener() {
-        @Override
-        public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
-            if (dataSnapshot.exists()) {
-                float balanceAmount = Float.parseFloat(String.valueOf(dataSnapshot.getValue()));
-                user_balance.setText(String.format("Amount %s spent %f ", balanceAmount > 0 ? "you" : "others", balanceAmount));
+            @Override
+            public void onCancelled(@NonNull DatabaseError databaseError) {
             }
-        }
-        @Override
-        public void onCancelled(@NonNull DatabaseError databaseError) {
-        }
-    });
-}
+        });
+
+        //get the user's splitDues
+        Query query1 = mDatabaseReference.child("groups/" + group_name + "/members/" + userName + "/amount");
+        query1.addListenerForSingleValueEvent(new ValueEventListener() {
+            @Override
+            public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+                if (dataSnapshot.exists()) {
+                    float balanceAmount = Float.parseFloat(String.valueOf(dataSnapshot.getValue()));
+                    user_balance.setText(String.format("Amount %s spent %f ", balanceAmount > 0 ? "you" : "others", balanceAmount));
+                }
+            }
+
+            @Override
+            public void onCancelled(@NonNull DatabaseError databaseError) {
+            }
+        });
+    }
 
     private void loadGroupImage(String group_name) {
 

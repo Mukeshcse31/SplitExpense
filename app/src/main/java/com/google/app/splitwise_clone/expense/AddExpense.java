@@ -15,13 +15,11 @@ import android.widget.Button;
 import android.widget.ListView;
 import android.widget.Spinner;
 import android.widget.Toast;
-
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.fragment.app.DialogFragment;
-
 import com.google.app.splitwise_clone.R;
 import com.google.app.splitwise_clone.model.Expense;
 import com.google.app.splitwise_clone.model.Group;
@@ -35,7 +33,6 @@ import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.Query;
 import com.google.firebase.database.ValueEventListener;
-
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.HashMap;
@@ -55,7 +52,6 @@ public class AddExpense extends AppCompatActivity implements ListView.OnItemClic
     private Button date_btn;
     private Expense mExpense;
     private String group_name, expenseId = null;
-
     List<String> groupMember = new ArrayList<>();
     private Map<String, String> friendsImageMap = new HashMap<>();
     Map<String, Float> amountSpentByMember = null;
@@ -99,7 +95,6 @@ public class AddExpense extends AppCompatActivity implements ListView.OnItemClic
 
 
         Query query = mDatabaseReference.child("groups/" + group_name + "/members");
-
         query.addListenerForSingleValueEvent(new ValueEventListener() {
             @Override
             public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
@@ -108,6 +103,12 @@ public class AddExpense extends AppCompatActivity implements ListView.OnItemClic
                     for (DataSnapshot i : dataSnapshot.getChildren()) {
                         members.add(i.getKey());
                     }
+
+                    //put the userName at the first index
+                    members.remove(userName);
+                    members.add(0, userName);
+
+                    //set group members
                     groupMembers = members.toArray(new String[0]);
                     listView.setAdapter(new ArrayAdapter<String>(AddExpense.this, android.R.layout.simple_list_item_multiple_choice, groupMembers));
                     for (int i = 0; i < members.size(); i++)
@@ -115,11 +116,12 @@ public class AddExpense extends AppCompatActivity implements ListView.OnItemClic
                     listView.setOnItemClickListener(AddExpense.this);
 
 
-                    //person who spends for the expense
+                    //expense payer
                     ArrayAdapter<String> dataAdapter = new ArrayAdapter<String>(AddExpense.this,
                             android.R.layout.simple_spinner_item, members);
                     dataAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
                     spinner2.setAdapter(dataAdapter);
+                    spinner2.setSelection(0,true);
 
                 }
                 populateExpense();
@@ -142,21 +144,22 @@ public class AddExpense extends AppCompatActivity implements ListView.OnItemClic
 
     private void populateExpense() {
 
+        //set the expense details to edit
         if (mExpense != null) {
             date_btn.setText(mExpense.getDateSpent());
             mDescription.setText(mExpense.getDescription());
             mAmount.setText("" + mExpense.getTotal());
 
 //        https://stackoverflow.com/questions/13151699/set-text-on-spinner
-
+//set the payer
             for (int i = 0; i < spinner2.getAdapter().getCount(); i++) {
-                if (spinner2.getAdapter().getItem(i).toString().contains(mExpense.getMemberSpent())) {
+                if (spinner2.getAdapter().getItem(i).toString().contains(mExpense.getPayer())) {
                     spinner2.setSelection(i);
                     break;
                 }
             }
 
-            //members who share the expense
+            //set the members who share the expense
             Map<String, SingleBalance> splitExpense = mExpense.getSplitExpense();
             for (int i = 0; i < groupMembers.length; i++)
                 if (splitExpense.containsKey(groupMembers[i]))
@@ -397,7 +400,7 @@ public class AddExpense extends AppCompatActivity implements ListView.OnItemClic
                     while (it1.hasNext()) {
                         Map.Entry pairExp = (Map.Entry) it1.next();
                         Expense expense = (Expense) pairExp.getValue();
-                        String spender = expense.getMemberSpent();
+                        String spender = expense.getPayer();
                         Map<String, SingleBalance> splitExpense = expense.getSplitExpense();
 
                         //amount due by individuals

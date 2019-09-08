@@ -8,9 +8,10 @@ import java.util.Map;
 public class Expense implements Parcelable {
 
     private String dateSpent;
-    private String memberSpent;
+    private String payer;
     private String description;
     private float total = 0.2f;
+    private String active;
     private Map<String, SingleBalance> splitExpense = new HashMap<>();
 
 
@@ -19,17 +20,19 @@ public class Expense implements Parcelable {
 
     public Expense(String dateSpent, String memberSpent, String description, float total) {
         this.dateSpent = dateSpent;
-        this.memberSpent = memberSpent;
+        this.payer = memberSpent;
         this.description = description;
         this.total = total;
+        this.active = "Yes";
     }
 
     protected Expense(Parcel in){
 
         dateSpent = in.readString();
-        memberSpent = in.readString();
+        payer = in.readString();
         description = in.readString();
         total = in.readFloat();
+        active = in.readString();
         splitExpense = new HashMap<String, SingleBalance>();
         in.readMap(splitExpense, SingleBalance.class.getClassLoader());
     }
@@ -55,12 +58,12 @@ public class Expense implements Parcelable {
         this.dateSpent = dateSpent;
     }
 
-    public String getMemberSpent() {
-        return memberSpent;
+    public String getPayer() {
+        return payer;
     }
 
-    public void setMemberSpent(String memberSpent) {
-        this.memberSpent = memberSpent;
+    public void setPayer(String payer) {
+        this.payer = payer;
     }
 
     public String getDescription() {
@@ -77,6 +80,14 @@ public class Expense implements Parcelable {
 
     public void setTotal(float total) {
         this.total = total;
+    }
+
+    public String getActive() {
+        return active;
+    }
+
+    public void setActive(String active) {
+        this.active = active;
     }
 
     public Map<String, SingleBalance> getSplitExpense() {
@@ -106,9 +117,10 @@ public class Expense implements Parcelable {
     public void writeToParcel(Parcel dest, int flags) {
 
         dest.writeString(dateSpent);
-        dest.writeString(memberSpent);
+        dest.writeString(payer);
         dest.writeString(description);
         dest.writeFloat(total);
+        dest.writeString(active);
         dest.writeMap(splitExpense);
     }
 }

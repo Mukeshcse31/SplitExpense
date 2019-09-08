@@ -59,6 +59,8 @@
     <string name="add_group_image">click to add picture</string>
     <string name="group_image">image of group</string>
     <string name="groupname_warning">Please enter a Group Name</string>
+    <string name="settledup">You are all settled up \n Tap to show settled expenses</string>
+    <string name="no_expense">No Expense in this Group</string>
 
     <!--DB schema names-->
     <string name="goto_groupDetails">go to group details</string>
@@ -78,7 +80,7 @@
     <string name="add_expense">Add Expense</string>
     <string name="you_are_owed">you are owed</string>
     <string name="default_amount">$0</string>
-
+<string name="opted_out">OPTED OUT</string>
     <string name="edit_expense">edit_expense</string>
 
     <!--TextUtils-->

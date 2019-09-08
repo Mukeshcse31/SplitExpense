@@ -56,6 +56,7 @@
             android:imeOptions="actionNext"
             android:inputType="textNoSuggestions"
             android:maxLines="@integer/signUp_lines"
+            android:maxLength="@integer/expense_description_length"
             android:textColor="@color/black"
             android:textColorHint="@color/black"
             android:textIsSelectable="false"

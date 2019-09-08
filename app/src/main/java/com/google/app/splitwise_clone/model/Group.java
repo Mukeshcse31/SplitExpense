@@ -14,6 +14,7 @@ public class Group implements Parcelable, Cloneable {
     private Float totalAmount;
     private Map<String, SingleBalance> members = new HashMap<>();
     private Map<String, Expense> expenses = new HashMap<>();
+    private Map<String, Expense> archivedExpenses = new HashMap<>();
 
     public Group() {
     }
@@ -42,6 +43,8 @@ public class Group implements Parcelable, Cloneable {
         in.readMap(members, SingleBalance.class.getClassLoader());
         expenses = new HashMap<String, Expense>();
         in.readMap(expenses, Expense.class.getClassLoader());
+        archivedExpenses = new HashMap<String, Expense>();
+        in.readMap(archivedExpenses, Expense.class.getClassLoader());
     }
 
     public static final Creator<Group> CREATOR = new Creator<Group>() {
@@ -107,6 +110,14 @@ public class Group implements Parcelable, Cloneable {
         this.expenses = expenses;
     }
 
+    public Map<String, Expense> getArchivedExpenses() {
+        return archivedExpenses;
+    }
+
+    public void setArchivedExpenses(Map<String, Expense> archivedExpenses) {
+        this.archivedExpenses = archivedExpenses;
+    }
+
     public void removeMember(String memberName){
         if(members.containsKey(memberName))
             members.remove(memberName);
@@ -124,6 +135,7 @@ public class Group implements Parcelable, Cloneable {
         dest.writeFloat(totalAmount);
         dest.writeMap(members);
         dest.writeMap(expenses);
+        dest.writeMap(archivedExpenses);
     }
 
 }
