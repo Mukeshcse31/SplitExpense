@@ -42,7 +42,7 @@ public class NonGroupMembersAdapter extends RecyclerView.Adapter<NonGroupMembers
     private Map<String, String> nonGroup_members;
 
     public NonGroupMembersAdapter(Map<String, String> nongroup_members, OnClickListener context) {
-        mOnClickListener = (OnClickListener) context;
+        mOnClickListener = context;
         this.nonGroup_members = nongroup_members;
         nonMembersSet = nonGroup_members.keySet();
         it = nonMembersSet.iterator();
@@ -94,7 +94,7 @@ public class NonGroupMembersAdapter extends RecyclerView.Adapter<NonGroupMembers
         public ReviewViewHolder(View itemView) {
             super(itemView);
 
-            tv_friend_name = (TextView) itemView.findViewById(R.id.tv_friend_name);
+            tv_friend_name = itemView.findViewById(R.id.tv_friend_name);
             member_iv = itemView.findViewById(R.id.member_iv);
 
             member_iv.setImageDrawable(member_iv.getContext().getDrawable(R.drawable.plus));

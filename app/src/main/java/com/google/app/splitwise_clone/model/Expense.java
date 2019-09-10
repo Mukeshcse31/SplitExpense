@@ -104,8 +104,7 @@ public class Expense implements Parcelable {
 
 
     public void removeMember(String memberName){
-        if(splitExpense.containsKey(memberName))
-            splitExpense.remove(memberName);
+        splitExpense.remove(memberName);
     }
 
     @Override

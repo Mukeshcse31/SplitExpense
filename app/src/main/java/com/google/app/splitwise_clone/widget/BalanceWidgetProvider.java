@@ -72,7 +72,7 @@ public class BalanceWidgetProvider extends AppWidgetProvider {
 
         Log.i("Widget", "invoked");
         // Construct the RemoteViews object
-        final RemoteViews views = new RemoteViews(context.getPackageName(), R.layout.widget_balanceamount);
+        final RemoteViews views = new RemoteViews(context.getPackageName(), R.layout.widget_balance_amount);
 
         Iterator it = amountGroup.entrySet().iterator();
         String text="";

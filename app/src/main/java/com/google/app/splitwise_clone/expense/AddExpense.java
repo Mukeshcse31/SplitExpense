@@ -2,6 +2,7 @@ package com.google.app.splitwise_clone.expense;
 
 import android.content.DialogInterface;
 import android.os.Bundle;
+import android.text.InputFilter;
 import android.text.TextUtils;
 import android.util.Log;
 import android.util.SparseBooleanArray;
@@ -26,6 +27,7 @@ import com.google.app.splitwise_clone.model.Group;
 import com.google.app.splitwise_clone.model.SingleBalance;
 import com.google.app.splitwise_clone.notification.SendNotificationLogic;
 import com.google.app.splitwise_clone.utils.DatePickerFragment;
+import com.google.app.splitwise_clone.utils.DigitsInputFilter;
 import com.google.app.splitwise_clone.utils.FirebaseUtils;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
@@ -53,11 +55,9 @@ public class AddExpense extends AppCompatActivity implements ListView.OnItemClic
     private Expense mExpense;
     private String group_name, expenseId = null;
     List<String> groupMember = new ArrayList<>();
-    private Map<String, String> friendsImageMap = new HashMap<>();
     Map<String, Float> amountSpentByMember = null;
     Map<String, Float> amountDueByMember = null;
     Map<String, Map<String, Float>> expenseMatrix = null;
-    List<String> friends = new ArrayList<>();
     private Map<String, SingleBalance> members;
     Map<String, Expense> expenses;
     private Group group;
@@ -71,6 +71,8 @@ public class AddExpense extends AppCompatActivity implements ListView.OnItemClic
         date_btn = findViewById(R.id.date_btn);
         mDescription = findViewById(R.id.expense_description);
         mAmount = findViewById(R.id.expense_amount);
+        //https://stackoverflow.com/questions/17423483/how-to-limit-edittext-length-to-7-integers-and-2-decimal-places/21802109
+        mAmount.setFilters(new InputFilter[]{new DigitsInputFilter(10, 2, 99999999.99)});
 
         getSupportActionBar().setTitle(getString(R.string.add_expense));
         mDatabaseReference = FirebaseDatabase.getInstance().getReference();
@@ -78,7 +80,7 @@ public class AddExpense extends AppCompatActivity implements ListView.OnItemClic
         listView = findViewById(R.id.group_members);
         listView.setChoiceMode(ListView.CHOICE_MODE_MULTIPLE);
 
-        spinner2 = (Spinner) findViewById(R.id.member_spent);
+        spinner2 = findViewById(R.id.member_spent);
         setDefaultDate();
 
         Bundle bundle = getIntent().getExtras();
@@ -110,7 +112,7 @@ public class AddExpense extends AppCompatActivity implements ListView.OnItemClic
 
                     //set group members
                     groupMembers = members.toArray(new String[0]);
-                    listView.setAdapter(new ArrayAdapter<String>(AddExpense.this, android.R.layout.simple_list_item_multiple_choice, groupMembers));
+                    listView.setAdapter(new ArrayAdapter<>(AddExpense.this, android.R.layout.simple_list_item_multiple_choice, groupMembers));
                     for (int i = 0; i < members.size(); i++)
                         listView.setItemChecked(i, true);
                     listView.setOnItemClickListener(AddExpense.this);
@@ -129,17 +131,8 @@ public class AddExpense extends AppCompatActivity implements ListView.OnItemClic
 
             @Override
             public void onCancelled(@NonNull DatabaseError databaseError) {
-
             }
         });
-
-        //check for edit or new expense
-//        if(mExpense == null) {
-//}
-//else{
-//
-//}
-
     }
 
     private void populateExpense() {
@@ -216,7 +209,6 @@ public class AddExpense extends AppCompatActivity implements ListView.OnItemClic
         for (int i = 0; i < sp.size(); i++) {
             if (sp.valueAt(i) == true)
                 participants.add(groupMembers[i]);
-//            str += groupMembers[sp.keyAt(i)] + ",";
         }
         return participants;
     }
@@ -231,28 +223,23 @@ public class AddExpense extends AppCompatActivity implements ListView.OnItemClic
             case R.id.saveExpense:
                 String spentDate = date_btn.getText().toString();
                 String description = mDescription.getText().toString();
-                float amount = Float.valueOf(mAmount.getText().toString());
+                float amount = 0.0f;
+                amount = Float.valueOf(mAmount.getText().toString());
 
                 String spender = (String) spinner2.getSelectedItem();
                 Log.i(TAG, "Expense Added");
                 Expense expense = new Expense(spentDate, spender, description, amount);
-//                Map<String, Float> splitDues = new HashMap<>();
-//                for (int j = 0; j < participants.size(); j++) {
-//                        splitDues.put(participants.get(j),0.0f);
-//                    }
-
                 for (int i = 0; i < participants.size(); i++) {
 
                     final String participant = participants.get(i);
                     float amountForUser = amount;
-                    float amountSpentForOthers = 0.0f;
-                    String amountStatus = "you spent";
+                    String amountStatus = getString(R.string.you_lent);
                     if (TextUtils.equals(spender, participant)) {
                         amountForUser = amount - (amount / participants.size());
 
                     } else {
                         amountForUser = -(amount / participants.size());
-                        amountStatus = "you owe";
+                        amountStatus = getString(R.string.you_borrowed);
                     }
                     SingleBalance singleBalance = new SingleBalance(amountForUser, amountStatus, participant);
 //                    final float amountSpentForOthers1 = amountForUser;
@@ -381,7 +368,7 @@ public class AddExpense extends AppCompatActivity implements ListView.OnItemClic
                     while (itMbr.hasNext()) {
                         Map.Entry pairMbr = (Map.Entry) itMbr.next();
                         String grouMbr = (String) pairMbr.getKey();
-                        splitDues.put(grouMbr, 0.0f);
+                        splitDues.put(grouMbr, 0.0f);//this is not added when a group is added newly
                     }
 
                     //build the expense matrix for all the members
@@ -391,8 +378,8 @@ public class AddExpense extends AppCompatActivity implements ListView.OnItemClic
                         String grouMbr = (String) pairMbr.getKey();
                         groupMember.add(grouMbr);
                         SingleBalance sb = new SingleBalance(0.0f, "amount owed", grouMbr);
-                        sb.setSplitDues(new HashMap<String, Float>(splitDues));
-                        members.put(grouMbr, (SingleBalance) sb);
+                        sb.setSplitDues(new HashMap<>(splitDues));
+                        members.put(grouMbr, sb);
                     }
 
 //loop through all the expense
@@ -427,8 +414,8 @@ public class AddExpense extends AppCompatActivity implements ListView.OnItemClic
                                 lenderSplit.put(name, lenderSplit.get(name) - amount); //as the amount is in debt
                                 borrowerSplit.put(spender, borrowerSplit.get(spender) + amount);
 
-                                members.get(spender).setSplitDues(new HashMap<String, Float>(lenderSplit));
-                                members.get(name).setSplitDues(new HashMap<String, Float>(borrowerSplit));
+                                members.get(spender).setSplitDues(new HashMap<>(lenderSplit));
+                                members.get(name).setSplitDues(new HashMap<>(borrowerSplit));
 
                             }
                             it.remove(); // avoids a ConcurrentModificationException
@@ -440,9 +427,9 @@ public class AddExpense extends AppCompatActivity implements ListView.OnItemClic
                         //add the amount spent by the members
                         float amountSpentByMember = members.get(spender).getAmount() + expense.getTotal();
                         members.get(spender).setAmount(amountSpentByMember);
-                        members.get(spender).setStatus("you owe");
+                        members.get(spender).setStatus(getString(R.string.you_borrowed));
                         if (amountSpentByMember > 0)
-                            members.get(spender).setStatus("others owe you");
+                            members.get(spender).setStatus(getString(R.string.you_lent));
                     }
 
                     //write group total and members into DB

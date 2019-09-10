@@ -14,10 +14,14 @@
         app:showAsAction="always"
         android:orderInCategory="1"/>
 
+    <item
+        android:id="@+id/invite_friend"
+        android:title="@string/inviteafriend"
+        android:orderInCategory="2"/>
 
     <item
         android:id="@+id/signout"
         android:title="@string/signout"
-        android:orderInCategory="1"/>
+        android:orderInCategory="3"/>
 
 </menu>

@@ -60,6 +60,8 @@
     <string name="group_image">image of group</string>
     <string name="groupname_warning">Please enter a Group Name</string>
     <string name="settledup">You are all settled up \n Tap to show settled expenses</string>
+    <string name="action_settleup">Settle up</string>
+    <string name="action_export">Export</string>
     <string name="no_expense">No Expense in this Group</string>
     <string name="export_title">Export Expenses</string>
 
@@ -90,7 +92,9 @@
 
     <!--TextUtils-->
     <string name="send_message">send Messages</string>
-
+<string name="invite_friend">Share with your friends</string>
+    <string name="inviteafriend">Invite Friend</string>
+    <string name="invite_text">Check out a new app: https://play.google.com/store/apps/details?id=</string>
     <string name="new_line">\n</string>
 
 

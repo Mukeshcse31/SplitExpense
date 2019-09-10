@@ -119,8 +119,7 @@ public class Group implements Parcelable, Cloneable {
     }
 
     public void removeMember(String memberName){
-        if(members.containsKey(memberName))
-            members.remove(memberName);
+        members.remove(memberName);
     }
 
     @Override

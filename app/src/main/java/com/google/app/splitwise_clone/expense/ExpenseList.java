@@ -7,6 +7,7 @@ import android.os.Bundle;
 import android.text.TextUtils;
 import android.util.Log;
 import android.view.View;
+import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -52,7 +53,8 @@ public class ExpenseList extends AppCompatActivity implements ExpenseAdapter.OnC
     List<DataSnapshot> expenseSnapshotList, archivedExpenseSnapshotList;
     private ExpenseAdapter mExpenseAdapter;
     private RecyclerView expenses_rv;
-    private FloatingActionButton mFloatingActionButton, settleup;
+    private FloatingActionButton mFloatingActionButton;
+    private Button settleup_bn;
     private String group_name;
     private ImageView groupImage;
     private String userName = "";
@@ -78,9 +80,9 @@ public class ExpenseList extends AppCompatActivity implements ExpenseAdapter.OnC
 
         user_balance = findViewById(R.id.user_balance);
         user_summary = findViewById(R.id.user_summary);
-        expenses_rv = (RecyclerView) findViewById(R.id.expenses_rv);
+        expenses_rv = findViewById(R.id.expenses_rv);
         mFloatingActionButton = findViewById(R.id.add_expense_fab);
-        settleup = findViewById(R.id.settleupFAB);
+        settleup_bn = findViewById(R.id.settleup_bn);
 
         LinearLayoutManager layoutManager = new LinearLayoutManager(this);
         expenses_rv.setLayoutManager(layoutManager);
@@ -105,7 +107,7 @@ public class ExpenseList extends AppCompatActivity implements ExpenseAdapter.OnC
             }
         });
 
-        settleup.setOnClickListener(new View.OnClickListener() {
+        settleup_bn.setOnClickListener(new View.OnClickListener() {
 
             @Override
             public void onClick(View view) {
@@ -132,7 +134,7 @@ public class ExpenseList extends AppCompatActivity implements ExpenseAdapter.OnC
 
     public void settleUpExpenses() {
 
-        //add all the expenses to archivedExpenses for later use
+//        add all the expenses to archivedExpenses for later use
         for (DataSnapshot d : expenseSnapshotList) {
             Expense expense = d.getValue(Expense.class);
             mDatabaseReference.child("groups/" + group_name + "/archivedExpenses/").push().setValue(expense);
@@ -142,18 +144,11 @@ public class ExpenseList extends AppCompatActivity implements ExpenseAdapter.OnC
         deleteTask.addOnSuccessListener(new OnSuccessListener() {
             @Override
             public void onSuccess(Object o) {
+                resetMembersBalances();
                 populateExpenseList();
             }
         });
 
-//        Iterator it = expenseSnapshotList.iterator();
-//        while (it.hasNext()) {
-//            Map.Entry pair = (Map.Entry) it.next();
-//            String expCode = (String) pair.getKey();
-//            Expense exp = (Expense) pair.getValue();
-//            mDatabaseReference.child("groups/" + group_name + "/archivedExpenses/" + expCode).setValue(exp);
-//
-//        }
     }
 
 
@@ -168,6 +163,31 @@ public class ExpenseList extends AppCompatActivity implements ExpenseAdapter.OnC
         startActivity(intent);
         Log.i(TAG, String.format("clicked the expense %d", index));
 
+    }
+
+    private void resetMembersBalances() {
+
+        //Get all the group members
+        Query query = mDatabaseReference.child("groups/" + group_name + "/members");
+        query.addListenerForSingleValueEvent(new ValueEventListener() {
+            @Override
+            public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+
+                if (dataSnapshot.exists()) {
+                    Map<String, SingleBalance> groupMembers = (Map<String, SingleBalance>) dataSnapshot.getValue();
+                    for (DataSnapshot i : dataSnapshot.getChildren()) {
+                        String groupMemberName = i.getKey();
+                        SingleBalance sb = new SingleBalance(groupMemberName);
+                        groupMembers.put(groupMemberName, sb);
+                    }
+                    mDatabaseReference.child("groups/" + group_name + "/members/").setValue(groupMembers);
+                }
+            }
+            @Override
+            public void onCancelled(@NonNull DatabaseError databaseError) {
+
+            }
+        });
     }
 
     private void populateExpenseList() {
@@ -351,9 +371,7 @@ public class ExpenseList extends AppCompatActivity implements ExpenseAdapter.OnC
     public void exportExpenses(View view) {
 
         String expensePayload = ExpenseAdapter.expensePayload;
-        Log.i(TAG, ExpenseAdapter.expensePayload);
-
-
+//        Log.i(TAG, ExpenseAdapter.expensePayload);
         Intent sharingIntent = new Intent(android.content.Intent.ACTION_SEND);
         sharingIntent.setType("text/plain");
         sharingIntent.putExtra(android.content.Intent.EXTRA_SUBJECT, group_name);

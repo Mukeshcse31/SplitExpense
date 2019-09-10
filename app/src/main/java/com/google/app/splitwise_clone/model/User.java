@@ -1,6 +1,6 @@
 package com.google.app.splitwise_clone.model;
 
-//Getter and Setter are very important for firebase writing
+//Getter and Setter are very important for fire base writing
 
 import java.util.HashMap;
 import java.util.Map;
@@ -68,8 +68,7 @@ private Balance balances;
     }
 
     public void removeAsFriend(String friendName){
-            if(friends.containsKey(friendName))
-                friends.remove(friendName);
+        friends.remove(friendName);
     }
 
     public Balance getBalances() {

@@ -14,6 +14,7 @@ import android.widget.ImageView;
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.cardview.widget.CardView;
+import androidx.core.app.ShareCompat;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
@@ -27,6 +28,7 @@ import com.google.app.splitwise_clone.model.Expense;
 import com.google.app.splitwise_clone.model.Group;
 import com.google.app.splitwise_clone.model.SingleBalance;
 import com.google.app.splitwise_clone.notification.SendNotificationLogic;
+import com.google.app.splitwise_clone.utils.ExpenseAdapter;
 import com.google.app.splitwise_clone.utils.FirebaseUtils;
 import com.google.app.splitwise_clone.utils.FriendsAdapter;
 import com.google.firebase.auth.FirebaseAuth;
@@ -85,7 +87,7 @@ public class FriendsList extends AppCompatActivity {
 //        imageCard = findViewById(R.id.roundCardView);
         getSupportActionBar().setTitle(userName);
         mDatabaseReference = FirebaseDatabase.getInstance().getReference();
-        friends_rv = (RecyclerView) findViewById(R.id.friends_rv);
+        friends_rv = findViewById(R.id.friends_rv);
 
         LinearLayoutManager layoutManager = new LinearLayoutManager(this);
         friends_rv.setLayoutManager(layoutManager);
@@ -124,6 +126,7 @@ public class FriendsList extends AppCompatActivity {
                     Balance balance = new Balance();
                     Map<String, Map<String, Float>> amountGroup = new HashMap<>();
 
+                    //loop through the groups
                     for (DataSnapshot i : dataSnapshot.getChildren()) {
                         Group group = i.getValue(Group.class);
                         String groupName = i.getKey();
@@ -182,12 +185,15 @@ public class FriendsList extends AppCompatActivity {
             case R.id.saveFriend:
                 intent = new Intent(FriendsList.this, AddFriend.class);
                 startActivity(intent);
-
                 break;
 
             case R.id.gotoGroups:
                 intent = new Intent(FriendsList.this, GroupsList.class);
                 startActivity(intent);
+                break;
+
+            case R.id.invite_friend:
+                inviteAFriend();
                 break;
 
             //Sign Out
@@ -299,4 +305,17 @@ public class FriendsList extends AppCompatActivity {
         updateUsersAmount();
     }
 
+    public void inviteAFriend(){
+
+//        Log.i(TAG, "package name" + getPackageName());
+        String invite_text = getString(R.string.invite_text) + getPackageName();
+        Intent sharingIntent = new Intent(android.content.Intent.ACTION_SEND);
+        sharingIntent.setType("text/plain");
+        sharingIntent.putExtra(android.content.Intent.EXTRA_SUBJECT, getString(R.string.invite_friend));
+        sharingIntent.putExtra(android.content.Intent.EXTRA_TEXT, invite_text);
+
+        //verify that this intent can be launched before starting
+        if (sharingIntent.resolveActivity(getPackageManager()) != null)
+            startActivity(Intent.createChooser(sharingIntent, getString(R.string.invite_friend)));
+    }
 }

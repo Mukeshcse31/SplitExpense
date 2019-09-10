@@ -22,7 +22,6 @@ import com.google.android.gms.tasks.Task;
 import com.google.android.material.snackbar.Snackbar;
 import com.google.android.material.textfield.TextInputLayout;
 import com.google.app.splitwise_clone.model.User;
-import com.google.app.splitwise_clone.notification.MyFirebaseMessagingService;
 import com.google.app.splitwise_clone.utils.FirebaseUtils;
 import com.google.firebase.auth.AuthResult;
 import com.google.firebase.auth.FirebaseAuth;
@@ -72,11 +71,11 @@ public class MainActivity extends AppCompatActivity {
 
         if (TextUtils.isEmpty(email)) {
             setContentView(R.layout.activity_register);
-            mEmailView = (AutoCompleteTextView) findViewById(R.id.register_email);
-            mPasswordView = (EditText) findViewById(R.id.register_password);
-            mConfirmPasswordView = (EditText) findViewById(R.id.register_confirm_password);
-            mUsernameView = (AutoCompleteTextView) findViewById(R.id.register_username);
-            mloginbutton = findViewById(R.id.loginbutton);
+            mEmailView = findViewById(R.id.register_email);
+            mPasswordView = findViewById(R.id.register_password);
+            mConfirmPasswordView = findViewById(R.id.register_confirm_password);
+            mUsernameView = findViewById(R.id.register_username);
+            mloginbutton = findViewById(R.id.login_bn);
             msignUp = findViewById(R.id.register_sign_up_button);
             mgetLogin = findViewById(R.id.getLogin);
             mgetSignUp = findViewById(R.id.getSignUp);

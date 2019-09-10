@@ -82,7 +82,7 @@ public class AddGroup extends AppCompatActivity implements GroupMembersAdapter.O
         mDatabaseReference = FirebaseDatabase.getInstance().getReference();
         mPhotosStorageReference = mFirebaseStorage.getReference().child("images/groups");
         mGroupName = findViewById(R.id.group_name);
-        members_rv = (RecyclerView) findViewById(R.id.members_rv);
+        members_rv = findViewById(R.id.members_rv);
         nonmembers_rv = findViewById(R.id.nonmembers_rv);
         mPhotoPickerButton = findViewById(R.id.photoPickerButton);
         userName = FirebaseUtils.getUserName();
@@ -189,6 +189,7 @@ public class AddGroup extends AppCompatActivity implements GroupMembersAdapter.O
                     friendsCount = dataSnapshot.getChildrenCount() + 1;//include the user
                     for (DataSnapshot i : dataSnapshot.getChildren()) {
                         final String friend = i.getKey();
+                        if( friend != null)
                         userFriends.put(friend, "");
                     }
 
@@ -287,20 +288,24 @@ public class AddGroup extends AppCompatActivity implements GroupMembersAdapter.O
     @Override
     public void removeFriendFromGroup(final String name) {
 
-        nongroup_members.put(name, group_members.get(name));
-        group_members.remove(name);
-        updateAdapters();
-
+        String friend = group_members.get(name);
+        if(friend != null) {
+            nongroup_members.put(name, friend);
+            group_members.remove(name);
+            updateAdapters();
+        }
     }
 
     @Override
     public void addFriendToGroup(final String name) {
 
-        group_members.put(name, nongroup_members.get(name));
-        nongroup_members.remove(name);
-        updateAdapters();
+        String friend = nongroup_members.get(name);
+        if (friend != null) {
+            group_members.put(name, friend);
+            nongroup_members.remove(name);
+            updateAdapters();
+        }
     }
-
 
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {

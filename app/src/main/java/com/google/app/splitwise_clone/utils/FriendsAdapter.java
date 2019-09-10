@@ -109,8 +109,8 @@ private Context mContext;
             super(itemView);
 
             friendImage = itemView.findViewById(R.id.friendImage);
-            tv_friend_name = (TextView) itemView.findViewById(R.id.tv_friend_name);
-            tv_status = (TextView) itemView.findViewById(R.id.tv_status);
+            tv_friend_name = itemView.findViewById(R.id.tv_friend_name);
+            tv_status = itemView.findViewById(R.id.tv_status);
         }
 
         /**

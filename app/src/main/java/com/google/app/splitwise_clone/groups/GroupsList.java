@@ -67,7 +67,7 @@ public class GroupsList extends AppCompatActivity implements GroupsAdapter.OnCli
         groupImage = findViewById(R.id.groupImage);
         getSupportActionBar().setTitle(getString(R.string.group_list));
         mDatabaseReference = FirebaseDatabase.getInstance().getReference();
-        groups_rv = (RecyclerView) findViewById(R.id.groups_rv);
+        groups_rv = findViewById(R.id.groups_rv);
         LinearLayoutManager layoutManager = new LinearLayoutManager(this);
         groups_rv.setLayoutManager(layoutManager);
         groupImage.setOnClickListener(new View.OnClickListener() {
@@ -82,7 +82,6 @@ public class GroupsList extends AppCompatActivity implements GroupsAdapter.OnCli
         });
 
     }
-
 
     private void populateGroupList() {
         String userName = FirebaseUtils.getUserName();
@@ -164,58 +163,8 @@ public class GroupsList extends AppCompatActivity implements GroupsAdapter.OnCli
 
             }
         });
-
-
     }
 
-//    //WIP - update image only by the owner of the group
-//    @Override
-//    public void onActivityResult(int requestCode, int resultCode, Intent data) {
-//        super.onActivityResult(requestCode, resultCode, data);
-//
-//        //update users' profile picture
-//        if (requestCode == RC_PHOTO_PICKER && resultCode == RESULT_OK) {
-//            Uri selectedImageUri = data.getData();
-//
-//            // Get a reference to store file at chat_photos/<FILENAME>
-//            mPhotosStorageReference = mFirebaseStorage.getReference().child("images/groups");
-//            final StorageReference photoRef = mPhotosStorageReference.child(userName);
-//
-//            // Upload file to Firebase Storage
-//            photoRef.putFile(selectedImageUri)
-//                    .addOnSuccessListener(this, new OnSuccessListener<UploadTask.TaskSnapshot>() {
-//                        public void onSuccess(UploadTask.TaskSnapshot taskSnapshot) {
-//
-//                            //update the path of image in the DB users'
-//                            mDatabaseReference = FirebaseDatabase.getInstance().getReference();
-//                            mDatabaseReference.child("users/" + userName + "/imageUrl").setValue(photoRef.getPath());
-//
-//                            final StorageReference group1 = mPhotosStorageReference.child("images/users/" + userName);
-//                            final long ONE_MEGABYTE = 1024 * 1024;
-//                            group1.getBytes(ONE_MEGABYTE).addOnSuccessListener(new OnSuccessListener<byte[]>() {
-//                                @Override
-//                                public void onSuccess(byte[] bytes) {
-////                                           https://stackoverflow.com/questions/46619510/how-can-i-download-image-on-firebase-storage
-//                                    //            https://github.com/bumptech/glide/issues/458
-//                                    Glide.with(GroupsList.this)
-//                                            .load(bytes)
-//                                            .asBitmap()
-//                                            .into(groupImage);
-//
-////                                    Log.i(TAG, "photo download " + mPhotosStorageReference.getPath());
-//                                }
-//                            }).addOnFailureListener(new OnFailureListener() {
-//                                @Override
-//                                public void onFailure(@NonNull Exception exception) {
-//
-//                                    Log.i(TAG, exception.getMessage());
-//                                    // Handle any errors
-//                                }
-//                            });
-//                        }
-//                    });
-//        }
-//    }
 
     @Override
     public void onResume() {

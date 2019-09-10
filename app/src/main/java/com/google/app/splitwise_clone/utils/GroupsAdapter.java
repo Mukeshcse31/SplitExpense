@@ -102,8 +102,8 @@ public class GroupsAdapter extends RecyclerView.Adapter<GroupsAdapter.ReviewView
         public ReviewViewHolder(View itemView) {
             super(itemView);
             group_image = itemView.findViewById(R.id.group_image);
-            tv_group_name = (TextView) itemView.findViewById(R.id.tv_group_name);
-            tv_member_status = (TextView) itemView.findViewById(R.id.tv_member_status);
+            tv_group_name = itemView.findViewById(R.id.tv_group_name);
+            tv_member_status = itemView.findViewById(R.id.tv_member_status);
         }
 
         /**

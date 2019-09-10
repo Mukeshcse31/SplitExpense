@@ -96,7 +96,7 @@ private OnClickListener mOnClickListener;
         public ReviewViewHolder(View itemView) {
             super(itemView);
 
-            tv_friend_name = (TextView) itemView.findViewById(R.id.tv_friend_name);
+            tv_friend_name = itemView.findViewById(R.id.tv_friend_name);
             member_iv = itemView.findViewById(R.id.member_iv);
 
             member_iv.setImageDrawable(member_iv.getContext().getDrawable(R.drawable.minus));

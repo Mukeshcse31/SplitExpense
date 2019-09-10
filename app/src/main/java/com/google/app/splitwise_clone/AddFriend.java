@@ -34,7 +34,7 @@ public class AddFriend extends AppCompatActivity {
         setContentView(R.layout.fragment_add_friend);
 
         mFriendName = findViewById(R.id.friend_name);
-        mFriendEmail = (AutoCompleteTextView) findViewById(R.id.friend_email);
+        mFriendEmail = findViewById(R.id.friend_email);
         mDatabaseReference = FirebaseDatabase.getInstance().getReference();
     }
 
