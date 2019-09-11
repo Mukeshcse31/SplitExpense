@@ -58,7 +58,7 @@ public class ExpenseList extends AppCompatActivity implements ExpenseAdapter.OnC
     private String group_name;
     private ImageView groupImage;
     private String userName = "";
-    private TextView user_balance, user_summary, noExpenses_tv, settleup_tv;
+    private TextView groupName_tv, user_balance, user_summary, noExpenses_tv, settleup_tv;
     public static String GROUP_NAME = "group_name";
     public static String EDIT_EXPENSE = "edit_expense";
     public static String EDIT_EXPENSEID = "edit_expenseID";
@@ -75,6 +75,7 @@ public class ExpenseList extends AppCompatActivity implements ExpenseAdapter.OnC
         setContentView(R.layout.activity_expense_list);
         mDatabaseReference = FirebaseDatabase.getInstance().getReference();
 
+        groupName_tv = findViewById(R.id.groupName_tv);
         settleup_tv = findViewById(R.id.settleup_tv);
         noExpenses_tv = findViewById(R.id.noExpenses_tv);
 
@@ -93,7 +94,9 @@ public class ExpenseList extends AppCompatActivity implements ExpenseAdapter.OnC
         Intent intent = getIntent();
         if (intent.hasExtra("group_name")) {
             group_name = intent.getStringExtra("group_name");
-            getSupportActionBar().setTitle(group_name);
+            getSupportActionBar().hide();
+            groupName_tv.setText(group_name);
+
 //            Toast.makeText(this, "Expense list - " + group_name, Toast.LENGTH_LONG).show();
 //            populateExpenseList(); called in onResume method
         }
@@ -299,7 +302,7 @@ public class ExpenseList extends AppCompatActivity implements ExpenseAdapter.OnC
                         String status = "spent";
                         float amount = Float.parseFloat(String.valueOf(pair.getValue()));
                         if (amount > 0) status = "owes you";
-                        summary += String.format("%s %s %f \n", friendName, status, Math.abs(amount));
+                        summary += String.format("%s %s $%.2f \n", friendName, status, Math.abs(amount));
                     }
                     user_summary.setText(summary);
                 }
@@ -317,7 +320,7 @@ public class ExpenseList extends AppCompatActivity implements ExpenseAdapter.OnC
             public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
                 if (dataSnapshot.exists()) {
                     float balanceAmount = Float.parseFloat(String.valueOf(dataSnapshot.getValue()));
-                    user_balance.setText(String.format("Amount %s spent %f ", balanceAmount > 0 ? "you" : "others", balanceAmount));
+                    user_balance.setText(String.format("Amount %s spent $%.2f ", balanceAmount > 0 ? "you" : "others", balanceAmount));
                 }
             }
 

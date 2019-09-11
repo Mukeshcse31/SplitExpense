@@ -63,8 +63,9 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_gravity="end"
-            android:layout_weight="5"
+            android:layout_weight="2"
             android:text="@string/status"
+            android:textColor="@color/green"
             android:textAppearance="@style/TextAppearance.AppCompat.Medium"
             android:textSize="@dimen/text_size_header"
             android:textStyle="italic" />

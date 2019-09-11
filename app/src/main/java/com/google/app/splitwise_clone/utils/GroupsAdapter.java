@@ -16,6 +16,7 @@
 package com.google.app.splitwise_clone.utils;
 
 import android.content.Context;
+import android.text.TextUtils;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -36,6 +37,7 @@ import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.storage.FirebaseStorage;
 import com.google.firebase.storage.StorageReference;
 
+import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 
@@ -47,12 +49,15 @@ public class GroupsAdapter extends RecyclerView.Adapter<GroupsAdapter.ReviewView
     private static int viewHolderCount;
     List<DataSnapshot>  mDataSnapshotList;
     private OnClickListener mOnClickListener;
+    private String userName;
+    private Context mContext;
 
     public GroupsAdapter(List<DataSnapshot> dataSnapshotList, OnClickListener listener) {
         mDataSnapshotList = dataSnapshotList;
         mOnClickListener = listener;
         mFirebaseStorage = FirebaseStorage.getInstance();
         mPhotosStorageReference= mFirebaseStorage.getReference();
+        userName = FirebaseUtils.getUserName();
         viewHolderCount = 0;
     }
 
@@ -64,9 +69,9 @@ public class GroupsAdapter extends RecyclerView.Adapter<GroupsAdapter.ReviewView
     @Override
     public ReviewViewHolder onCreateViewHolder(ViewGroup viewGroup, int viewType) {
 
-        Context context = viewGroup.getContext();
+        mContext = viewGroup.getContext();
         int layoutIdForListItem = R.layout.group_list_item;
-        LayoutInflater inflater = LayoutInflater.from(context);
+        LayoutInflater inflater = LayoutInflater.from(mContext);
         boolean shouldAttachToParentImmediately = false;
 
         View view = inflater.inflate(layoutIdForListItem, viewGroup, shouldAttachToParentImmediately);
@@ -96,7 +101,7 @@ public class GroupsAdapter extends RecyclerView.Adapter<GroupsAdapter.ReviewView
         // Will display the position in the list, ie 0 through getItemCount() - 1
         TextView tv_group_name;
         // Will display which ViewHolder is displaying this data
-        TextView tv_member_status;
+        TextView tv_member_status, tv_status;
         ImageView group_image;
 
         public ReviewViewHolder(View itemView) {
@@ -104,6 +109,8 @@ public class GroupsAdapter extends RecyclerView.Adapter<GroupsAdapter.ReviewView
             group_image = itemView.findViewById(R.id.group_image);
             tv_group_name = itemView.findViewById(R.id.tv_group_name);
             tv_member_status = itemView.findViewById(R.id.tv_member_status);
+            tv_status = itemView.findViewById(R.id.tv_status);
+
         }
 
         /**
@@ -116,21 +123,40 @@ public class GroupsAdapter extends RecyclerView.Adapter<GroupsAdapter.ReviewView
             DataSnapshot d = mDataSnapshotList.get(listIndex);
 
             Group group = d.getValue(Group.class);
-            Map<String, SingleBalance> members = group.getMembers();
+            SingleBalance sb = group.getMembers().get(userName);
+
+            //update group name
             final String group_name = d.getKey();
+            tv_group_name.setText(group_name);
+
             loadImage(group_name);
+
+            //member balance
+            float balanceAmount = 0.0f;
             String member_status = "";
 
-            for (Map.Entry<String, SingleBalance> entrySet : members.entrySet()){
-                String name = entrySet.getKey();
-                SingleBalance sb = entrySet.getValue();
-                member_status += String.format("%s %s %s\n", name, sb.getStatus(),sb.getAmount());
-            }
+            Map<String, Float> splitDues = sb.getSplitDues();
+            Iterator it = splitDues.entrySet().iterator();
+            while(it.hasNext()){
+                Map.Entry pair = (Map.Entry) it.next();
+                String friendName = (String) pair.getKey();
+                float amount = Float.parseFloat(String.valueOf(pair.getValue()));
+                balanceAmount += amount;
+                if(!TextUtils.equals(userName, friendName))
+                    member_status += String.format("%s %s you $%.2f\n", friendName, amount > 0 ? "owes" : "lent", amount);
 
-            tv_group_name.setText(group_name);
+            }
             tv_member_status.setText(member_status);
 
+            //aggregate status
+            String aggr_status = "lent";
+            if(balanceAmount < 0){
+                tv_status.setTextColor(mContext.getColor(R.color.orange));
+                aggr_status = "borrowed";
+            }
+            tv_status.setText(String.format("%s %s\n $%.2f", "you", aggr_status, balanceAmount));
 
+            //set listeners
             group_image.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {

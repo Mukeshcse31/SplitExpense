@@ -16,7 +16,7 @@
             android:id="@+id/settleup_image"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:alpha=".1"
+
             android:background="@drawable/settledup"
             android:scaleType="center"
             android:visibility="gone">
@@ -42,10 +42,11 @@
         </TextView>
     </LinearLayout>
 
+
     <androidx.swiperefreshlayout.widget.SwipeRefreshLayout
         android:id="@+id/swipe_refresh_layout"
         android:layout_width="match_parent"
-        android:layout_height="match_parent">
+        android:layout_height="wrap_content">
 
         <androidx.recyclerview.widget.RecyclerView
             android:id="@+id/expenses_rv"
@@ -57,82 +58,66 @@
     <com.google.android.material.appbar.AppBarLayout
         android:id="@+id/app_bar_layout_main"
         style="@style/AppBarLayoutStyle"
-        android:layout_height="@dimen/app_bar_layout_main_height">
+        android:layout_height="wrap_content">
 
         <com.google.android.material.appbar.CollapsingToolbarLayout
             android:id="@+id/toolbar_container"
             style="@style/CollapsingToolbarLayoutStyle"
-            android:background="@drawable/people_unselected"
+            android:layout_width="match_parent"
+            android:layout_height="@dimen/app_bar_layout_main_height"
             app:collapsedTitleTextAppearance="@style/TextAppearance.AppCompat.Widget.ActionBar.Title.Inverse"
-            app:contentScrim="@color/white"
             app:expandedTitleTextAppearance="@style/TextAppearance.AppCompat.Widget.ActionBar.Title.Inverse"
             app:layout_scrollFlags="scroll|exitUntilCollapsed">
 
 
-            <LinearLayout
+            <ImageView
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
+                android:tint="#D9200000"
+                android:background="#500000"
+                android:scaleType="fitXY"
+                android:src="@drawable/people_unselected">
+
+            </ImageView>
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:textAlignment="center"
+                android:layout_marginTop="24dp"
                 android:orientation="vertical">
 
-                <LinearLayout
+                <TextView
+                    android:id="@+id/groupName_tv"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_gravity="center"
+                    android:textColor="@color/white"
+                    android:textAlignment="center"
+                    android:textSize="@dimen/groupname_exp"
+                    android:textStyle="bold" />
+
+                <TextView
+                    android:id="@+id/user_balance"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:orientation="horizontal">
+                    android:text="@string/you_are_owed"
+                    android:textColor="@color/white"
+                    android:textAlignment="center"
+                    android:textSize="@dimen/userbalance_exp" />
 
-                    <LinearLayout
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:layout_weight="1"
-                        android:orientation="vertical">
-
-                        <TextView
-                            android:id="@+id/user_balance"
-                            android:layout_width="wrap_content"
-                            android:layout_height="wrap_content"
-                            android:text="@string/you_are_owed"
-                            android:textSize="20sp" />
-
-                        <TextView
-                            android:id="@+id/user_summary"
-                            android:layout_width="wrap_content"
-                            android:layout_height="wrap_content"
-                            android:text="@string/default_amount"
-                            android:textSize="16sp" />
-                    </LinearLayout>
-                </LinearLayout>
-
-                <HorizontalScrollView
-                    android:id="@+id/horizon"
+                <TextView
+                    android:id="@+id/user_summary"
                     android:layout_width="match_parent"
-                    android:layout_height="wrap_content">
-
-                    <LinearLayout
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:orientation="horizontal">
-
-                        <Button
-                            android:id="@+id/settleup_bn"
-                            android:layout_width="wrap_content"
-                            android:layout_height="wrap_content"
-                            android:text="@string/action_settleup"></Button>
-
-                        <Button
-                            android:id="@+id/export"
-                            android:layout_width="wrap_content"
-                            android:layout_height="wrap_content"
-                            android:onClick="exportExpenses"
-                            android:text="@string/action_export"></Button>
-
-
-                    </LinearLayout>
-                </HorizontalScrollView>
-
+                    android:layout_height="wrap_content"
+                    android:text="@string/default_amount"
+                    android:textColor="@color/white"
+                    android:textAlignment="center"
+                    android:textSize="16sp" />
             </LinearLayout>
 
         </com.google.android.material.appbar.CollapsingToolbarLayout>
     </com.google.android.material.appbar.AppBarLayout>
-
 
     <com.google.android.material.bottomappbar.BottomAppBar
         android:id="@+id/bottom_bar"
@@ -141,6 +126,28 @@
         android:layout_height="wrap_content"
         android:layout_gravity="bottom"
         app:backgroundTint="@color/skyBlue" />
+
+
+    <Button
+        android:id="@+id/settleup_bn"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_gravity="start"
+        android:layout_marginStart="8dp"
+        android:text="@string/action_settleup"
+        app:layout_anchor="@id/bottom_bar"
+        app:layout_anchorGravity="start|bottom"></Button>
+
+    <Button
+        android:id="@+id/export"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_gravity="end"
+        android:layout_marginEnd="8dp"
+        android:onClick="exportExpenses"
+        android:text="@string/action_export"
+        app:layout_anchor="@id/bottom_bar"
+        app:layout_anchorGravity="end|bottom"></Button>
 
     <com.google.android.material.floatingactionbutton.FloatingActionButton
         android:id="@+id/add_expense_fab"

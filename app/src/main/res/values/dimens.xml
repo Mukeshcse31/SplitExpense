@@ -16,7 +16,7 @@
 
     <dimen name="list_top_margin">112dp</dimen>
     <dimen name="list_bottom_margin">24dp</dimen>
-    <dimen name="app_bar_layout_main_height">125dp</dimen>
+    <dimen name="app_bar_layout_main_height">150dp</dimen>
     <dimen name="app_bar_layout_elevation">4dp</dimen>
 
     <dimen name="detail_toolbar_elevation">2dp</dimen>
@@ -39,5 +39,21 @@
     <dimen name="layout_marginStart_addExpense">8dp</dimen>
     <dimen name="layout_marginEnd_addExpense">8dp</dimen>
     <dimen name="layout_margin">8dp</dimen>
+
+<!--    Expense List-->
+    <dimen name="groupname_exp">20sp</dimen>
+    <dimen name="userbalance_exp">20sp</dimen>
+    <dimen name="paidby_expense">12sp</dimen>
+    <dimen name="description_exp">16sp</dimen>
+    <dimen name="desc_start_margin">4dp</dimen>
+    <dimen name="debt_credit_exp">12sp</dimen>
+    <dimen name="lent_borrow_exp">16sp</dimen>
+    <dimen name="padding_exp_item">8dp</dimen>
+    <dimen name="date_start_margin">4dp</dimen>
+    <dimen name="date_end_margin">4dp</dimen>
+    <dimen name="image_start_margin">8dp</dimen>
+    <dimen name="image_end_margin">4dp</dimen>
+<dimen name="arrow_width">20dp</dimen>
+    <dimen name="arrow_height">26dp</dimen>
 </resources>
 

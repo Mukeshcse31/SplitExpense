@@ -77,6 +77,9 @@
     <string name="warning_message">Are you sure,You want to delete this expense ?</string>
     <string name="yes">Yes</string>
     <string name="no">No</string>
+    <string name="date">Date:</string>
+    <string name="split_expense_with">Split Expense with:</string>
+    <string name="payer">Payer:</string>
     <string name="description">Description</string>
     <string name="amount">Amount</string>
     <string name="status">Status</string>

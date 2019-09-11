@@ -16,7 +16,7 @@
 <FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
-    android:padding="@dimen/line">
+    android:padding="@dimen/padding_exp_item">
 
     <LinearLayout
         android:layout_width="match_parent"
@@ -30,12 +30,15 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_gravity="start"
+            android:layout_marginEnd="@dimen/date_end_margin"
             android:textSize="@dimen/text_size_header"
             android:textStyle="bold" />
 
         <ImageView
             android:layout_width="20dp"
-            android:layout_height="16dp"
+            android:layout_height="match_parent"
+            android:layout_marginStart="@dimen/image_start_margin"
+            android:layout_marginEnd="@dimen/image_end_margin"
             android:layout_marginTop="@dimen/margin_4"
             android:layout_weight="3"
             android:contentDescription="@string/group_image"
@@ -51,19 +54,19 @@
                 android:id="@+id/tv_expenseDescription"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
+                android:layout_marginStart="@dimen/desc_start_margin"
                 android:layout_gravity="start"
-                android:textAppearance="@style/TextAppearance.AppCompat.Medium"
-                android:textSize="@dimen/text_size_header"
-                android:textStyle="bold" />
+                android:textAppearance="@style/TextAppearance.AppCompat.Title"
+                android:textSize="@dimen/description_exp"/>
 
             <TextView
                 android:id="@+id/tv_paidBy"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
+                android:layout_marginStart="@dimen/desc_start_margin"
                 android:layout_gravity="start"
-                android:textAppearance="@style/TextAppearance.AppCompat.Small"
-                android:textSize="@dimen/text_size_header"
-                android:textStyle="bold" />
+                android:textAppearance="@style/TextAppearance.AppCompat.Medium"
+                android:textSize="@dimen/paidby_expense" />
 
         </LinearLayout>
 
@@ -78,10 +81,11 @@
             android:textColor="@color/green"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_gravity="start"
-            android:textSize="@dimen/text_size_header"
+            android:layout_gravity="end"
+
+            android:textSize="@dimen/debt_credit_exp"
             android:text="@string/opted_out"
-            android:textAppearance="@style/TextAppearance.AppCompat.Small" />
+            android:textAppearance="@style/TextAppearance.AppCompat.Medium" />
         <TextView
             android:id="@+id/tv_amount"
             android:textColor="@color/green"
@@ -90,16 +94,17 @@
             android:layout_gravity="end"
             android:layout_weight="5"
             android:text="@string/default_amount"
-            android:textAppearance="@style/TextAppearance.AppCompat.Medium"
-            android:textSize="@dimen/text_size_header"
-            android:textStyle="italic" />
+            android:textAppearance="@style/TextAppearance.AppCompat.Title"
+            android:textSize="@dimen/lent_borrow_exp"
+             />
     </LinearLayout>
 
         <ImageView
-            android:layout_width="20dp"
-            android:layout_height="26dp"
+            android:layout_width="@dimen/arrow_width"
+            android:layout_height="@dimen/arrow_height"
             android:layout_marginTop="@dimen/margin_4"
             android:layout_weight="1"
+            android:layout_gravity="center_vertical|center_horizontal|end"
             android:contentDescription="@string/goto_groupDetails"
             android:src="@drawable/greater" />
 

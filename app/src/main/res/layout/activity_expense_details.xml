@@ -3,7 +3,21 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
-    android:layout_height="match_parent">
+    android:layout_height="match_parent"
+    android:layout_marginStart="@dimen/layout_marginStart_addExpense"
+    android:layout_marginEnd="@dimen/layout_marginEnd_addExpense"
+    >
+
+    <TextView
+        android:layout_height="wrap_content"
+        android:layout_width="wrap_content"
+        android:id="@+id/date_tv"
+        android:text="@string/date"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintBottom_toTopOf="@id/group_members"
+        app:layout_constraintTop_toTopOf="parent"
+
+        />
 
     <Button
         android:id="@+id/date_btn"
@@ -12,21 +26,38 @@
         android:layout_margin="@dimen/layout_margin"
         android:onClick="onButtonClicked"
         android:text="Set Date"
+        app:layout_constraintStart_toEndOf="@id/date_tv"
+        app:layout_constraintBottom_toTopOf="@id/group_members" />
+
+    <TextView
+        android:layout_height="wrap_content"
+        android:layout_width="wrap_content"
+        android:id="@+id/members_tv"
+        android:text="@string/split_expense_with"
         app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/group_members"
         app:layout_constraintBottom_toTopOf="@id/group_members"
-        app:layout_constraintTop_toTopOf="parent" />
+        />
 
     <ListView
         android:id="@+id/group_members"
-        android:layout_width="313dp"
-        android:layout_height="269dp"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
         android:layout_margin="@dimen/layout_margin"
-        app:layout_constraintBottom_toTopOf="@id/member_spent"
         android:layout_marginStart="@dimen/layout_marginStart_addExpense"
         android:layout_marginBottom="8dp"
-        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/date_btn"
+        app:layout_constraintStart_toEndOf="@id/members_tv" />
+
+    <TextView
+        android:layout_height="wrap_content"
+        android:layout_width="wrap_content"
+        android:id="@+id/payer_tv"
+        android:text="@string/payer"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@id/date_btn" />
+        app:layout_constraintTop_toBottomOf="@id/group_members"
+
+        />
 
     <Spinner
         android:id="@+id/member_spent"
@@ -34,7 +65,7 @@
         android:layout_height="0dp"
         android:layout_margin="@dimen/layout_margin"
         android:layout_marginTop="8dp"
-        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintStart_toEndOf="@+id/payer_tv"
         app:layout_constraintTop_toBottomOf="@id/group_members">
     </Spinner>
 
