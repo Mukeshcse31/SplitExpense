@@ -16,11 +16,13 @@ import android.widget.Button;
 import android.widget.ListView;
 import android.widget.Spinner;
 import android.widget.Toast;
+
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.fragment.app.DialogFragment;
+
 import com.google.app.splitwise_clone.R;
 import com.google.app.splitwise_clone.model.Expense;
 import com.google.app.splitwise_clone.model.Group;
@@ -35,6 +37,7 @@ import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.Query;
 import com.google.firebase.database.ValueEventListener;
+
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.HashMap;
@@ -112,7 +115,7 @@ public class AddExpense extends AppCompatActivity implements ListView.OnItemClic
 
                     //set group members
                     groupMembers = members.toArray(new String[0]);
-                    listView.setAdapter(new ArrayAdapter<>(AddExpense.this, android.R.layout.simple_list_item_multiple_choice, groupMembers));
+                    listView.setAdapter(new ArrayAdapter<>(AddExpense.this, R.layout.expense_participants_item, groupMembers));
                     for (int i = 0; i < members.size(); i++)
                         listView.setItemChecked(i, true);
                     listView.setOnItemClickListener(AddExpense.this);
@@ -120,10 +123,10 @@ public class AddExpense extends AppCompatActivity implements ListView.OnItemClic
 
                     //expense payer
                     ArrayAdapter<String> dataAdapter = new ArrayAdapter<String>(AddExpense.this,
-                            android.R.layout.simple_spinner_item, members);
+                            R.layout.spinner_item, members);
                     dataAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
                     spinner2.setAdapter(dataAdapter);
-                    spinner2.setSelection(0,true);
+                    spinner2.setSelection(0, true);
 
                 }
                 populateExpense();
@@ -221,10 +224,23 @@ public class AddExpense extends AppCompatActivity implements ListView.OnItemClic
         switch (item.getItemId()) {
 
             case R.id.saveExpense:
+
                 String spentDate = date_btn.getText().toString();
                 String description = mDescription.getText().toString();
+                String amountStr = mAmount.getText().toString();
                 float amount = 0.0f;
-                amount = Float.valueOf(mAmount.getText().toString());
+
+                //check if amount or description is empty
+                if (TextUtils.isEmpty(description)) {
+                    mDescription.setError(getString(R.string.desc_error));
+                    break;
+                }
+
+                if (TextUtils.isEmpty(amountStr)) {
+                    mAmount.setError(getString(R.string.amount_error));
+                    break;
+                }
+                amount = Float.valueOf(amountStr);
 
                 String spender = (String) spinner2.getSelectedItem();
                 Log.i(TAG, "Expense Added");
@@ -303,7 +319,7 @@ public class AddExpense extends AppCompatActivity implements ListView.OnItemClic
                                 for (int i = 0; i < participants.size(); i++) {
                                     if (!TextUtils.equals(userName, participants.get(i))) {
                                         notification.setData(participants.get(i), getString(R.string.expense_deleted),
-                                                String.format("%s deleted the expense for %s %f",userName, mExpense.getDescription(),mExpense.getTotal()));
+                                                String.format("%s deleted the expense for %s %f", userName, mExpense.getDescription(), mExpense.getTotal()));
                                         notification.send();
                                     }
                                 }

@@ -10,6 +10,7 @@ import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.ImageView;
+import android.widget.TextView;
 
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
@@ -58,7 +59,7 @@ public class FriendsList extends AppCompatActivity {
     private String userName = "anonymous";
     private ImageView profilePicture;
     private static final int RC_PHOTO_PICKER = 2;
-
+private TextView balance_summary_tv;
     List<String> groupMember = new ArrayList<>();
     private Map<String, SingleBalance> members;
     private Map<String, Float> splitDues = new HashMap<>();
@@ -73,7 +74,7 @@ public class FriendsList extends AppCompatActivity {
     private String TAG = "Friendslist_Page";
     private RecyclerView friends_rv;
     private FriendsAdapter mFriendsAdapter;
-    Float amountSpentByUser = 0.2f;
+    float amountSpentByUser = 0.2f, balanceAmount = 0.2f;
 
 
     @Override
@@ -84,6 +85,8 @@ public class FriendsList extends AppCompatActivity {
 
         userName = FirebaseUtils.getUserName();
         profilePicture = findViewById(R.id.profilePicture);
+        balance_summary_tv = findViewById(R.id.balance_summary_tv);
+
 //        imageCard = findViewById(R.id.roundCardView);
         getSupportActionBar().setTitle(userName);
         mDatabaseReference = FirebaseDatabase.getInstance().getReference();
@@ -123,6 +126,7 @@ public class FriendsList extends AppCompatActivity {
             public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
 
                 if (dataSnapshot.exists()) {
+                    balanceAmount = 0f;
                     Balance balance = new Balance();
                     Map<String, Map<String, Float>> amountGroup = new HashMap<>();
 
@@ -140,7 +144,11 @@ public class FriendsList extends AppCompatActivity {
                             Map.Entry pair = (Map.Entry) it.next();
                             String expenseParticipant = (String) pair.getKey();
                             Float amount = (Float) pair.getValue();
+
                             //update user Balance
+                            balanceAmount += amount;
+
+                            //group-wise balance
                             Map<String, Float> eachGroup = new HashMap<>();
                             eachGroup.put(groupName, amount);
                             if (amountGroup.containsKey(expenseParticipant)) {
@@ -154,6 +162,8 @@ public class FriendsList extends AppCompatActivity {
                     balance.setAmount(amountSpentByUser);
                     amountGroup.remove(userName);
                     balance.setGroups(amountGroup);
+
+                    balance_summary_tv.setText(String.format("%s $%.2f\n%s %.2f","total amount spent by you", amountSpentByUser, "others owe", balanceAmount));
 
                     mFriendsAdapter = new FriendsAdapter(amountGroup,friendsImageMap, FriendsList.this);
                     friends_rv.setAdapter(mFriendsAdapter);

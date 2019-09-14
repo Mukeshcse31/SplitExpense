@@ -1,8 +1,12 @@
 package com.google.app.splitwise_clone.groups;
 
+import android.Manifest;
+import android.app.Activity;
 import android.content.DialogInterface;
 import android.content.Intent;
+import android.content.pm.PackageManager;
 import android.net.Uri;
+import android.os.Build;
 import android.os.Bundle;
 import android.text.TextUtils;
 import android.util.Log;
@@ -16,6 +20,8 @@ import android.widget.Toast;
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.core.app.ActivityCompat;
+import androidx.core.content.ContextCompat;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
@@ -23,6 +29,7 @@ import com.bumptech.glide.Glide;
 import com.google.android.gms.tasks.OnFailureListener;
 import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.android.material.snackbar.Snackbar;
+import com.google.app.splitwise_clone.MainActivity;
 import com.google.app.splitwise_clone.R;
 import com.google.app.splitwise_clone.model.User;
 import com.google.app.splitwise_clone.model.Group;
@@ -30,6 +37,7 @@ import com.google.app.splitwise_clone.model.SingleBalance;
 import com.google.app.splitwise_clone.utils.FirebaseUtils;
 import com.google.app.splitwise_clone.utils.GroupMembersAdapter;
 import com.google.app.splitwise_clone.utils.NonGroupMembersAdapter;
+import com.google.app.splitwise_clone.utils.Permissions;
 import com.google.firebase.database.ChildEventListener;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
@@ -72,6 +80,8 @@ public class AddGroup extends AppCompatActivity implements GroupMembersAdapter.O
     private Map<String, Boolean> all_friends = new HashMap<>();
     private Map<String, String> group_members = new HashMap<>();
     private Map<String, String> nongroup_members = new HashMap<>();
+    private static final int PERMISSION_REQUEST_CODE = 200;
+    private static final int MY_PERMISSIONS_REQUEST_CAMERA = 201;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -91,22 +101,28 @@ public class AddGroup extends AppCompatActivity implements GroupMembersAdapter.O
         LinearLayoutManager layoutManager1 = new LinearLayoutManager(this);
         nonmembers_rv.setLayoutManager(layoutManager1);
 
-        mPhotoPickerButton.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
 
-                //Check if the group Name is empty
-                if (TextUtils.isEmpty(mGroupName.getText().toString())) {
-                    mGroupName.setError(getString(R.string.groupname_warning));
-                } else {
+        if (ContextCompat.checkSelfPermission(this,
+                Manifest.permission.CAMERA) != PackageManager.PERMISSION_GRANTED) {
 
-                    Intent intent = new Intent(Intent.ACTION_GET_CONTENT);
-                    intent.setType("image/jpeg");
-                    intent.putExtra(Intent.EXTRA_LOCAL_ONLY, true);
-                    startActivityForResult(Intent.createChooser(intent, "Complete action using"), RC_PHOTO_PICKER);
-                }
+            if (ActivityCompat.shouldShowRequestPermissionRationale((Activity)
+                    this, Manifest.permission.CAMERA)) {
+
+
+            } else {
+                ActivityCompat.requestPermissions( this,
+                        new String[]{Manifest.permission.CAMERA},
+                        MY_PERMISSIONS_REQUEST_CAMERA);
             }
-        });
+
+        }
+        else
+            setphotoClickListener();
+
+//        if (Permissions.checkPermission(this))
+//            setphotoClickListener();
+//        else
+//            requestCameraPermission();
 
         Bundle bundle = getIntent().getExtras();
         if (bundle != null && bundle.containsKey(GroupsList.GROUP_NAME)) {
@@ -117,6 +133,14 @@ public class AddGroup extends AppCompatActivity implements GroupMembersAdapter.O
             }
         }
         membersViews();
+    }
+
+
+    private void requestCameraPermission() {
+
+        ActivityCompat.requestPermissions(this,
+                new String[]{Manifest.permission.CAMERA},
+                PERMISSION_REQUEST_CODE);
     }
 
 
@@ -173,6 +197,66 @@ public class AddGroup extends AppCompatActivity implements GroupMembersAdapter.O
                         }
                     });
         }
+    }
+
+    private void setphotoClickListener(){
+        mPhotoPickerButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+
+                //Check if the group Name is empty
+                if (TextUtils.isEmpty(mGroupName.getText().toString())) {
+                    mGroupName.setError(getString(R.string.groupname_warning));
+                } else {
+
+                    Intent intent = new Intent(Intent.ACTION_GET_CONTENT);
+                    intent.setType("image/jpeg");
+                    intent.putExtra(Intent.EXTRA_LOCAL_ONLY, true);
+                    if (intent.resolveActivity(getPackageManager()) != null)
+                        startActivityForResult(Intent.createChooser(intent, "Complete action using"), RC_PHOTO_PICKER);
+                }
+            }
+        });
+    }
+
+    @Override
+    public void onRequestPermissionsResult(int requestCode, String permissions[], int[] grantResults) {
+        switch (requestCode) {
+            case MY_PERMISSIONS_REQUEST_CAMERA:
+                if (grantResults.length > 0 && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
+                    Toast.makeText(getApplicationContext(), "Permission Granted", Toast.LENGTH_SHORT).show();
+                    setphotoClickListener();
+                    // main logic
+                } else {
+//                    Toast.makeText(getApplicationContext(), "Permission Denied", Toast.LENGTH_SHORT).show();
+                    if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
+                        if (ContextCompat.checkSelfPermission(this, Manifest.permission.CAMERA)
+                                != PackageManager.PERMISSION_GRANTED) {
+                            showMessageOKCancel("You need to allow access permissions",
+                                    new DialogInterface.OnClickListener() {
+                                        @Override
+                                        public void onClick(DialogInterface dialog, int which) {
+                                            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
+//                                                setphotoClickListener();
+//                                                requestCameraPermission();
+                                            }
+                                        }
+                                    });
+                        }
+                    }
+                }
+                break;
+        }
+    }
+
+    private void showMessageOKCancel(String message, DialogInterface.OnClickListener okListener) {
+        new AlertDialog.Builder(AddGroup.this)
+                .setMessage(message)
+                .setIcon(R.drawable.camera)
+                .setPositiveButton("OK", okListener)
+                .setNegativeButton("Cancel", null)
+                .create()
+                .show();
     }
 
     private void membersViews() {

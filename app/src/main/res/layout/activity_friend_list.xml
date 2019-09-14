@@ -23,11 +23,11 @@
                 android:layout_height="match_parent"
                 android:orientation="vertical">
 
-            <TextView
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:text="@string/friends"
-                android:textSize="22sp" />
+<!--            <TextView-->
+<!--                android:layout_width="wrap_content"-->
+<!--                android:layout_height="wrap_content"-->
+<!--                android:text="@string/friends"-->
+<!--                android:textSize="22sp" />-->
 
             <LinearLayout
                 android:layout_width="match_parent"
@@ -63,27 +63,29 @@
 
                 </androidx.cardview.widget.CardView>
 
-
-
-                <LinearLayout
+                <TextView
+                    android:id="@+id/balance_summary_tv"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:layout_weight="3"
-                    android:orientation="vertical">
+                    android:text="@string/you_are_owed"
+                    android:textSize="22sp" />
 
-                    <TextView
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:text="@string/you_are_owed"
-                        android:textSize="22sp" />
+<!--                -->
+<!--                <LinearLayout-->
+<!--                    android:layout_width="wrap_content"-->
+<!--                    android:layout_height="wrap_content"-->
+<!--                    android:layout_weight="3"-->
+<!--                    android:orientation="vertical">-->
 
-                    <TextView
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:text="@string/default_amount"
-                        android:textSize="12sp" />
 
-                </LinearLayout>
+
+<!--                    <TextView-->
+<!--                        android:layout_width="wrap_content"-->
+<!--                        android:layout_height="wrap_content"-->
+<!--                        android:text="@string/default_amount"-->
+<!--                        android:textSize="12sp" />-->
+
+<!--                </LinearLayout>-->
 
             </LinearLayout>
 

@@ -175,6 +175,12 @@ public class GroupsAdapter extends RecyclerView.Adapter<GroupsAdapter.ReviewView
                     mOnClickListener.gotoSharedGroup(listIndex, group_name);
                 }
             });
+            tv_status.setOnClickListener(new View.OnClickListener(){
+                @Override
+                public void onClick(View v){
+                    mOnClickListener.gotoSharedGroup(listIndex, group_name);
+                }
+            });
         }
 
         private void loadImage(String groupName){

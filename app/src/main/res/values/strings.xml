@@ -74,6 +74,8 @@
     <string name="db_messages">messages</string>
     <string name="save">Save</string>
     <string name="delete">Delete</string>
+    <string name="desc_error">Description should not be empty</string>
+    <string name="amount_error">Amount should not be empty</string>
     <string name="warning_message">Are you sure,You want to delete this expense ?</string>
     <string name="yes">Yes</string>
     <string name="no">No</string>

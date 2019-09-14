@@ -40,7 +40,7 @@
         app:layout_constraintTop_toTopOf="parent"
         android:layout_width="80dp"
         android:layout_height="80dp"
-        android:src="@drawable/camera"
+        app:srcCompat="@drawable/camera"
         android:contentDescription="@string/add_group_image" />
 
     <com.google.android.material.textfield.TextInputLayout

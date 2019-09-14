@@ -45,7 +45,7 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_gravity="start"
-                android:textSize="@dimen/text_size_header"
+                android:textSize="@dimen/tv_group_name"
                 android:textStyle="bold" />
 
             <TextView
@@ -53,7 +53,7 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_gravity="start"
-                android:textSize="@dimen/text_size_header"
+                android:textSize="@dimen/tv_member_status"
                 android:textStyle="bold" />
 
         </LinearLayout>
@@ -67,7 +67,7 @@
             android:text="@string/status"
             android:textColor="@color/green"
             android:textAppearance="@style/TextAppearance.AppCompat.Medium"
-            android:textSize="@dimen/text_size_header"
+            android:textSize="@dimen/tv_status"
             android:textStyle="italic" />
 
         <ImageView

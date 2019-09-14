@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+
+    <!--friends' list-->
+    <dimen name="tv_friend_name">32sp</dimen>
+    <dimen name="tv_status">32sp</dimen>
+
+
+<!--    Add Expense-->
+    <dimen name="label_exp">32sp</dimen>
+    <dimen name="expense_description">32sp</dimen>
+    <dimen name="expense_amount">32sp</dimen>
+    <dimen name="payer">32sp</dimen>
+    <dimen name="layout_marginStart_addExpense">40dp</dimen>
+    <dimen name="layout_marginEnd_addExpense">40dp</dimen>
+    <dimen name="layout_marginBottom_addExpense">40dp</dimen>
+    <dimen name="layout_margin_addExpense">32dp</dimen>
+
+
+</resources>

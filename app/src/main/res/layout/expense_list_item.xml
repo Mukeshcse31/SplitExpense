@@ -31,7 +31,7 @@
             android:layout_height="wrap_content"
             android:layout_gravity="start"
             android:layout_marginEnd="@dimen/date_end_margin"
-            android:textSize="@dimen/text_size_header"
+            android:textSize="@dimen/dateSpent_tv"
             android:textStyle="bold" />
 
         <ImageView

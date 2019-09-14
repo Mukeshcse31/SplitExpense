@@ -21,9 +21,14 @@
 
     <dimen name="detail_toolbar_elevation">2dp</dimen>
 
+<!--    Group-->
+    <dimen name="tv_member_status">16sp</dimen>
+    <dimen name="tv_group_name">16sp</dimen>
+
 <!--friends' list-->
+    <dimen name="tv_friend_name">16sp</dimen>
+    <dimen name="tv_status">16sp</dimen>
     <dimen name="text_size_small">8sp</dimen>
-    <dimen name="text_size_header">16sp</dimen>
     <dimen name="text_size_large">32sp</dimen>
     <dimen name="line">1dp</dimen>
     <dimen name="margin_4">4dp</dimen>
@@ -38,12 +43,18 @@
     <!--Add Expense-->
     <dimen name="layout_marginStart_addExpense">8dp</dimen>
     <dimen name="layout_marginEnd_addExpense">8dp</dimen>
-    <dimen name="layout_margin">8dp</dimen>
+    <dimen name="layout_margin_addExpense">8dp</dimen>
+    <dimen name="layout_marginBottom_addExpense">8dp</dimen>
+    <dimen name="label_exp">16sp</dimen>
+    <dimen name="expense_description">16sp</dimen>
+    <dimen name="expense_amount">16sp</dimen>
+    <dimen name="payer">16sp</dimen>
 
 <!--    Expense List-->
     <dimen name="groupname_exp">20sp</dimen>
     <dimen name="userbalance_exp">20sp</dimen>
     <dimen name="paidby_expense">12sp</dimen>
+    <dimen name="dateSpent_tv">16sp</dimen>
     <dimen name="description_exp">16sp</dimen>
     <dimen name="desc_start_margin">4dp</dimen>
     <dimen name="debt_credit_exp">12sp</dimen>
