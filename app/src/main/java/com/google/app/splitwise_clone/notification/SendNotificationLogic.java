@@ -2,16 +2,12 @@ package com.google.app.splitwise_clone.notification;
 
 import android.content.Context;
 import android.util.Log;
-import android.widget.Toast;
 
 import com.android.volley.AuthFailureError;
-import com.android.volley.Request;
 import com.android.volley.Response;
 import com.android.volley.VolleyError;
 import com.android.volley.toolbox.JsonObjectRequest;
-import com.google.app.splitwise_clone.MainActivity;
 import com.google.app.splitwise_clone.R;
-import com.google.app.splitwise_clone.utils.FirebaseUtils;
 
 import org.json.JSONException;
 import org.json.JSONObject;

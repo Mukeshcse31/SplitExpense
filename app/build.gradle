@@ -1,5 +1,4 @@
 apply plugin: 'com.android.application'
-apply plugin: 'com.google.gms.google-services'
 
 android {
     compileSdkVersion 28
@@ -15,6 +14,17 @@ android {
         release {
             minifyEnabled false
             proguardFiles getDefaultProguardFile('proguard-android-optimize.txt'), 'proguard-rules.pro'
+        }
+    }
+    flavorDimensions "version"
+    productFlavors {
+        free {
+            applicationId "com.google.app.splitwise_clone.free"
+            versionName "1.0-free"
+        }
+        paid {
+            applicationId "com.google.app.splitwise_clone.paid"
+            versionName "1.0-paid"
         }
     }
 }
@@ -34,5 +44,8 @@ dependencies {
     implementation 'com.google.firebase:firebase-database:19.0.0'
     implementation 'com.google.firebase:firebase-auth:19.0.0'
     implementation 'com.google.firebase:firebase-messaging:20.0.0'
+    freeImplementation 'com.google.android.gms:play-services-ads:18.2.0'
 
 }
+
+apply plugin: 'com.google.gms.google-services'

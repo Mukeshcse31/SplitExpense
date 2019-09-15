@@ -1,8 +1,6 @@
 package com.google.app.splitwise_clone.expense;
 
-import android.app.IntentService;
 import android.content.Intent;
-import android.media.Image;
 import android.os.Bundle;
 import android.text.TextUtils;
 import android.util.Log;
@@ -10,11 +8,9 @@ import android.view.View;
 import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.TextView;
-import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
-import androidx.constraintlayout.widget.ConstraintLayout;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
@@ -23,11 +19,9 @@ import com.google.android.gms.tasks.OnFailureListener;
 import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.android.gms.tasks.Task;
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
-import com.google.app.splitwise_clone.FriendsList;
 import com.google.app.splitwise_clone.R;
 import com.google.app.splitwise_clone.model.Expense;
 import com.google.app.splitwise_clone.model.SingleBalance;
-import com.google.app.splitwise_clone.model.User;
 import com.google.app.splitwise_clone.utils.ExpenseAdapter;
 import com.google.app.splitwise_clone.utils.FirebaseUtils;
 import com.google.firebase.database.DataSnapshot;
@@ -257,7 +251,6 @@ public class ExpenseList extends AppCompatActivity implements ExpenseAdapter.OnC
         });
     }
 
-
     @Override
     protected void onRestoreInstanceState(Bundle savedInstanceState) {
         String group_nameKey = getResources().getString(R.string.group_name);
@@ -372,16 +365,6 @@ public class ExpenseList extends AppCompatActivity implements ExpenseAdapter.OnC
     }
 
     public void exportExpenses(View view) {
-
-        String expensePayload = ExpenseAdapter.expensePayload;
-//        Log.i(TAG, ExpenseAdapter.expensePayload);
-        Intent sharingIntent = new Intent(android.content.Intent.ACTION_SEND);
-        sharingIntent.setType("text/plain");
-        sharingIntent.putExtra(android.content.Intent.EXTRA_SUBJECT, group_name);
-        sharingIntent.putExtra(android.content.Intent.EXTRA_TEXT, expensePayload);
-
-        //verify that this intent can be launched before starting
-        if (sharingIntent.resolveActivity(getPackageManager()) != null)
-            startActivity(Intent.createChooser(sharingIntent, getResources().getString(R.string.export_title)));
+ExportUtility.exportExpenses(this, group_name);
     }
 }

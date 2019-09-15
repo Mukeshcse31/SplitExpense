@@ -10,10 +10,9 @@
         android:roundIcon="@mipmap/ic_launcher_round"
         android:supportsRtl="true"
         android:theme="@style/Theme.Design.Light">
+
         <activity
-            android:name=".MainActivity"
-            android:configChanges=""
-            android:launchMode="singleTop">
+            android:name=".MainActivity">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
 
@@ -21,17 +20,21 @@
             </intent-filter>
         </activity>
 
-        <activity
-            android:name=".AddFriend"
-            android:parentActivityName=".MainActivity"></activity>
+        <activity android:name=".FriendsList"></activity>
         <activity android:name=".groups.GroupsList"></activity>
-
+<activity android:name=".expense.ExpenseList"></activity>
         <activity android:name=".expense.AddExpense"></activity>
-        <activity
-            android:name=".FriendsList"
-            android:parentActivityName=".MainActivity"></activity>
-        <activity android:name=".expense.ExpenseList" />
         <activity android:name=".groups.AddGroup" />
+
+        <meta-data
+            android:name="com.google.android.gms.ads.AD_MANAGER_APP"
+            android:value="true"/>
+
+
+        <activity
+            android:name="com.google.android.gms.ads.AdActivity"
+            android:configChanges="keyboard|keyboardHidden|orientation|screenLayout|uiMode|screenSize|smallestScreenSize"
+            android:theme="@android:style/Theme.Translucent" />
 
         <receiver android:name=".widget.BalanceWidgetProvider">
             <intent-filter>

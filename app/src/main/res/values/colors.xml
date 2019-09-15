@@ -1,5 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
+    <color name="fab_background">#FF2768</color>
     <color name="colorPrimary">#3F51B5</color>
     <color name="colorPrimaryDark">#28759A</color>
     <color name="skyBlue">#87ceeb</color>

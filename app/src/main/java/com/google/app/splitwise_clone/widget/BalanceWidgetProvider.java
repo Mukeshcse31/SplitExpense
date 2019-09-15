@@ -14,6 +14,7 @@ import android.text.TextUtils;
 import android.util.Log;
 import android.widget.RemoteViews;
 import androidx.annotation.NonNull;
+
 import com.google.app.splitwise_clone.FriendsList;
 import com.google.app.splitwise_clone.MainActivity;
 import com.google.app.splitwise_clone.R;

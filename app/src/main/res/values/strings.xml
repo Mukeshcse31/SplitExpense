@@ -1,6 +1,6 @@
 <resources>
     <!--Registration-->
-    <color name="fab_background">#FF2768</color>
+
     <string name="app_name">SplitWise_Clone</string>
     <string name="prompt_email">Email</string>
     <string name="prompt_username">Username</string>

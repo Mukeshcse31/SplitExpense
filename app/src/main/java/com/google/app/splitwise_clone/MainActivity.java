@@ -23,6 +23,7 @@ import com.google.android.material.snackbar.Snackbar;
 import com.google.android.material.textfield.TextInputLayout;
 import com.google.app.splitwise_clone.model.User;
 import com.google.app.splitwise_clone.utils.FirebaseUtils;
+import com.google.firebase.FirebaseApp;
 import com.google.firebase.auth.AuthResult;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
@@ -59,7 +60,8 @@ public class MainActivity extends AppCompatActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-
+//        https://stackoverflow.com/questions/40081539/default-firebaseapp-is-not-initialized
+//        FirebaseApp.initializeApp(getBaseContext());
         mAuth = FirebaseAuth.getInstance();
         SharedPreferences prefs = getSharedPreferences(SPLIT_PREFS, 0);
         mDatabaseReference = FirebaseDatabase.getInstance().getReference();
