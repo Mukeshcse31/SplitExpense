@@ -13,71 +13,98 @@
      See the License for the specific language governing permissions and
      limitations under the License.
 -->
-<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
-    android:layout_height="wrap_content"
-    android:padding="@dimen/line">
+    android:layout_height="wrap_content">
 
-    <LinearLayout
-        android:layout_width="match_parent"
+
+    <ImageView
+        android:id="@+id/group_image"
+        android:layout_width="@dimen/group_image_width"
+        android:layout_height="@dimen/group_image_height"
+        android:layout_gravity="center_vertical|center_horizontal"
+        android:layout_marginTop="@dimen/margin_4"
+        android:contentDescription="@string/group_image"
+        android:src="@drawable/person"
+        app:layout_constraintEnd_toStartOf="@+id/guideline_1"
+        app:layout_constraintTop_toTopOf="parent" />
+
+    <ImageView
+        android:layout_width="@dimen/arrow_width"
+        android:layout_height="@dimen/arrow_height"
+        android:layout_gravity="center_vertical|center_horizontal"
+        android:layout_marginTop="@dimen/margin_4"
+        android:layout_weight="1"
+        android:contentDescription="@string/goto_groupDetails"
+        android:src="@drawable/greater"
+        app:layout_constraintStart_toEndOf="@+id/guideline_4"
+        app:layout_constraintTop_toTopOf="parent" />
+
+
+    <TextView
+        android:id="@+id/tv_group_name"
+
+        android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_margin="4dp"
-        android:orientation="horizontal"
-        android:padding="@dimen/margin_4">
+        android:layout_gravity="start"
+        android:textSize="@dimen/tv_group_name"
+        android:textStyle="bold"
+        app:layout_constraintStart_toEndOf="@+id/guideline_2"
+        app:layout_constraintTop_toTopOf="parent" />
 
-        <ImageView
-            android:id="@+id/group_image"
-            android:layout_width="20dp"
-            android:layout_height="16dp"
-            android:layout_marginTop="@dimen/margin_4"
-            android:layout_weight="3"
-            android:contentDescription="@string/group_image"
-            android:src="@drawable/person" />
+    <TextView
+        android:id="@+id/tv_member_status"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_gravity="start"
+        android:text="@string/no_expense"
+        android:textSize="@dimen/tv_member_status"
+        android:textStyle="bold"
+        app:layout_constraintStart_toEndOf="@+id/guideline_2"
+        app:layout_constraintTop_toBottomOf="@id/tv_group_name" />
 
-        <LinearLayout
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_weight="3"
-            android:orientation="vertical">
+    <TextView
+        android:id="@+id/tv_status"
 
-            <TextView
-                android:id="@+id/tv_group_name"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_gravity="start"
-                android:textSize="@dimen/tv_group_name"
-                android:textStyle="bold" />
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_gravity="end|center_vertical"
+        android:layout_weight="2"
+        android:text="@string/default_status"
+        android:textAppearance="@style/TextAppearance.AppCompat.Medium"
+        android:textColor="@color/common_google_signin_btn_text_light_disabled"
+        android:textSize="@dimen/tv_status"
+        android:textStyle="italic"
+        app:layout_constraintEnd_toEndOf="@+id/guideline_3"
+        app:layout_constraintTop_toTopOf="parent" />
 
-            <TextView
-                android:id="@+id/tv_member_status"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_gravity="start"
-                android:textSize="@dimen/tv_member_status"
-                android:textStyle="bold" />
+    <androidx.constraintlayout.widget.Guideline
+        android:id="@+id/guideline_1"
+        android:layout_width="1dp"
+        android:layout_height="match_parent"
+        android:orientation="vertical"
+        app:layout_constraintGuide_percent="0.10" />
 
-        </LinearLayout>
+    <androidx.constraintlayout.widget.Guideline
+        android:id="@+id/guideline_2"
+        android:layout_width="1dp"
+        android:layout_height="match_parent"
+        android:orientation="vertical"
+        app:layout_constraintGuide_percent="0.15" />
 
-        <TextView
-            android:id="@+id/tv_status"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_gravity="end"
-            android:layout_weight="2"
-            android:text="@string/status"
-            android:textColor="@color/green"
-            android:textAppearance="@style/TextAppearance.AppCompat.Medium"
-            android:textSize="@dimen/tv_status"
-            android:textStyle="italic" />
+    <androidx.constraintlayout.widget.Guideline
+        android:id="@+id/guideline_3"
+        android:layout_width="1dp"
+        android:layout_height="match_parent"
+        android:orientation="vertical"
+        app:layout_constraintGuide_percent="0.90" />
 
-        <ImageView
-            android:layout_width="20dp"
-            android:layout_height="26dp"
-            android:layout_marginTop="@dimen/margin_4"
-            android:layout_weight="1"
-            android:contentDescription="@string/goto_groupDetails"
-            android:src="@drawable/greater" />
+    <androidx.constraintlayout.widget.Guideline
+        android:id="@+id/guideline_4"
+        android:layout_width="1dp"
+        android:layout_height="match_parent"
+        android:orientation="vertical"
+        app:layout_constraintGuide_percent="0.95" />
 
-    </LinearLayout>
-
-</FrameLayout>
+</androidx.constraintlayout.widget.ConstraintLayout>

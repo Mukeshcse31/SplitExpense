@@ -6,47 +6,12 @@
     android:layout_height="match_parent"
     android:orientation="vertical">
 
-    <LinearLayout
-        android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:orientation="horizontal"
-        app:layout_behavior="@string/appbar_scrolling_view_behavior">
-
-        <ImageView
-            android:id="@+id/settleup_image"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-
-            android:background="@drawable/settledup"
-            android:scaleType="center"
-            android:visibility="gone">
-
-        </ImageView>
-
-        <TextView
-            android:id="@+id/settleup_tv"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="@string/settledup"
-            android:visibility="gone">
-
-        </TextView>
-
-        <TextView
-            android:id="@+id/noExpenses_tv"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="@string/no_expense"
-            android:visibility="gone">
-
-        </TextView>
-    </LinearLayout>
-
 
     <androidx.swiperefreshlayout.widget.SwipeRefreshLayout
         android:id="@+id/swipe_refresh_layout"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content">
+        android:layout_height="wrap_content"
+        android:layout_margin="@dimen/layout_margin">
 
         <androidx.recyclerview.widget.RecyclerView
             android:id="@+id/expenses_rv"
@@ -64,7 +29,7 @@
             android:id="@+id/toolbar_container"
             style="@style/CollapsingToolbarLayoutStyle"
             android:layout_width="match_parent"
-            android:layout_height="@dimen/app_bar_layout_main_height"
+            android:layout_height="@dimen/exp_toolbar_height"
             app:collapsedTitleTextAppearance="@style/TextAppearance.AppCompat.Widget.ActionBar.Title.Inverse"
             app:expandedTitleTextAppearance="@style/TextAppearance.AppCompat.Widget.ActionBar.Title.Inverse"
             app:layout_scrollFlags="scroll|exitUntilCollapsed">
@@ -73,6 +38,7 @@
             <ImageView
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
+                android:id="@+id/groupImage"
                 android:tint="#D9200000"
                 android:background="#500000"
                 android:scaleType="fitXY"
@@ -84,7 +50,6 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:textAlignment="center"
-                android:layout_marginTop="24dp"
                 android:orientation="vertical">
 
                 <TextView
@@ -110,10 +75,9 @@
                     android:id="@+id/user_summary"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:text="@string/default_amount"
                     android:textColor="@color/white"
                     android:textAlignment="center"
-                    android:textSize="16sp" />
+                    android:textSize="@dimen/user_summary" />
             </LinearLayout>
 
         </com.google.android.material.appbar.CollapsingToolbarLayout>
@@ -123,7 +87,7 @@
         android:id="@+id/bottom_bar"
         style="@style/Widget.MaterialComponents.BottomAppBar"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
+        android:layout_height="@dimen/bottom_app_bar_height"
         android:layout_gravity="bottom"
         app:backgroundTint="@color/skyBlue" />
 
@@ -135,19 +99,23 @@
         android:layout_gravity="start"
         android:layout_marginStart="8dp"
         android:text="@string/action_settleup"
+        android:elevation="4dp"
+        android:textSize="@dimen/settleup"
         app:layout_anchor="@id/bottom_bar"
-        app:layout_anchorGravity="start|bottom"></Button>
+        app:layout_anchorGravity="start|center_vertical|center_horizontal"></Button>
 
     <Button
-        android:id="@+id/export"
+        android:id="@+id/export_bn"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_gravity="end"
         android:layout_marginEnd="8dp"
+        android:elevation="4dp"
         android:onClick="exportExpenses"
         android:text="@string/action_export"
+        android:textSize="@dimen/export"
         app:layout_anchor="@id/bottom_bar"
-        app:layout_anchorGravity="end|bottom"></Button>
+        app:layout_anchorGravity="end|center_vertical|center_horizontal"></Button>
 
     <com.google.android.material.floatingactionbutton.FloatingActionButton
         android:id="@+id/add_expense_fab"
@@ -157,11 +125,48 @@
         android:src="@drawable/add_expense_fab"
         app:backgroundTint="@color/colorAccent"
         app:elevation="@dimen/fab_elevation"
-        app:fabCradleMargin="20dp"
-        app:fabSize="normal"
+        app:fabCradleMargin="@dimen/fab_margin"
+        app:fabCustomSize="@dimen/fab_size"
         app:layout_anchor="@id/bottom_bar"
         app:pressedTranslationZ="@dimen/fab_press_translation_z" />
 
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:orientation="horizontal"
+        app:layout_behavior="@string/appbar_scrolling_view_behavior">
+
+        <ImageView
+            android:id="@+id/settleup_image"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:background="@drawable/settledup"
+            android:scaleType="center"
+            android:visibility="gone">
+
+        </ImageView>
+
+        <TextView
+            android:id="@+id/settleup_tv"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="@string/settledup"
+            android:textSize="@dimen/label_exp"
+            android:visibility="gone">
+
+        </TextView>
+
+        <TextView
+            android:id="@+id/noExpenses_tv"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="@string/no_expense"
+            android:textSize="@dimen/label_exp"
+            android:visibility="gone">
+
+        </TextView>
+    </LinearLayout>
 
 </androidx.coordinatorlayout.widget.CoordinatorLayout>
 

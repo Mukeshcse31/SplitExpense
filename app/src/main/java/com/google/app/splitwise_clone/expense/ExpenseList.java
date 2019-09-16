@@ -48,7 +48,7 @@ public class ExpenseList extends AppCompatActivity implements ExpenseAdapter.OnC
     private ExpenseAdapter mExpenseAdapter;
     private RecyclerView expenses_rv;
     private FloatingActionButton mFloatingActionButton;
-    private Button settleup_bn;
+    private Button settleup_bn, export_bn;
     private String group_name;
     private ImageView groupImage;
     private String userName = "";
@@ -56,12 +56,6 @@ public class ExpenseList extends AppCompatActivity implements ExpenseAdapter.OnC
     public static String GROUP_NAME = "group_name";
     public static String EDIT_EXPENSE = "edit_expense";
     public static String EDIT_EXPENSEID = "edit_expenseID";
-
-//    ListView listView;
-//    Spinner spinner2;
-//    private static String[] groupMembers;
-//    private AutoCompleteTextView mDescription, mAmount;
-//    private Button date_btn;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -78,6 +72,7 @@ public class ExpenseList extends AppCompatActivity implements ExpenseAdapter.OnC
         expenses_rv = findViewById(R.id.expenses_rv);
         mFloatingActionButton = findViewById(R.id.add_expense_fab);
         settleup_bn = findViewById(R.id.settleup_bn);
+        export_bn = findViewById(R.id.export_bn);
 
         LinearLayoutManager layoutManager = new LinearLayoutManager(this);
         expenses_rv.setLayoutManager(layoutManager);
@@ -205,7 +200,8 @@ public class ExpenseList extends AppCompatActivity implements ExpenseAdapter.OnC
                     settleup_tv.setVisibility(View.VISIBLE);
                     expenses_rv.setVisibility(View.GONE);
                     getArchivedExpense();
-
+                    settleup_bn.setClickable(false);
+                    export_bn.setClickable(false);
 
                 } else {
                     settleup_tv.setVisibility(View.GONE);
@@ -213,6 +209,8 @@ public class ExpenseList extends AppCompatActivity implements ExpenseAdapter.OnC
                     expenses_rv.setVisibility(View.VISIBLE);
                     mExpenseAdapter = new ExpenseAdapter(expenseSnapshotList, ExpenseList.this);
                     expenses_rv.setAdapter(mExpenseAdapter);
+                    settleup_bn.setClickable(true);
+                    export_bn.setClickable(true);
                 }
             }
 

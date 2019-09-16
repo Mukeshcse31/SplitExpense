@@ -1,12 +1,29 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
 
+
+    <dimen name="list_top_margin">160dp</dimen>
+
     <!--friends' list-->
-    <dimen name="tv_friend_name">32sp</dimen>
-    <dimen name="tv_status">32sp</dimen>
+    <dimen name="tv_friend_name">24sp</dimen>
+    <dimen name="tv_status">24sp</dimen>
 
 
-<!--    Add Expense-->
+    <!--    Group-->
+    <dimen name="tv_group_name">24sp</dimen>
+    <dimen name="tv_member_status">20sp</dimen>
+    <dimen name="layout_margin_grp">8dp</dimen>
+    <dimen name="group_member_label">24dp</dimen>
+    <dimen name="group_image_width">52dp</dimen>
+    <dimen name="group_image_height">52dp</dimen>
+    <dimen name="grpname_marginStart">160dp</dimen>
+    <dimen name="camera_image_width">80dp</dimen>
+    <dimen name="plus_width">40dp</dimen>
+    <dimen name="plus_height">40dp</dimen>
+    <dimen name="groupmbr_image_width">52dp</dimen>
+    <dimen name="groupmbr_image_height">52dp</dimen>
+
+    <!--    Add Expense-->
     <dimen name="label_exp">32sp</dimen>
     <dimen name="expense_description">32sp</dimen>
     <dimen name="expense_amount">32sp</dimen>
@@ -15,6 +32,44 @@
     <dimen name="layout_marginEnd_addExpense">40dp</dimen>
     <dimen name="layout_marginBottom_addExpense">40dp</dimen>
     <dimen name="layout_margin_addExpense">32dp</dimen>
+    <dimen name="layout_marginTop_exp">20dp</dimen>
 
+    <dimen name="layout_margin">40dp</dimen>
+
+    <!--    Expense List-->
+    <dimen name="exp_toolbar_height">200dp</dimen>
+    <dimen name="groupname_exp">40sp</dimen>
+    <dimen name="userbalance_exp">28sp</dimen>
+    <dimen name="exp_image_width">20dp</dimen>
+    <dimen name="user_summary">20sp</dimen>
+    <dimen name="paidby_expense">20sp</dimen>
+    <dimen name="dateSpent_tv">28sp</dimen>
+    <dimen name="description_exp">28sp</dimen>
+    <dimen name="desc_start_margin">8dp</dimen>
+    <dimen name="debt_credit_exp">20sp</dimen>
+    <dimen name="lent_borrow_exp">28sp</dimen>
+    <dimen name="padding_exp_item">4dp</dimen>
+    <dimen name="date_start_margin">8dp</dimen>
+    <dimen name="date_end_margin">8dp</dimen>
+    <dimen name="image_start_margin">8dp</dimen>
+    <dimen name="image_end_margin">8dp</dimen>
+    <dimen name="arrow_width">36dp</dimen>
+    <dimen name="arrow_height">36dp</dimen>
+    <dimen name="line_margin_start">16dp</dimen>
+    <dimen name="line_margin_end">32dp</dimen>
+    <dimen name="line_top_margin">8dp</dimen>
+    <dimen name="export">28sp</dimen>
+    <dimen name="settleup">28sp</dimen>
+
+    <!--    Others-->
+    <dimen name="guildeline_grp_horizon">8dp</dimen>
+    <dimen name="bottom_app_bar_height">80dp</dimen>
+
+
+    <!--FAB-->
+    <dimen name="fab_elevation">6dp</dimen>
+    <dimen name="fab_press_translation_z">8dp</dimen>
+    <dimen name="fab_margin">24dp</dimen>
+    <dimen name="fab_size">80dp</dimen>
 
 </resources>

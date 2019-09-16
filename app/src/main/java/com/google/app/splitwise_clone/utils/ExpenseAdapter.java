@@ -63,9 +63,7 @@ public class ExpenseAdapter extends RecyclerView.Adapter<ExpenseAdapter.ReviewVi
         mContext = viewGroup.getContext();
         int layoutIdForListItem = R.layout.expense_list_item;
         LayoutInflater inflater = LayoutInflater.from(mContext);
-        boolean shouldAttachToParentImmediately = false;
-
-        View view = inflater.inflate(layoutIdForListItem, viewGroup, shouldAttachToParentImmediately);
+        View view = inflater.inflate(layoutIdForListItem, viewGroup, false);
         ReviewViewHolder viewHolder = new ReviewViewHolder(view);
 
 //        viewHolder.tv_review.setText("ViewHolder index: " + viewHolderCount);

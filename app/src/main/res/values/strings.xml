@@ -64,6 +64,8 @@
     <string name="action_export">Export</string>
     <string name="no_expense">No Expense in this Group</string>
     <string name="export_title">Export Expenses</string>
+    <string name="default_status">N/A</string>
+    <string name="group_debt_separator">\n</string>
 
     <!--DB schema names-->
     <string name="goto_groupDetails">go to group details</string>

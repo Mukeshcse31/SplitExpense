@@ -14,9 +14,15 @@
      limitations under the License.
 -->
 <FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
     android:padding="@dimen/padding_exp_item">
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="vertical">
 
     <LinearLayout
         android:layout_width="match_parent"
@@ -35,7 +41,7 @@
             android:textStyle="bold" />
 
         <ImageView
-            android:layout_width="20dp"
+            android:layout_width="@dimen/exp_image_width"
             android:layout_height="match_parent"
             android:layout_marginStart="@dimen/image_start_margin"
             android:layout_marginEnd="@dimen/image_end_margin"
@@ -107,6 +113,17 @@
             android:layout_gravity="center_vertical|center_horizontal|end"
             android:contentDescription="@string/goto_groupDetails"
             android:src="@drawable/greater" />
+
+    </LinearLayout>
+
+        <View
+            android:id="@+id/right_divider"
+            android:layout_width="match_parent"
+            android:layout_height="1dp"
+            android:layout_marginStart="@dimen/line_margin_start"
+            android:layout_marginTop="@dimen/line_top_margin"
+            android:layout_marginEnd="@dimen/line_margin_end"
+            android:background="#FF888484" />
 
     </LinearLayout>
 

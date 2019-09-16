@@ -13,45 +13,52 @@
      See the License for the specific language governing permissions and
      limitations under the License.
 -->
-<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
     android:padding="@dimen/line">
 
+<androidx.constraintlayout.widget.Guideline
+    android:layout_width="wrap_content"
+    android:layout_height="wrap_content"
+    android:id="@+id/guideline_1"
+    app:layout_constraintGuide_percent=".90"
+    android:orientation="vertical"/>
 
-    <LinearLayout
-        android:layout_width="match_parent"
+    <ImageView
+        android:id="@+id/image"
+        android:layout_width="@dimen/groupmbr_image_width"
+        android:layout_height="@dimen/groupmbr_image_height"
+        android:layout_marginStart="@dimen/margin_4"
+        android:contentDescription="@string/friend_image"
+        android:layout_gravity="center_vertical|center_horizontal|end"
+        android:scaleType="fitXY"
+        android:src="@drawable/person"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent" />
+
+    <ImageView
+        android:id="@+id/member_iv"
+        android:layout_width="@dimen/plus_width"
+        android:layout_height="@dimen/plus_height"
+        android:layout_marginEnd="@dimen/margin_4"
+        android:contentDescription="@string/goto_details"
+        android:layout_gravity="center_vertical|center_horizontal|end"
+        android:scaleType="fitXY"
+        android:src="@drawable/plus"
+        app:layout_constraintEnd_toStartOf="@+id/guideline_1"
+        app:layout_constraintTop_toTopOf="parent" />
+
+    <TextView
+        android:id="@+id/tv_friend_name"
+        android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_margin="4dp"
-        android:orientation="horizontal"
-        android:padding="@dimen/margin_4">
+        android:layout_gravity="start"
+        android:text="Name"
+        android:textSize="@dimen/tv_friend_name"
+        app:layout_constraintEnd_toStartOf="@+id/member_iv"
+        app:layout_constraintStart_toEndOf="@+id/image"
+        app:layout_constraintTop_toTopOf="parent" />
 
-        <ImageView
-            android:layout_width="20dp"
-            android:layout_height="16dp"
-            android:layout_marginTop="@dimen/margin_4"
-            android:layout_weight="3"
-            android:src="@drawable/person"
-            android:contentDescription="@string/friend_image" />
-
-        <TextView
-            android:id="@+id/tv_friend_name"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_gravity="start"
-            android:textStyle="bold"
-            android:text="Name"
-            android:layout_weight="3"
-            android:textSize="@dimen/tv_friend_name" />
-
-        <ImageView
-            android:id="@+id/member_iv"
-            android:layout_width="20dp"
-            android:layout_height="26dp"
-            android:layout_marginTop="@dimen/margin_4"
-            android:layout_weight="1"
-            android:contentDescription="@string/goto_details" />
-
-    </LinearLayout>
-
-</FrameLayout>
+</androidx.constraintlayout.widget.ConstraintLayout>

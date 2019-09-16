@@ -47,7 +47,7 @@ public class GroupsAdapter extends RecyclerView.Adapter<GroupsAdapter.ReviewView
     private StorageReference mPhotosStorageReference;
     private FirebaseStorage mFirebaseStorage;
     private static int viewHolderCount;
-    List<DataSnapshot>  mDataSnapshotList;
+    List<DataSnapshot> mDataSnapshotList;
     private OnClickListener mOnClickListener;
     private String userName;
     private Context mContext;
@@ -56,13 +56,14 @@ public class GroupsAdapter extends RecyclerView.Adapter<GroupsAdapter.ReviewView
         mDataSnapshotList = dataSnapshotList;
         mOnClickListener = listener;
         mFirebaseStorage = FirebaseStorage.getInstance();
-        mPhotosStorageReference= mFirebaseStorage.getReference();
+        mPhotosStorageReference = mFirebaseStorage.getReference();
         userName = FirebaseUtils.getUserName();
         viewHolderCount = 0;
     }
 
-    public interface OnClickListener{
+    public interface OnClickListener {
         void gotoSharedGroup(int index, String name);
+
         void gotoEditGroup(int index, String name);
     }
 
@@ -116,6 +117,7 @@ public class GroupsAdapter extends RecyclerView.Adapter<GroupsAdapter.ReviewView
         /**
          * A method we wrote for convenience. This method will take an integer as input and
          * use that integer to display the appropriate text within a list item.
+         *
          * @param listIndex Position of the item in the list
          */
         void bind(final int listIndex) {
@@ -137,24 +139,29 @@ public class GroupsAdapter extends RecyclerView.Adapter<GroupsAdapter.ReviewView
 
             Map<String, Float> splitDues = sb.getSplitDues();
             Iterator it = splitDues.entrySet().iterator();
-            while(it.hasNext()){
+            while (it.hasNext()) {
                 Map.Entry pair = (Map.Entry) it.next();
                 String friendName = (String) pair.getKey();
                 float amount = Float.parseFloat(String.valueOf(pair.getValue()));
                 balanceAmount += amount;
-                if(!TextUtils.equals(userName, friendName))
+                if (!TextUtils.equals(userName, friendName))
                     member_status += String.format("%s %s you $%.2f\n", friendName, amount > 0 ? "owes" : "lent", amount);
 
             }
             tv_member_status.setText(member_status);
 
             //aggregate status
-            String aggr_status = "lent";
-            if(balanceAmount < 0){
-                tv_status.setTextColor(mContext.getColor(R.color.orange));
-                aggr_status = "borrowed";
+            if (balanceAmount == 0) {
+                Log.i(TAG, "N/A");
+            } else {
+                String aggr_status = mContext.getString(R.string.you_lent);
+                tv_status.setTextColor(mContext.getColor(R.color.green));
+                if (balanceAmount < 0) {
+                    tv_status.setTextColor(mContext.getColor(R.color.orange));
+                    aggr_status = mContext.getString(R.string.you_borrowed);
+                }
+                tv_status.setText(String.format("%s %s $%.2f", aggr_status, mContext.getString(R.string.group_debt_separator), balanceAmount));
             }
-            tv_status.setText(String.format("%s %s\n $%.2f", "you", aggr_status, balanceAmount));
 
             //set listeners
             group_image.setOnClickListener(new View.OnClickListener() {
@@ -175,15 +182,15 @@ public class GroupsAdapter extends RecyclerView.Adapter<GroupsAdapter.ReviewView
                     mOnClickListener.gotoSharedGroup(listIndex, group_name);
                 }
             });
-            tv_status.setOnClickListener(new View.OnClickListener(){
+            tv_status.setOnClickListener(new View.OnClickListener() {
                 @Override
-                public void onClick(View v){
+                public void onClick(View v) {
                     mOnClickListener.gotoSharedGroup(listIndex, group_name);
                 }
             });
         }
 
-        private void loadImage(String groupName){
+        private void loadImage(String groupName) {
 
             final StorageReference imageRef = mPhotosStorageReference.child("images/groups/" + groupName);
             final long ONE_MEGABYTE = 1024 * 1024;

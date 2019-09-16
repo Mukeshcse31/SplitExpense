@@ -39,8 +39,11 @@
         android:onClick="onButtonClicked"
         android:text="Set Date"
         android:textSize="@dimen/label_exp"
+        android:elevation="@dimen/elevation_exp"
+        android:layout_margin="@dimen/layout_margin_addExpense"
         app:layout_constraintBottom_toTopOf="@id/group_members"
-        app:layout_constraintStart_toEndOf="@id/guideline_ver" />
+        app:layout_constraintStart_toEndOf="@id/guideline_ver"
+        app:layout_constraintTop_toTopOf="parent"/>
 
     <TextView
         android:id="@+id/members_tv"
@@ -86,7 +89,7 @@
         android:layout_width="wrap_content"
         android:layout_height="0dp"
         android:layout_margin="@dimen/layout_margin_addExpense"
-        android:layout_marginTop="8dp"
+        android:layout_marginTop="@dimen/layout_marginTop_exp"
         android:textSize="@dimen/label_exp"
         android:textStyle="bold"
         android:fontFamily="sans-serif-black"
@@ -98,7 +101,7 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_margin="@dimen/layout_margin_addExpense"
-        android:layout_marginTop="@dimen/layout_marginTop_10"
+        android:layout_marginTop="@dimen/layout_marginTop_exp"
         android:textColorHint="@color/black"
         android:textSize="@dimen/label_exp"
         app:layout_constraintStart_toStartOf="parent"

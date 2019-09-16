@@ -11,8 +11,8 @@
 
     <dimen name="subtitle_text_size">14dp</dimen>
 
-    <item name="visible" type="id"/>
-    <item name="masked" type="id"/>
+    <item name="visible" type="id" />
+    <item name="masked" type="id" />
 
     <dimen name="list_top_margin">112dp</dimen>
     <dimen name="list_bottom_margin">24dp</dimen>
@@ -21,11 +21,23 @@
 
     <dimen name="detail_toolbar_elevation">2dp</dimen>
 
-<!--    Group-->
+    <!--    Group-->
     <dimen name="tv_member_status">16sp</dimen>
     <dimen name="tv_group_name">16sp</dimen>
+    <dimen name="layout_margin_grp">4dp</dimen>
+    <dimen name="group_top_margin">16dp</dimen>
+    <dimen name="group_image_width">32dp</dimen>
+    <dimen name="group_image_height">32dp</dimen>
+<dimen name="groupmbr_image_width">32dp</dimen>
+    <dimen name="groupmbr_image_height">32dp</dimen>
+    <dimen name="group_member_label">16dp</dimen>
+    <dimen name="grpname_marginStart">80dp</dimen>
+    <dimen name="camera_image_width">60dp</dimen>
+    <dimen name="plus_width">24dp</dimen>
+    <dimen name="plus_height">24dp</dimen>
 
-<!--friends' list-->
+    <!--friends' list-->
+    <dimen name="friends_top_margin">116dp</dimen>
     <dimen name="tv_friend_name">16sp</dimen>
     <dimen name="tv_status">16sp</dimen>
     <dimen name="text_size_small">8sp</dimen>
@@ -33,14 +45,16 @@
     <dimen name="line">1dp</dimen>
     <dimen name="margin_4">4dp</dimen>
 
-<dimen name="padding_small">8dp</dimen>
+    <dimen name="padding_small">8dp</dimen>
 
-<!--FAB-->
+    <!--FAB-->
     <dimen name="fab_elevation">4dp</dimen>
     <dimen name="fab_press_translation_z">6dp</dimen>
-    <dimen name="fab_margin">24dp</dimen>
+    <dimen name="fab_margin">16dp</dimen>
+    <dimen name="fab_size">48dp</dimen>
 
     <!--Add Expense-->
+    <dimen name="layout_margin">8dp</dimen>
     <dimen name="layout_marginStart_addExpense">8dp</dimen>
     <dimen name="layout_marginEnd_addExpense">8dp</dimen>
     <dimen name="layout_margin_addExpense">8dp</dimen>
@@ -49,22 +63,37 @@
     <dimen name="expense_description">16sp</dimen>
     <dimen name="expense_amount">16sp</dimen>
     <dimen name="payer">16sp</dimen>
+    <dimen name="layout_marginTop_exp">10dp</dimen>
+    <dimen name="elevation_exp">4dp</dimen>
 
-<!--    Expense List-->
+    <!--    Expense List-->
+    <dimen name="exp_toolbar_height">112dp</dimen>
     <dimen name="groupname_exp">20sp</dimen>
     <dimen name="userbalance_exp">20sp</dimen>
+    <dimen name="user_summary">16sp</dimen>
     <dimen name="paidby_expense">12sp</dimen>
     <dimen name="dateSpent_tv">16sp</dimen>
     <dimen name="description_exp">16sp</dimen>
     <dimen name="desc_start_margin">4dp</dimen>
     <dimen name="debt_credit_exp">12sp</dimen>
     <dimen name="lent_borrow_exp">16sp</dimen>
-    <dimen name="padding_exp_item">8dp</dimen>
+    <dimen name="padding_exp_item">2dp</dimen>
     <dimen name="date_start_margin">4dp</dimen>
     <dimen name="date_end_margin">4dp</dimen>
-    <dimen name="image_start_margin">8dp</dimen>
+    <dimen name="image_start_margin">4dp</dimen>
     <dimen name="image_end_margin">4dp</dimen>
-<dimen name="arrow_width">20dp</dimen>
+    <dimen name="arrow_width">20dp</dimen>
     <dimen name="arrow_height">26dp</dimen>
+    <dimen name="line_margin_start">8dp</dimen>
+    <dimen name="line_margin_end">16dp</dimen>
+    <dimen name="line_top_margin">4dp</dimen>
+    <dimen name="exp_image_width">16dp</dimen>
+<dimen name="export">16sp</dimen>
+    <dimen name="settleup">16sp</dimen>
+
+<!--    Others-->
+    <dimen name="guildeline_grp_horizon">4dp</dimen>
+    <dimen name="bottom_app_bar_height">52dp</dimen>
+
 </resources>
 
