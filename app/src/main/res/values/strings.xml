@@ -99,7 +99,7 @@
 
     <!--TextUtils-->
     <string name="send_message">send Messages</string>
-<string name="invite_friend">Share with your friends</string>
+    <string name="invite_friend">Share with your friends</string>
     <string name="inviteafriend">Invite Friend</string>
     <string name="invite_text">Check out a new app: https://play.google.com/store/apps/details?id=</string>
     <string name="new_line">\n</string>
@@ -120,4 +120,44 @@
     <string name="notif_Content_Type">Content-Type</string>
     <string name="notif_contentType">application/json</string>
     <string name="FCM_API">https://fcm.googleapis.com/fcm/send</string>
+
+    <!--    shopping images-->
+    <string-array name="food">
+        <item>drinks</item>
+        <item>alcohol</item>
+        <item>egg</item>
+        <item>milk</item>
+        <item>fruit</item>
+        <item>food</item>
+        <item>apple</item>
+        <item>banana</item>
+    </string-array>
+
+    <string-array name="bulb">
+        <item>bulb</item>
+        <item>learning</item>
+        <item>book</item>
+        <item>power</item>
+    </string-array>
+
+    <string-array name="gas">
+        <item>gas</item>
+        <item>fuel</item>
+    </string-array>
+
+    <string-array name="cart">
+        <item>costco</item>
+        <item>amazon</item>
+        <item>walmart</item>
+        <item>cart</item>
+        <item>winco</item>
+    </string-array>
+
+    <string-array name="house">
+        <item>internet</item>
+        <item>house</item>
+        <item>rent</item>
+    </string-array>
+
+
 </resources>

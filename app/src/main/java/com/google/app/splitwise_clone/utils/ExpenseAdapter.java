@@ -21,6 +21,7 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.ImageView;
 import android.widget.TextView;
 
 import androidx.recyclerview.widget.RecyclerView;
@@ -35,7 +36,7 @@ import java.util.Date;
 import java.util.List;
 import java.util.Map;
 
-public class ExpenseAdapter extends RecyclerView.Adapter<ExpenseAdapter.ReviewViewHolder> {
+public class ExpenseAdapter extends RecyclerView.Adapter<ExpenseAdapter.ExpenseViewHolder> {
 
     private static final String TAG = ExpenseAdapter.class.getSimpleName();
     public static String expensePayload;
@@ -58,13 +59,13 @@ public class ExpenseAdapter extends RecyclerView.Adapter<ExpenseAdapter.ReviewVi
     }
 
     @Override
-    public ReviewViewHolder onCreateViewHolder(ViewGroup viewGroup, int viewType) {
+    public ExpenseViewHolder onCreateViewHolder(ViewGroup viewGroup, int viewType) {
 
         mContext = viewGroup.getContext();
         int layoutIdForListItem = R.layout.expense_list_item;
         LayoutInflater inflater = LayoutInflater.from(mContext);
         View view = inflater.inflate(layoutIdForListItem, viewGroup, false);
-        ReviewViewHolder viewHolder = new ReviewViewHolder(view);
+        ExpenseViewHolder viewHolder = new ExpenseViewHolder(view);
 
 //        viewHolder.tv_review.setText("ViewHolder index: " + viewHolderCount);
 
@@ -74,7 +75,7 @@ public class ExpenseAdapter extends RecyclerView.Adapter<ExpenseAdapter.ReviewVi
     }
 
     @Override
-    public void onBindViewHolder(ReviewViewHolder holder, int position) {
+    public void onBindViewHolder(ExpenseViewHolder holder, int position) {
         Log.d(TAG, "#" + position);
         holder.bind(position);
     }
@@ -84,16 +85,16 @@ public class ExpenseAdapter extends RecyclerView.Adapter<ExpenseAdapter.ReviewVi
         return mDataSnapshotList.size();
     }
 
-    class ReviewViewHolder extends RecyclerView.ViewHolder {
+    class ExpenseViewHolder extends RecyclerView.ViewHolder {
 
         // Will display the position in the list, ie 0 through getItemCount() - 1
-        TextView dateSpent_tv, tv_expenseDescription, tv_debt_credit, tv_amount;
-        // Will display which ViewHolder is displaying this data
-        TextView tv_paidBy;
+        TextView dateSpent_tv, tv_expenseDescription, tv_debt_credit, tv_amount, tv_paidBy;
+        ImageView expense_img;
 
-        public ReviewViewHolder(View itemView) {
+        public ExpenseViewHolder(View itemView) {
             super(itemView);
 
+            expense_img = itemView.findViewById(R.id.expense_img);
             dateSpent_tv = itemView.findViewById(R.id.dateSpent_tv);
             tv_expenseDescription = itemView.findViewById(R.id.tv_expenseDescription);
             tv_paidBy = itemView.findViewById(R.id.tv_paidBy);
@@ -131,6 +132,9 @@ public class ExpenseAdapter extends RecyclerView.Adapter<ExpenseAdapter.ReviewVi
             } catch (Exception e) {
             }
             dateSpent_tv.setText(dateString);
+
+            int imageName = AppUtils.findImage(mContext, description);
+            expense_img.setImageDrawable(mContext.getDrawable(imageName));
 
             //2. description
             tv_expenseDescription.setText(description);

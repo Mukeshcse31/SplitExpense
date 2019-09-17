@@ -37,10 +37,10 @@
             android:layout_height="wrap_content"
             android:layout_gravity="start"
             android:layout_marginEnd="@dimen/date_end_margin"
-            android:textSize="@dimen/dateSpent_tv"
-            android:textStyle="bold" />
+            android:textSize="@dimen/dateSpent_tv" />
 
         <ImageView
+            android:id="@+id/expense_img"
             android:layout_width="@dimen/exp_image_width"
             android:layout_height="match_parent"
             android:layout_marginStart="@dimen/image_start_margin"
@@ -48,7 +48,7 @@
             android:layout_marginTop="@dimen/margin_4"
             android:layout_weight="3"
             android:contentDescription="@string/group_image"
-            android:src="@drawable/person" />
+            android:src="@drawable/house" />
 
         <LinearLayout
             android:layout_width="wrap_content"
