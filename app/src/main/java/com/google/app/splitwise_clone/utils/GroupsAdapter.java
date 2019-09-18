@@ -55,7 +55,7 @@ public class GroupsAdapter extends RecyclerView.Adapter<GroupsAdapter.ReviewView
     public GroupsAdapter(List<DataSnapshot> dataSnapshotList, OnClickListener listener) {
         mDataSnapshotList = dataSnapshotList;
         mOnClickListener = listener;
-        mFirebaseStorage = FirebaseStorage.getInstance();
+        mFirebaseStorage = AppUtils.getDBStorage();
         mPhotosStorageReference = mFirebaseStorage.getReference();
         userName = FirebaseUtils.getUserName();
         viewHolderCount = 0;

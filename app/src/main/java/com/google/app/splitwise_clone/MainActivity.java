@@ -22,6 +22,7 @@ import com.google.android.gms.tasks.Task;
 import com.google.android.material.snackbar.Snackbar;
 import com.google.android.material.textfield.TextInputLayout;
 import com.google.app.splitwise_clone.model.User;
+import com.google.app.splitwise_clone.utils.AppUtils;
 import com.google.app.splitwise_clone.utils.FirebaseUtils;
 import com.google.firebase.FirebaseApp;
 import com.google.firebase.auth.AuthResult;
@@ -64,7 +65,7 @@ public class MainActivity extends AppCompatActivity {
 //        FirebaseApp.initializeApp(getBaseContext());
         mAuth = FirebaseAuth.getInstance();
         SharedPreferences prefs = getSharedPreferences(SPLIT_PREFS, 0);
-        mDatabaseReference = FirebaseDatabase.getInstance().getReference();
+        mDatabaseReference = AppUtils.getDBReference();
         String displayName = prefs.getString(DISPLAY_NAME_KEY, "");
         String email = prefs.getString(USERNAME_KEY, "");
         String password = prefs.getString(PASSWORD_KEY, "");

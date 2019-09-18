@@ -16,6 +16,7 @@ import androidx.recyclerview.widget.RecyclerView;
 import com.google.app.splitwise_clone.R;
 import com.google.app.splitwise_clone.expense.ExpenseList;
 import com.google.app.splitwise_clone.model.Group;
+import com.google.app.splitwise_clone.utils.AppUtils;
 import com.google.app.splitwise_clone.utils.FirebaseUtils;
 import com.google.app.splitwise_clone.utils.GroupsAdapter;
 import com.google.firebase.database.DataSnapshot;
@@ -33,8 +34,6 @@ import java.util.List;
 public class GroupsList extends AppCompatActivity implements GroupsAdapter.OnClickListener {
 
     private DatabaseReference mDatabaseReference;
-    private FirebaseStorage mFirebaseStorage;
-    private StorageReference mPhotosStorageReference;
     List<DataSnapshot> dataSnapshotGroupList = new ArrayList<>();
     ;
     private String TAG = GroupsList.class.getSimpleName();
@@ -45,29 +44,29 @@ public class GroupsList extends AppCompatActivity implements GroupsAdapter.OnCli
     private static final int RC_PHOTO_PICKER = 2;
     private GroupsAdapter mGroupsAdapter;
     private RecyclerView groups_rv;
-    private ImageView groupImage;
+//    private ImageView groupImage;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_group_list);
         userName = FirebaseUtils.getUserName();
-        groupImage = findViewById(R.id.groupImage);
+//        groupImage = findViewById(R.id.group_image);
         getSupportActionBar().setTitle(getString(R.string.group_list));
-        mDatabaseReference = FirebaseDatabase.getInstance().getReference();
+        mDatabaseReference = AppUtils.getDBReference();
         groups_rv = findViewById(R.id.groups_rv);
         LinearLayoutManager layoutManager = new LinearLayoutManager(this);
         groups_rv.setLayoutManager(layoutManager);
-        groupImage.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-
-                Intent intent = new Intent(Intent.ACTION_GET_CONTENT);
-                intent.setType("image/jpeg");
-                intent.putExtra(Intent.EXTRA_LOCAL_ONLY, true);
-                startActivityForResult(Intent.createChooser(intent, "Complete action using"), RC_PHOTO_PICKER);
-            }
-        });
+//        groupImage.setOnClickListener(new View.OnClickListener() {
+//            @Override
+//            public void onClick(View v) {
+//
+//                Intent intent = new Intent(Intent.ACTION_GET_CONTENT);
+//                intent.setType("image/jpeg");
+//                intent.putExtra(Intent.EXTRA_LOCAL_ONLY, true);
+//                startActivityForResult(Intent.createChooser(intent, "Complete action using"), RC_PHOTO_PICKER);
+//            }
+//        });
 
     }
 

@@ -13,6 +13,7 @@ import androidx.appcompat.app.AppCompatActivity;
 
 import com.google.android.material.snackbar.Snackbar;
 import com.google.app.splitwise_clone.model.User;
+import com.google.app.splitwise_clone.utils.AppUtils;
 import com.google.app.splitwise_clone.utils.FirebaseUtils;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
@@ -35,7 +36,7 @@ public class AddFriend extends AppCompatActivity {
 
         mFriendName = findViewById(R.id.friend_name);
         mFriendEmail = findViewById(R.id.friend_email);
-        mDatabaseReference = FirebaseDatabase.getInstance().getReference();
+        mDatabaseReference = AppUtils.getDBReference();
     }
 
     @Override

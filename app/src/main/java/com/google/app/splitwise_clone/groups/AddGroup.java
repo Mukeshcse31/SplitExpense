@@ -16,7 +16,6 @@ import android.view.View;
 import android.widget.AutoCompleteTextView;
 import android.widget.ImageView;
 import android.widget.Toast;
-
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
@@ -24,7 +23,6 @@ import androidx.core.app.ActivityCompat;
 import androidx.core.content.ContextCompat;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
-
 import com.bumptech.glide.Glide;
 import com.google.android.gms.tasks.OnFailureListener;
 import com.google.android.gms.tasks.OnSuccessListener;
@@ -32,20 +30,18 @@ import com.google.android.material.snackbar.Snackbar;
 import com.google.app.splitwise_clone.R;
 import com.google.app.splitwise_clone.model.Group;
 import com.google.app.splitwise_clone.model.SingleBalance;
+import com.google.app.splitwise_clone.utils.AppUtils;
 import com.google.app.splitwise_clone.utils.FirebaseUtils;
 import com.google.app.splitwise_clone.utils.GroupMembersAdapter;
 import com.google.app.splitwise_clone.utils.NonGroupMembersAdapter;
-import com.google.firebase.database.ChildEventListener;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
-import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.Query;
 import com.google.firebase.database.ValueEventListener;
 import com.google.firebase.storage.FirebaseStorage;
 import com.google.firebase.storage.StorageReference;
 import com.google.firebase.storage.UploadTask;
-
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.Map;
@@ -57,7 +53,6 @@ public class AddGroup extends AppCompatActivity implements GroupMembersAdapter.O
     private DatabaseReference mDatabaseReference;
     private FirebaseStorage mFirebaseStorage;
     private StorageReference mPhotosStorageReference;
-    private ChildEventListener mChildEventListener;
     private static final int RC_PHOTO_PICKER = 2;
     private static final String TAG = AddGroup.class.getSimpleName();
     private Uri selectedImageUri;
@@ -70,8 +65,6 @@ public class AddGroup extends AppCompatActivity implements GroupMembersAdapter.O
     int friendsCounter;
     private String photoUrl = "";
     Map<String, String> userFriends = new HashMap<>();
-    private Map<String, String> all_members = new HashMap<>();
-    private Map<String, Boolean> all_friends = new HashMap<>();
     private Map<String, String> group_members = new HashMap<>();
     private Map<String, String> nongroup_members = new HashMap<>();
     private static final int PERMISSION_REQUEST_CODE = 200;
@@ -82,8 +75,8 @@ public class AddGroup extends AppCompatActivity implements GroupMembersAdapter.O
         super.onCreate(savedInstanceState);
         setContentView(R.layout.fragment_add_group);
         getSupportActionBar().setTitle(getString(R.string.new_group));
-        mFirebaseStorage = FirebaseStorage.getInstance();
-        mDatabaseReference = FirebaseDatabase.getInstance().getReference();
+        mFirebaseStorage = AppUtils.getDBStorage();
+        mDatabaseReference = AppUtils.getDBReference();
         mPhotosStorageReference = mFirebaseStorage.getReference().child("images/groups");
         mGroupName = findViewById(R.id.group_name);
         members_rv = findViewById(R.id.members_rv);
@@ -316,8 +309,13 @@ public class AddGroup extends AppCompatActivity implements GroupMembersAdapter.O
                     Map.Entry pair = (Map.Entry) it.next();
                     String name = (String) pair.getKey();
                     SingleBalance sb = (SingleBalance) pair.getValue();
-                    String email = sb.getEmail();
-                    group_members.put(name, email);
+
+                    //get only the active members
+                    if(TextUtils.equals(sb.getActive(), "Yes")){
+                        String email = sb.getEmail();
+                        group_members.put(name, email);
+                    }
+
 //                            it.remove(); // avoids a ConcurrentModificationException
                 }
 
@@ -539,15 +537,7 @@ public class AddGroup extends AppCompatActivity implements GroupMembersAdapter.O
                         });
 
                         newGroup.setPhotoUrl(String.join("/", imageName));
-                    } else {
-                        final StorageReference photoRef = mPhotosStorageReference.child(newGroupNname);
-                        // Upload file to Firebase Storage
-                        photoRef.putFile(selectedImageUri)
-                                .addOnSuccessListener(this, new OnSuccessListener<UploadTask.TaskSnapshot>() {
-                                    public void onSuccess(UploadTask.TaskSnapshot taskSnapshot) {
-                                        Log.i(TAG, "new Image uploaded");
-                                    }
-                                });
+                    } else {//No need to change anything
                     }
                 }
 

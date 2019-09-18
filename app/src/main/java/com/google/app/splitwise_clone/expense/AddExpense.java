@@ -28,6 +28,7 @@ import com.google.app.splitwise_clone.model.Expense;
 import com.google.app.splitwise_clone.model.Group;
 import com.google.app.splitwise_clone.model.SingleBalance;
 import com.google.app.splitwise_clone.notification.SendNotificationLogic;
+import com.google.app.splitwise_clone.utils.AppUtils;
 import com.google.app.splitwise_clone.utils.DatePickerFragment;
 import com.google.app.splitwise_clone.utils.DigitsInputFilter;
 import com.google.app.splitwise_clone.utils.FirebaseUtils;
@@ -78,7 +79,7 @@ public class AddExpense extends AppCompatActivity implements ListView.OnItemClic
         mAmount.setFilters(new InputFilter[]{new DigitsInputFilter(10, 2, 99999999.99)});
 
         getSupportActionBar().setTitle(getString(R.string.add_expense));
-        mDatabaseReference = FirebaseDatabase.getInstance().getReference();
+        mDatabaseReference = AppUtils.getDBReference();
 
         listView = findViewById(R.id.group_members);
         listView.setChoiceMode(ListView.CHOICE_MODE_MULTIPLE);
@@ -99,7 +100,7 @@ public class AddExpense extends AppCompatActivity implements ListView.OnItemClic
         }
 
 
-        Query query = mDatabaseReference.child("groups/" + group_name + "/members");
+        Query query = mDatabaseReference.child("groups/" + group_name + "/members").orderByChild("active").equalTo("Yes");
         query.addListenerForSingleValueEvent(new ValueEventListener() {
             @Override
             public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
@@ -363,9 +364,6 @@ public class AddExpense extends AppCompatActivity implements ListView.OnItemClic
         expenseMatrix = new HashMap<>();
 
         //update the participant's total amount
-        final DatabaseReference mDatabaseReference;
-        mDatabaseReference = FirebaseDatabase.getInstance().getReference();
-
         //Get all the group members
         Query query = mDatabaseReference.child("groups/" + groupName);
 

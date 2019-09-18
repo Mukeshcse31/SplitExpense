@@ -10,6 +10,7 @@ import android.graphics.BitmapFactory;
 import android.media.RingtoneManager;
 import android.net.Uri;
 import android.os.Build;
+import android.text.TextUtils;
 import android.util.Log;
 
 import androidx.annotation.RequiresApi;
@@ -27,24 +28,25 @@ import java.util.Random;
 public class MyFirebaseMessagingService extends FirebaseMessagingService {
 
 
-    private final String ADMIN_CHANNEL_ID ="admin_channel";
+    private final String ADMIN_CHANNEL_ID = "admin_channel";
     private static final String TAG = MyFirebaseMessagingService.class.getSimpleName();
     private static String SUBSCRIBE_TO = "userABC";
     String GROUP_KEY_WORK_EMAIL = "com.android.example.EXPENSE";
 
     @Override
-    public void onNewToken(String token){
+    public void onNewToken(String token) {
 
         //whenever the user signs in, the subscribeToTopic would be updated in Sign in method
         SUBSCRIBE_TO = FirebaseUtils.getUserName();
-        FirebaseMessaging.getInstance().subscribeToTopic(SUBSCRIBE_TO);
+        if (!TextUtils.isEmpty(SUBSCRIBE_TO))
+            FirebaseMessaging.getInstance().subscribeToTopic(SUBSCRIBE_TO);
         Log.i(TAG, "onTokenRefresh completed with token: " + token);
     }
 
     @Override
     public void onMessageReceived(RemoteMessage remoteMessage) {
         final Intent intent = new Intent(this, MainActivity.class);
-        NotificationManager notificationManager = (NotificationManager)getSystemService(Context.NOTIFICATION_SERVICE);
+        NotificationManager notificationManager = (NotificationManager) getSystemService(Context.NOTIFICATION_SERVICE);
         int notificationID = new Random().nextInt(3000);
 
       /*
@@ -56,7 +58,7 @@ public class MyFirebaseMessagingService extends FirebaseMessagingService {
         }
 
         intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
-        PendingIntent pendingIntent = PendingIntent.getActivity(this , 0, intent,
+        PendingIntent pendingIntent = PendingIntent.getActivity(this, 0, intent,
                 PendingIntent.FLAG_ONE_SHOT);
 
         Bitmap largeIcon = BitmapFactory.decodeResource(getResources(),
@@ -74,14 +76,14 @@ public class MyFirebaseMessagingService extends FirebaseMessagingService {
                 .setContentIntent(pendingIntent);
 
         //Set notification color to match your app color template
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP){
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
             notificationBuilder.setColor(getResources().getColor(R.color.colorPrimaryDark));
         }
         notificationManager.notify(notificationID, notificationBuilder.build());
     }
 
     @RequiresApi(api = Build.VERSION_CODES.O)
-    private void setupChannels(NotificationManager notificationManager){
+    private void setupChannels(NotificationManager notificationManager) {
         CharSequence adminChannelName = "New notification";
         String adminChannelDescription = "Device to devie notification";
 

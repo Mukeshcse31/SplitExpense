@@ -38,7 +38,7 @@ import java.util.Iterator;
 import java.util.Map;
 import java.util.Set;
 
-public class FriendsAdapter extends RecyclerView.Adapter<FriendsAdapter.ReviewViewHolder> {
+public class FriendsAdapter extends RecyclerView.Adapter<FriendsAdapter.FriendsViewHolder> {
 
     private static final String TAG = FriendsAdapter.class.getSimpleName();
 private String userName;
@@ -57,12 +57,12 @@ private Context mContext;
         friendsImageMap = images;
         mContext = context;
         it = expenseMatrix.entrySet().iterator();
-        mFirebaseStorage = FirebaseStorage.getInstance();
+        mFirebaseStorage = AppUtils.getDBStorage();
         mPhotosStorageReference= mFirebaseStorage.getReference();
         viewHolderCount = 0;
     }
     @Override
-    public ReviewViewHolder onCreateViewHolder(ViewGroup viewGroup, int viewType) {
+    public FriendsViewHolder onCreateViewHolder(ViewGroup viewGroup, int viewType) {
 
         Context context = viewGroup.getContext();
         int layoutIdForListItem = R.layout.friends_list_item;
@@ -70,7 +70,7 @@ private Context mContext;
         boolean shouldAttachToParentImmediately = false;
 
         View view = inflater.inflate(layoutIdForListItem, viewGroup, shouldAttachToParentImmediately);
-        ReviewViewHolder viewHolder = new ReviewViewHolder(view);
+        FriendsViewHolder viewHolder = new FriendsViewHolder(view);
         viewHolderCount++;
         Log.d(TAG, "onCreateViewHolder: number of ViewHolders created: "
                 + viewHolderCount);
@@ -78,7 +78,7 @@ private Context mContext;
     }
 
     @Override
-    public void onBindViewHolder(ReviewViewHolder holder, int position) {
+    public void onBindViewHolder(FriendsViewHolder holder, int position) {
         Log.d(TAG, "#" + position);
 
 //        holder.setIsRecyclable(false);
@@ -90,7 +90,7 @@ private Context mContext;
         return expenseMatrix.size();
     }
 
-    class ReviewViewHolder extends RecyclerView.ViewHolder {
+    class FriendsViewHolder extends RecyclerView.ViewHolder {
 
         // Will display the position in the list, ie 0 through getItemCount() - 1
         TextView tv_friend_name;
@@ -98,9 +98,10 @@ private Context mContext;
         TextView tv_status;
         ImageView friendImage;
 
-        public ReviewViewHolder(View itemView) {
+        public FriendsViewHolder(View itemView) {
             super(itemView);
 
+            itemView.animate();
             friendImage = itemView.findViewById(R.id.friendImage);
             tv_friend_name = itemView.findViewById(R.id.tv_friend_name);
             tv_status = itemView.findViewById(R.id.tv_status);

@@ -21,6 +21,7 @@ import com.google.app.splitwise_clone.R;
 import com.google.app.splitwise_clone.model.Balance;
 import com.google.app.splitwise_clone.model.Group;
 import com.google.app.splitwise_clone.model.SingleBalance;
+import com.google.app.splitwise_clone.utils.AppUtils;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
@@ -136,7 +137,7 @@ public class BalanceWidgetProvider extends AppWidgetProvider {
 
         //update the participant's total amount
         final DatabaseReference mDatabaseReference;
-        mDatabaseReference = FirebaseDatabase.getInstance().getReference();
+        mDatabaseReference = AppUtils.getDBReference();
 
         Query query = mDatabaseReference.child("groups/").orderByChild("members/" + userName + "/name").equalTo(userName);
 

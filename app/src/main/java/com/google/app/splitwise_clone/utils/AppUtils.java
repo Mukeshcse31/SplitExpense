@@ -3,12 +3,20 @@ package com.google.app.splitwise_clone.utils;
 import android.content.Context;
 import android.content.res.Resources;
 import android.text.TextUtils;
+
 import com.google.app.splitwise_clone.R;
+import com.google.firebase.database.DatabaseReference;
+import com.google.firebase.database.FirebaseDatabase;
+import com.google.firebase.storage.FirebaseStorage;
+
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.Map;
 
 public class AppUtils {
+
+    private static DatabaseReference mDatabaseReference;
+    private static FirebaseStorage firebaseStorage;
 
     public static int findImage(Context context, String desc) {
 
@@ -40,7 +48,7 @@ public class AppUtils {
                     break;
                 }
             }
-            if(!TextUtils.isEmpty(matchImage)) break;
+            if (!TextUtils.isEmpty(matchImage)) break;
         }
 
         switch (matchImage) {
@@ -71,4 +79,17 @@ public class AppUtils {
         return result;
     }
 
+    public static DatabaseReference getDBReference() {
+
+        if (mDatabaseReference == null)
+            mDatabaseReference = FirebaseDatabase.getInstance().getReference();
+        return mDatabaseReference;
+    }
+
+    public static FirebaseStorage getDBStorage() {
+
+        if (firebaseStorage == null)
+            firebaseStorage = FirebaseStorage.getInstance();
+        return firebaseStorage;
+    }
 }

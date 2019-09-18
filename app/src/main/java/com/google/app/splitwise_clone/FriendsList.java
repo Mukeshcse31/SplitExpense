@@ -29,6 +29,7 @@ import com.google.app.splitwise_clone.model.Expense;
 import com.google.app.splitwise_clone.model.Group;
 import com.google.app.splitwise_clone.model.SingleBalance;
 import com.google.app.splitwise_clone.notification.SendNotificationLogic;
+import com.google.app.splitwise_clone.utils.AppUtils;
 import com.google.app.splitwise_clone.utils.ExpenseAdapter;
 import com.google.app.splitwise_clone.utils.FirebaseUtils;
 import com.google.app.splitwise_clone.utils.FriendsAdapter;
@@ -81,7 +82,7 @@ private TextView balance_summary_tv;
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_friend_list);
-        mFirebaseStorage = FirebaseStorage.getInstance();
+        mFirebaseStorage = AppUtils.getDBStorage();
 
         userName = FirebaseUtils.getUserName();
         profilePicture = findViewById(R.id.profilePicture);
@@ -89,7 +90,7 @@ private TextView balance_summary_tv;
 
 //        imageCard = findViewById(R.id.roundCardView);
         getSupportActionBar().setTitle(userName);
-        mDatabaseReference = FirebaseDatabase.getInstance().getReference();
+        mDatabaseReference = AppUtils.getDBReference();
         friends_rv = findViewById(R.id.friends_rv);
 
         LinearLayoutManager layoutManager = new LinearLayoutManager(this);
@@ -116,8 +117,8 @@ private TextView balance_summary_tv;
         members = new HashMap<>();
 
         //update the participant's total amount
-        final DatabaseReference mDatabaseReference;
-        mDatabaseReference = FirebaseDatabase.getInstance().getReference();
+//        final DatabaseReference mDatabaseReference;
+//        mDatabaseReference = AppUtils.getDBReference();
 
         Query query = mDatabaseReference.child("groups/").orderByChild("members/" + userName + "/name").equalTo(userName);
 
@@ -238,7 +239,6 @@ private TextView balance_summary_tv;
                         public void onSuccess(UploadTask.TaskSnapshot taskSnapshot) {
 
                             //update the path of image in the DB users'
-                            mDatabaseReference = FirebaseDatabase.getInstance().getReference();
                             mDatabaseReference.child("users/" + userName + "/imageUrl").setValue(photoRef.getPath());
 
                             final StorageReference group1 = mPhotosStorageReference.child("images/users/" + userName);

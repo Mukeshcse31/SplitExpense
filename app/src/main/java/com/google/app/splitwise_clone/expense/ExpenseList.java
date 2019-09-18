@@ -22,6 +22,7 @@ import com.google.android.material.floatingactionbutton.FloatingActionButton;
 import com.google.app.splitwise_clone.R;
 import com.google.app.splitwise_clone.model.Expense;
 import com.google.app.splitwise_clone.model.SingleBalance;
+import com.google.app.splitwise_clone.utils.AppUtils;
 import com.google.app.splitwise_clone.utils.ExpenseAdapter;
 import com.google.app.splitwise_clone.utils.FirebaseUtils;
 import com.google.firebase.database.DataSnapshot;
@@ -61,7 +62,7 @@ public class ExpenseList extends AppCompatActivity implements ExpenseAdapter.OnC
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_expense_list);
-        mDatabaseReference = FirebaseDatabase.getInstance().getReference();
+        mDatabaseReference = AppUtils.getDBReference();
 
         groupName_tv = findViewById(R.id.groupName_tv);
         settleup_tv = findViewById(R.id.settleup_tv);
@@ -77,7 +78,7 @@ public class ExpenseList extends AppCompatActivity implements ExpenseAdapter.OnC
         LinearLayoutManager layoutManager = new LinearLayoutManager(this);
         expenses_rv.setLayoutManager(layoutManager);
         groupImage = findViewById(R.id.groupImage);
-        mFirebaseStorage = FirebaseStorage.getInstance();
+        mFirebaseStorage = AppUtils.getDBStorage();
         userName = FirebaseUtils.getUserName();
 
         Intent intent = getIntent();

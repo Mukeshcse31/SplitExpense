@@ -11,7 +11,6 @@ public class Expense implements Parcelable {
     private String payer;
     private String description;
     private float total = 0.2f;
-    private String active;
     private Map<String, SingleBalance> splitExpense = new HashMap<>();
 
 
@@ -23,7 +22,6 @@ public class Expense implements Parcelable {
         this.payer = memberSpent;
         this.description = description;
         this.total = total;
-        this.active = "Yes";
     }
 
     protected Expense(Parcel in){
@@ -32,7 +30,6 @@ public class Expense implements Parcelable {
         payer = in.readString();
         description = in.readString();
         total = in.readFloat();
-        active = in.readString();
         splitExpense = new HashMap<String, SingleBalance>();
         in.readMap(splitExpense, SingleBalance.class.getClassLoader());
     }
@@ -82,14 +79,6 @@ public class Expense implements Parcelable {
         this.total = total;
     }
 
-    public String getActive() {
-        return active;
-    }
-
-    public void setActive(String active) {
-        this.active = active;
-    }
-
     public Map<String, SingleBalance> getSplitExpense() {
         return splitExpense;
     }
@@ -119,7 +108,6 @@ public class Expense implements Parcelable {
         dest.writeString(payer);
         dest.writeString(description);
         dest.writeFloat(total);
-        dest.writeString(active);
         dest.writeMap(splitExpense);
     }
 }
