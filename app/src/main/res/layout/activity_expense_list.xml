@@ -102,7 +102,8 @@
         android:elevation="4dp"
         android:textSize="@dimen/settleup"
         app:layout_anchor="@id/bottom_bar"
-        app:layout_anchorGravity="start|center_vertical|center_horizontal"></Button>
+        android:layout_marginBottom="@dimen/exp_actions_layout_bottom"
+        app:layout_anchorGravity="start|bottom"></Button>
 
     <Button
         android:id="@+id/export_bn"
@@ -115,7 +116,8 @@
         android:text="@string/action_export"
         android:textSize="@dimen/export"
         app:layout_anchor="@id/bottom_bar"
-        app:layout_anchorGravity="end|center_vertical|center_horizontal"></Button>
+        android:layout_marginBottom="@dimen/exp_actions_layout_bottom"
+        app:layout_anchorGravity="end|bottom"></Button>
 
     <com.google.android.material.floatingactionbutton.FloatingActionButton
         android:id="@+id/add_expense_fab"

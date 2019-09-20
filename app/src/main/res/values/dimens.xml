@@ -14,7 +14,7 @@
     <item name="visible" type="id" />
     <item name="masked" type="id" />
 
-    <dimen name="list_top_margin">112dp</dimen>
+    <dimen name="list_top_margin">160dp</dimen>
     <dimen name="list_bottom_margin">24dp</dimen>
     <dimen name="app_bar_layout_main_height">150dp</dimen>
     <dimen name="app_bar_layout_elevation">4dp</dimen>
@@ -26,7 +26,7 @@
     <dimen name="tv_group_name">16sp</dimen>
     <dimen name="layout_margin_grp">4dp</dimen>
     <dimen name="group_top_margin">16dp</dimen>
-    <dimen name="group_image_width">32dp</dimen>
+    <dimen name="group_image_width">40dp</dimen>
     <dimen name="group_image_height">32dp</dimen>
 <dimen name="groupmbr_image_width">32dp</dimen>
     <dimen name="groupmbr_image_height">32dp</dimen>
@@ -67,7 +67,7 @@
     <dimen name="elevation_exp">4dp</dimen>
 
     <!--    Expense List-->
-    <dimen name="exp_toolbar_height">112dp</dimen>
+    <dimen name="exp_toolbar_height">160dp</dimen>
     <dimen name="groupname_exp">20sp</dimen>
     <dimen name="userbalance_exp">20sp</dimen>
     <dimen name="user_summary">16sp</dimen>
@@ -77,7 +77,7 @@
     <dimen name="desc_start_margin">4dp</dimen>
     <dimen name="debt_credit_exp">12sp</dimen>
     <dimen name="lent_borrow_exp">16sp</dimen>
-    <dimen name="padding_exp_item">2dp</dimen>
+    <dimen name="padding_exp_item">4dp</dimen>
     <dimen name="date_start_margin">4dp</dimen>
     <dimen name="date_end_margin">4dp</dimen>
     <dimen name="image_start_margin">4dp</dimen>
@@ -87,9 +87,11 @@
     <dimen name="line_margin_start">8dp</dimen>
     <dimen name="line_margin_end">16dp</dimen>
     <dimen name="line_top_margin">4dp</dimen>
-    <dimen name="exp_image_width">16dp</dimen>
+    <dimen name="exp_image_width">32dp</dimen>
+    <dimen name="exp_image_height">32dp</dimen>
 <dimen name="export">16sp</dimen>
     <dimen name="settleup">16sp</dimen>
+    <dimen name="exp_actions_layout_bottom">8dp</dimen>
 
 <!--    Others-->
     <dimen name="guildeline_grp_horizon">4dp</dimen>

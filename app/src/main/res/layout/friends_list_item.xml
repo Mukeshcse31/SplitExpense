@@ -13,56 +13,89 @@
      See the License for the specific language governing permissions and
      limitations under the License.
 -->
-<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
     android:padding="@dimen/padding_exp_item">
 
 
-    <LinearLayout
+    <ImageView
+        android:id="@+id/friendImage"
+        android:layout_width="@dimen/group_image_width"
+        android:layout_height="@dimen/group_image_height"
+        android:layout_gravity="center_vertical|center_horizontal"
+        android:layout_marginTop="@dimen/margin_4"
+        android:contentDescription="@string/goto_details"
+        android:src="@drawable/person"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toStartOf="@+id/guideline_1"
+        app:layout_constraintTop_toTopOf="parent" />
+
+    <!--    <ImageView-->
+    <!--            android:id="@+id/"-->
+    <!--            android:layout_width="20dp"-->
+    <!--            android:layout_height="16dp"-->
+    <!--            android:layout_marginTop="@dimen/margin_4"-->
+    <!--            android:layout_weight="3"-->
+    <!--            android:src="@drawable/person"-->
+    <!--            android:contentDescription="@string/friend_image" />-->
+
+
+    <ImageView
+        style="@style/greater_image_style"
+        android:contentDescription="@string/goto_details"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintStart_toEndOf="@+id/guideline_3"
+        app:layout_constraintTop_toTopOf="parent" />
+
+    <TextView
+        android:id="@+id/tv_status"
+        style="@style/paidBy_style"
+        android:text="@string/no_expense"
+        app:layout_constraintStart_toEndOf="@+id/guideline_2"
+        app:layout_constraintTop_toBottomOf="@id/tv_friend_name"
+        app:layout_constraintEnd_toStartOf="@id/guideline_3"/>
+
+    <TextView
+        android:id="@+id/tv_friend_name"
+        style="@style/expense_Description_style"
+        app:layout_constraintEnd_toStartOf="@+id/guideline_3"
+        app:layout_constraintStart_toEndOf="@+id/guideline_2"
+        app:layout_constraintTop_toTopOf="parent" />
+
+
+    <View
+        style="@style/horizontal_line_style"
+        app:layout_constraintTop_toTopOf="@+id/guideline_hor" />
+
+    <androidx.constraintlayout.widget.Guideline
+        android:id="@+id/guideline_1"
+        android:layout_width="1dp"
+        android:layout_height="match_parent"
+        android:orientation="vertical"
+        app:layout_constraintGuide_percent="0.15" />
+
+    <androidx.constraintlayout.widget.Guideline
+        android:id="@+id/guideline_2"
+        android:layout_width="1dp"
+        android:layout_height="match_parent"
+        android:orientation="vertical"
+        app:layout_constraintGuide_percent="0.20" />
+
+    <androidx.constraintlayout.widget.Guideline
+        android:id="@+id/guideline_3"
+        android:layout_width="1dp"
+        android:layout_height="match_parent"
+        android:orientation="vertical"
+        app:layout_constraintGuide_percent="0.90" />
+
+
+    <androidx.constraintlayout.widget.Guideline
+        android:id="@+id/guideline_hor"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_margin="4dp"
+        android:layout_height="1dp"
         android:orientation="horizontal"
-        android:padding="@dimen/margin_4">
+        app:layout_constraintGuide_percent=".90" />
 
-        <ImageView
-            android:id="@+id/friendImage"
-            android:layout_width="20dp"
-            android:layout_height="16dp"
-            android:layout_marginTop="@dimen/margin_4"
-            android:layout_weight="3"
-            android:src="@drawable/person"
-            android:contentDescription="@string/friend_image" />
-
-        <TextView
-            android:id="@+id/tv_friend_name"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_gravity="start"
-            android:textStyle="bold"
-            android:layout_weight="3"
-            android:textSize="@dimen/tv_friend_name" />
-
-        <TextView
-            android:id="@+id/tv_status"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_gravity="end"
-            android:textAppearance="@style/TextAppearance.AppCompat.Medium"
-            android:textSize="@dimen/tv_status"
-            android:layout_weight="5"
-            android:textStyle="italic" />
-
-        <ImageView
-            android:id="@+id/member_iv"
-            android:layout_width="20dp"
-            android:layout_height="26dp"
-            android:layout_marginTop="@dimen/margin_4"
-            android:layout_weight="1"
-            android:src="@drawable/greater"
-            android:contentDescription="@string/goto_details" />
-
-    </LinearLayout>
-
-</FrameLayout>
+</androidx.constraintlayout.widget.ConstraintLayout>

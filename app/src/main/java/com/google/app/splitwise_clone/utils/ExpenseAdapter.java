@@ -53,7 +53,7 @@ public class ExpenseAdapter extends RecyclerView.Adapter<ExpenseAdapter.ExpenseV
         mDataSnapshotList = dataSnapshotList;
         mOnClickListener = listener;
         userName = FirebaseUtils.getUserName();
-        expensePayload = "Date,Description,PaidBy,DebtCredit,AmountDue";
+
         viewHolderCount = 0;
     }
 
@@ -131,7 +131,8 @@ public class ExpenseAdapter extends RecyclerView.Adapter<ExpenseAdapter.ExpenseV
          */
         void bind(final int listIndex) {
 
-            DataSnapshot d = mDataSnapshotList.get(listIndex);
+            //the latest expense should be on top
+            DataSnapshot d = mDataSnapshotList.get(mDataSnapshotList.size() -1 - listIndex);
 
             Expense expense = d.getValue(Expense.class);
 
@@ -142,9 +143,9 @@ public class ExpenseAdapter extends RecyclerView.Adapter<ExpenseAdapter.ExpenseV
             String debtCredit = mContext.getString(R.string.you_borrowed);
             String amountDueStr = mContext.getString(R.string.default_amount);
             //1. date
-            SimpleDateFormat df = new SimpleDateFormat("yyyy-mm-dd");
+            SimpleDateFormat df = new SimpleDateFormat("yyyy-MM-dd");
             SimpleDateFormat df1 = new SimpleDateFormat("MMM");
-            SimpleDateFormat df2 = new SimpleDateFormat("DD");
+            SimpleDateFormat df2 = new SimpleDateFormat("dd");
             String dateString = "";
             try {
                 Date date1 = df.parse(date);

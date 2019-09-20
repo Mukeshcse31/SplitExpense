@@ -68,4 +68,62 @@
         <item name="android:stateListAnimator">@animator/fab_state_list_anim</item>
     </style>
 
+    <style name="expense_details_Amount_Style">
+        <item name="android:layout_width">wrap_content</item>
+        <item name="android:layout_height">wrap_content</item>
+        <item name="android:layout_gravity">end</item>
+        <item name="android:textAppearance">@style/TextAppearance.AppCompat.Title</item>
+        <item name="android:textColor">@color/green</item>
+<item name="android:textSize">@dimen/lent_borrow_exp</item>
+    </style>
+
+
+    <style name="horizontal_line_style">
+        <item name="android:layout_width">match_parent</item>
+        <item name="android:layout_height">@dimen/line</item>
+        <item name="android:layout_marginStart">@dimen/line_margin_start</item>
+        <item name="android:layout_marginTop">@dimen/line_top_margin</item>
+        <item name="android:layout_marginEnd">@dimen/line_margin_end</item>
+        <item name="android:background">@color/lineColor</item>
+        <item name="layout_constraintStart_toStartOf">parent</item>
+</style>
+
+    <style name="debit_credit_style">
+        <item name="android:layout_width">wrap_content</item>
+        <item name="android:layout_height">wrap_content</item>
+        <item name="android:layout_gravity">end</item>
+        <item name="android:textAppearance">@style/TextAppearance.AppCompat.Medium</item>
+        <item name="android:textColor">@color/green</item>
+        <item name="android:textSize">@dimen/debt_credit_exp</item>
+        <item name="layout_constraintTop_toTopOf">parent</item>
+    </style>
+
+    <style name="expense_Description_style">
+        <item name="android:layout_width">wrap_content</item>
+        <item name="android:layout_height">wrap_content</item>
+        <item name="android:layout_gravity">start</item>
+        <item name="android:textAppearance">@style/TextAppearance.AppCompat.Title</item>
+        <item name="android:layout_marginStart">@dimen/desc_start_margin</item>
+        <item name="android:textSize">@dimen/description_exp</item>
+        <item name="layout_constraintTop_toTopOf">parent</item>
+    </style>
+
+
+    <style name="paidBy_style">
+        <item name="android:layout_width">wrap_content</item>
+        <item name="android:layout_height">wrap_content</item>
+        <item name="android:layout_gravity">start</item>
+        <item name="android:textAppearance">@style/TextAppearance.AppCompat.Medium</item>
+        <item name="android:layout_marginStart">@dimen/desc_start_margin</item>
+        <item name="android:textSize">@dimen/paidby_expense</item>
+    </style>
+
+    <style name="greater_image_style">
+<item name="android:layout_width">@dimen/arrow_width</item>
+        <item name="android:layout_height">@dimen/arrow_height</item>
+        <item name="android:layout_gravity">center_vertical|center_horizontal|end</item>
+        <item name="android:layout_marginTop">@dimen/margin_4</item>
+        <item name="android:src">@drawable/greater</item>
+        <item name="layout_constraintTop_toTopOf">parent</item>
+</style>
 </resources>

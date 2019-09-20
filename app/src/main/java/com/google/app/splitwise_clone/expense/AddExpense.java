@@ -353,7 +353,7 @@ public class AddExpense extends AppCompatActivity implements ListView.OnItemClic
         int year = c.get(Calendar.YEAR);
         int month = c.get(Calendar.MONTH);
         int day = c.get(Calendar.DAY_OF_MONTH);
-        date_btn.setText(String.format("%d-%02d-%02d", year, month, day));
+        date_btn.setText(String.format("%d-%02d-%02d", year, month + 1, day));
     }
 
     //update a single specified group

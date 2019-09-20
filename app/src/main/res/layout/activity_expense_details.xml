@@ -4,7 +4,6 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="@color/lightslategrey"
     android:layout_marginStart="@dimen/layout_marginStart_addExpense"
     android:layout_marginEnd="@dimen/layout_marginEnd_addExpense"
     android:layout_marginBottom="@dimen/layout_marginBottom_addExpense">

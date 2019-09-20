@@ -309,11 +309,14 @@ public class AddGroup extends AppCompatActivity implements GroupMembersAdapter.O
                     Map.Entry pair = (Map.Entry) it.next();
                     String name = (String) pair.getKey();
                     SingleBalance sb = (SingleBalance) pair.getValue();
+                    String email = sb.getEmail();
 
                     //get only the active members
                     if(TextUtils.equals(sb.getActive(), "Yes")){
-                        String email = sb.getEmail();
                         group_members.put(name, email);
+                    }
+                    else {
+                        nongroup_members.put(name, email);
                     }
 
 //                            it.remove(); // avoids a ConcurrentModificationException

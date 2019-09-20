@@ -102,7 +102,7 @@ public class GroupsAdapter extends RecyclerView.Adapter<GroupsAdapter.ReviewView
         // Will display the position in the list, ie 0 through getItemCount() - 1
         TextView tv_group_name;
         // Will display which ViewHolder is displaying this data
-        TextView tv_member_status, tv_status;
+        TextView tv_member_status, tv_status, tv_amount;
         ImageView group_image;
 
         public ReviewViewHolder(View itemView) {
@@ -111,6 +111,7 @@ public class GroupsAdapter extends RecyclerView.Adapter<GroupsAdapter.ReviewView
             tv_group_name = itemView.findViewById(R.id.tv_group_name);
             tv_member_status = itemView.findViewById(R.id.tv_member_status);
             tv_status = itemView.findViewById(R.id.tv_status);
+            tv_amount = itemView.findViewById(R.id.tv_amount);
 
         }
 
@@ -148,7 +149,7 @@ public class GroupsAdapter extends RecyclerView.Adapter<GroupsAdapter.ReviewView
                     member_status += String.format("%s %s you $%.2f\n", friendName, amount > 0 ? "owes" : "lent", amount);
 
             }
-            tv_member_status.setText(member_status);
+            if(!TextUtils.isEmpty(member_status)) tv_member_status.setText(member_status);
 
             //aggregate status
             if (balanceAmount == 0) {
@@ -156,11 +157,15 @@ public class GroupsAdapter extends RecyclerView.Adapter<GroupsAdapter.ReviewView
             } else {
                 String aggr_status = mContext.getString(R.string.you_lent);
                 tv_status.setTextColor(mContext.getColor(R.color.green));
+                tv_amount.setTextColor(mContext.getColor(R.color.green));
                 if (balanceAmount < 0) {
                     tv_status.setTextColor(mContext.getColor(R.color.orange));
+                    tv_amount.setTextColor(mContext.getColor(R.color.orange));
                     aggr_status = mContext.getString(R.string.you_borrowed);
                 }
-                tv_status.setText(String.format("%s %s $%.2f", aggr_status, mContext.getString(R.string.group_debt_separator), balanceAmount));
+//                tv_status.setText(String.format("%s %s", aggr_status, mContext.getString(R.string.group_debt_separator)));
+                tv_status.setText(aggr_status);
+                tv_amount.setText(String.format("$%.2f",Math.abs(balanceAmount)));
             }
 
             //set listeners

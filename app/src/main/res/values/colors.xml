@@ -18,4 +18,5 @@
     <color name="gray">#FFC7BCBC</color>
 
     <color name="ltgray">#ffe0e0e0</color>
+    <color name="lineColor">#FF888484</color>
 </resources>

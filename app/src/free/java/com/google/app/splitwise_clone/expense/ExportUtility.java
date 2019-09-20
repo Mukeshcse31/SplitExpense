@@ -37,7 +37,8 @@ public class ExportUtility {
             public void onAdClosed() {
                 Log.i(TAG, "add closed");
 
-                String expensePayload = ExpenseAdapter.expensePayload;
+                String expensePayload = context.getString(R.string.export_heading);
+                expensePayload += ExpenseAdapter.expensePayload;
 //        Log.i(TAG, ExpenseAdapter.expensePayload);
                 Intent sharingIntent = new Intent(Intent.ACTION_SEND);
                 sharingIntent.setType("text/plain");

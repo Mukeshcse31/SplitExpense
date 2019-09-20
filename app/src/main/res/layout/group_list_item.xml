@@ -31,53 +31,40 @@
         app:layout_constraintTop_toTopOf="parent" />
 
     <ImageView
-        android:layout_width="@dimen/arrow_width"
-        android:layout_height="@dimen/arrow_height"
-        android:layout_gravity="center_vertical|center_horizontal"
-        android:layout_marginTop="@dimen/margin_4"
-        android:layout_weight="1"
-        android:contentDescription="@string/goto_groupDetails"
-        android:src="@drawable/greater"
+        style="@style/greater_image_style"
         app:layout_constraintStart_toEndOf="@+id/guideline_4"
-        app:layout_constraintTop_toTopOf="parent" />
-
+        android:contentDescription="@string/goto_groupDetails"/>
 
     <TextView
         android:id="@+id/tv_group_name"
-
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_gravity="start"
-        android:textSize="@dimen/tv_group_name"
-        android:textStyle="bold"
-        app:layout_constraintStart_toEndOf="@+id/guideline_2"
-        app:layout_constraintTop_toTopOf="parent" />
+        style="@style/expense_Description_style"
+        app:layout_constraintBottom_toTopOf="@id/tv_member_status"
+        app:layout_constraintStart_toEndOf="@+id/guideline_2" />
 
     <TextView
         android:id="@+id/tv_member_status"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_gravity="start"
+        style="@style/paidBy_style"
         android:text="@string/no_expense"
-        android:textSize="@dimen/tv_member_status"
-        android:textStyle="bold"
         app:layout_constraintStart_toEndOf="@+id/guideline_2"
-        app:layout_constraintTop_toBottomOf="@id/tv_group_name" />
+        app:layout_constraintTop_toBottomOf="@id/tv_group_name"
+        />
 
     <TextView
         android:id="@+id/tv_status"
-
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_gravity="end|center_vertical"
-        android:layout_weight="2"
-        android:text="@string/default_status"
-        android:textAppearance="@style/TextAppearance.AppCompat.Medium"
-        android:textColor="@color/common_google_signin_btn_text_light_disabled"
-        android:textSize="@dimen/tv_status"
-        android:textStyle="italic"
+        style="@style/debit_credit_style"
         app:layout_constraintEnd_toEndOf="@+id/guideline_3"
         app:layout_constraintTop_toTopOf="parent" />
+
+    <TextView
+        android:id="@+id/tv_amount"
+        style="@style/expense_details_Amount_Style"
+        android:text="@string/default_status"
+        app:layout_constraintEnd_toStartOf="@+id/guideline_3"
+        app:layout_constraintTop_toBottomOf="@id/tv_status"/>
+
+    <View
+        style="@style/horizontal_line_style"
+        app:layout_constraintTop_toTopOf="@+id/guideline_hor" />
 
     <androidx.constraintlayout.widget.Guideline
         android:id="@+id/guideline_1"
@@ -106,5 +93,13 @@
         android:layout_height="match_parent"
         android:orientation="vertical"
         app:layout_constraintGuide_percent="0.95" />
+
+
+    <androidx.constraintlayout.widget.Guideline
+        android:id="@+id/guideline_hor"
+        android:layout_width="match_parent"
+        android:layout_height="1dp"
+        android:orientation="horizontal"
+        app:layout_constraintGuide_percent=".90"/>
 
 </androidx.constraintlayout.widget.ConstraintLayout>

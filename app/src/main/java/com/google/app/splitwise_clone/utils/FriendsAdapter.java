@@ -16,6 +16,7 @@
 package com.google.app.splitwise_clone.utils;
 
 import android.content.Context;
+import android.text.Html;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -24,6 +25,7 @@ import android.widget.ImageView;
 import android.widget.TextView;
 
 import androidx.annotation.NonNull;
+import androidx.core.text.HtmlCompat;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.bumptech.glide.Glide;
@@ -126,15 +128,23 @@ private Context mContext;
                 Map.Entry pair2 = (Map.Entry) it2.next();
                 String groupName = (String) pair2.getKey();
                 Float amount = (float) pair2.getValue();
-                String stat1 = "you owe ";
+                String stat1 = getColoredSpanned("you owe $" + amount, "#ff7400");
                 if(amount > 0)
-                    stat1 = "owes you ";
-                stat += stat1 + amount + " from group " + groupName + "\n";
+                    stat1 = getColoredSpanned("owes you $" + amount, "#27AE60");
+//                String name = getColoredSpanned("Hiren", "#800000");
+                stat += stat1 + " from group " + groupName + "<br>";
 
             }
 
             tv_friend_name.setText(friendName);
-            tv_status.setText(stat);
+            tv_status.setText(HtmlCompat.fromHtml(stat,HtmlCompat.FROM_HTML_MODE_LEGACY), TextView.BufferType.SPANNABLE);
+
+        }
+
+//        https://stackoverflow.com/questions/6094315/single-textview-with-multiple-colored-text
+        private String getColoredSpanned(String text, String color) {
+            String input = "<font color=" + color + ">" + text + "</font>";
+            return input;
         }
 
         private void loadImage(String friendName){
