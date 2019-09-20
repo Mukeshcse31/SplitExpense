@@ -132,7 +132,8 @@ public class ExpenseAdapter extends RecyclerView.Adapter<ExpenseAdapter.ExpenseV
         void bind(final int listIndex) {
 
             //the latest expense should be on top
-            DataSnapshot d = mDataSnapshotList.get(mDataSnapshotList.size() -1 - listIndex);
+            final int index = mDataSnapshotList.size() -1 - listIndex;
+            DataSnapshot d = mDataSnapshotList.get(index);
 
             Expense expense = d.getValue(Expense.class);
 
@@ -196,7 +197,7 @@ public class ExpenseAdapter extends RecyclerView.Adapter<ExpenseAdapter.ExpenseV
             tv_expenseDescription.getRootView().setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
-                    mOnClickListener.gotoExpenseDetails(expense_id, listIndex);
+                    mOnClickListener.gotoExpenseDetails(expense_id, index);
                 }
             });
 

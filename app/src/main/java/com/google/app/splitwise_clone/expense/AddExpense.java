@@ -228,6 +228,7 @@ public class AddExpense extends AppCompatActivity implements ListView.OnItemClic
 
                 String spentDate = date_btn.getText().toString();
                 String description = mDescription.getText().toString();
+                String category = AppUtils.getExpenseCategory(this, description);
                 String amountStr = mAmount.getText().toString();
                 float amount = 0.0f;
 
@@ -246,6 +247,8 @@ public class AddExpense extends AppCompatActivity implements ListView.OnItemClic
                 String spender = (String) spinner2.getSelectedItem();
                 Log.i(TAG, "Expense Added");
                 Expense expense = new Expense(spentDate, spender, description, amount);
+expense.setCategory(category);
+
                 for (int i = 0; i < participants.size(); i++) {
 
                     final String participant = participants.get(i);
