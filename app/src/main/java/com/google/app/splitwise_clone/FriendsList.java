@@ -14,76 +14,63 @@ import android.widget.TextView;
 
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
-import androidx.cardview.widget.CardView;
-import androidx.core.app.ShareCompat;
+import androidx.appcompat.widget.Toolbar;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.bumptech.glide.Glide;
 import com.google.android.gms.tasks.OnFailureListener;
 import com.google.android.gms.tasks.OnSuccessListener;
-import com.google.app.splitwise_clone.groups.AddGroup;
 import com.google.app.splitwise_clone.groups.GroupsList;
 import com.google.app.splitwise_clone.model.Balance;
-import com.google.app.splitwise_clone.model.Expense;
 import com.google.app.splitwise_clone.model.Group;
 import com.google.app.splitwise_clone.model.SingleBalance;
-import com.google.app.splitwise_clone.notification.SendNotificationLogic;
 import com.google.app.splitwise_clone.utils.AppUtils;
-import com.google.app.splitwise_clone.utils.ExpenseAdapter;
 import com.google.app.splitwise_clone.utils.FirebaseUtils;
 import com.google.app.splitwise_clone.utils.FriendsAdapter;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
-import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.Query;
 import com.google.firebase.database.ValueEventListener;
-import com.google.firebase.storage.FileDownloadTask;
 import com.google.firebase.storage.FirebaseStorage;
 import com.google.firebase.storage.StorageReference;
 import com.google.firebase.storage.UploadTask;
+
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 
-public class FriendsList extends AppCompatActivity {
+public class FriendsList extends AppCompatActivity implements FriendsAdapter.OnClickListener {
 
     private FirebaseStorage mFirebaseStorage;
     private DatabaseReference mDatabaseReference;
     private StorageReference mPhotosStorageReference;
-    private FirebaseAuth.AuthStateListener mAuthStateListener;
-    private FirebaseAuth.IdTokenListener mIdTokenListener;
     private String userName = "anonymous";
     private ImageView profilePicture;
     private static final int RC_PHOTO_PICKER = 2;
-private TextView balance_summary_tv;
-    List<String> groupMember = new ArrayList<>();
-    private Map<String, SingleBalance> members;
-    private Map<String, Float> splitDues = new HashMap<>();
-    Map<String, Float> balances;
-
-    private Map<String, String> friendsImageMap = new HashMap<>();
+    private TextView balance_summary_tv;
     Map<String, Float> amountSpentByMember = null;
     Map<String, Float> amountDueByMember = null;
     Map<String, Map<String, Float>> expenseMatrix = null;
     List<String> friends = new ArrayList<>();
-
     private String TAG = "Friendslist_Page";
     private RecyclerView friends_rv;
     private FriendsAdapter mFriendsAdapter;
     float amountSpentByUser = 0.2f, balanceAmount = 0.2f;
 
-
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_friend_list);
-        mFirebaseStorage = AppUtils.getDBStorage();
 
+        Toolbar myToolbar = (Toolbar) findViewById(R.id.my_toolbar);
+        setSupportActionBar(myToolbar);
+
+        mFirebaseStorage = AppUtils.getDBStorage();
         userName = FirebaseUtils.getUserName();
         profilePicture = findViewById(R.id.profilePicture);
         balance_summary_tv = findViewById(R.id.balance_summary_tv);
@@ -114,12 +101,9 @@ private TextView balance_summary_tv;
         amountDueByMember = new HashMap<>();
         expenseMatrix = new HashMap<>();
         friends = new ArrayList<>();
-        members = new HashMap<>();
+//        members = new HashMap<>();
 
         //update the participant's total amount
-//        final DatabaseReference mDatabaseReference;
-//        mDatabaseReference = AppUtils.getDBReference();
-
         Query query = mDatabaseReference.child("groups/").orderByChild("members/" + userName + "/name").equalTo(userName);
 
         query.addListenerForSingleValueEvent(new ValueEventListener() {
@@ -164,9 +148,9 @@ private TextView balance_summary_tv;
                     amountGroup.remove(userName);
                     balance.setGroups(amountGroup);
 
-                    balance_summary_tv.setText(String.format("%s $%.2f\n%s %.2f","total amount spent by you", amountSpentByUser, "others owe", balanceAmount));
+                    balance_summary_tv.setText(String.format("%s $%.2f\n%s %.2f", "total amount spent by you", amountSpentByUser, "others owe", balanceAmount));
 
-                    mFriendsAdapter = new FriendsAdapter(amountGroup,friendsImageMap, FriendsList.this);
+                    mFriendsAdapter = new FriendsAdapter(amountGroup, FriendsList.this);
                     friends_rv.setAdapter(mFriendsAdapter);
                     mDatabaseReference.child("users/" + userName + "/balances/").setValue(balance);
                     Log.i(TAG, "total calculation");
@@ -183,7 +167,7 @@ private TextView balance_summary_tv;
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
         // Inflate the menu; this adds items to the action bar if it is present.
-        getMenuInflater().inflate(R.menu.friends_list, menu);
+        getMenuInflater().inflate(R.menu.mnu_friends_list, menu);
         return true;
     }
 
@@ -199,8 +183,7 @@ private TextView balance_summary_tv;
                 break;
 
             case R.id.gotoGroups:
-                intent = new Intent(FriendsList.this, GroupsList.class);
-                startActivity(intent);
+                gotoGroupsList();
                 break;
 
             case R.id.invite_friend:
@@ -209,16 +192,18 @@ private TextView balance_summary_tv;
 
             //Sign Out
             case R.id.signout:
-                FirebaseAuth mAuth = FirebaseAuth.getInstance();
-                mAuth.signOut();
-                SharedPreferences prefs = getSharedPreferences(MainActivity.SPLIT_PREFS, 0);
-                prefs.edit().remove(MainActivity.USERNAME_KEY).commit();
-                prefs.edit().remove(MainActivity.PASSWORD_KEY).commit();
+                AppUtils.signOut(this);
                 finish();
                 break;
 
         }
         return super.onOptionsItemSelected(item);
+    }
+
+    private void gotoGroupsList() {
+
+        Intent intent = new Intent(FriendsList.this, GroupsList.class);
+        startActivity(intent);
     }
 
     @Override
@@ -268,7 +253,7 @@ private TextView balance_summary_tv;
         }
     }
 
-    private void loadUserImage(){
+    private void loadUserImage() {
 
         Query query = mDatabaseReference.child("users/" + userName + "/imageUrl");
         query.addListenerForSingleValueEvent(new ValueEventListener() {
@@ -277,7 +262,7 @@ private TextView balance_summary_tv;
 
                 if (dataSnapshot.exists()) {
                     String imagePath = (String) dataSnapshot.getValue();
-                    if(TextUtils.isEmpty(imagePath)) return;
+                    if (TextUtils.isEmpty(imagePath)) return;
 
 //                    https://firebase.google.com/docs/storage/android/download-files
                     mPhotosStorageReference = mFirebaseStorage.getReference();
@@ -302,6 +287,7 @@ private TextView balance_summary_tv;
                     });
                 }
             }
+
             @Override
             public void onCancelled(@NonNull DatabaseError databaseError) {
             }
@@ -315,7 +301,7 @@ private TextView balance_summary_tv;
         updateUsersAmount();
     }
 
-    public void inviteAFriend(){
+    public void inviteAFriend() {
 
 //        Log.i(TAG, "package name" + getPackageName());
         String invite_text = getString(R.string.invite_text) + getPackageName();
@@ -327,5 +313,10 @@ private TextView balance_summary_tv;
         //verify that this intent can be launched before starting
         if (sharingIntent.resolveActivity(getPackageManager()) != null)
             startActivity(Intent.createChooser(sharingIntent, getString(R.string.invite_friend)));
+    }
+
+    @Override
+    public void gotoGroup() {
+        gotoGroupsList();
     }
 }

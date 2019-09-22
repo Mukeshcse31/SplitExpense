@@ -36,7 +36,7 @@
     <dimen name="plus_width">24dp</dimen>
     <dimen name="plus_height">24dp</dimen>
 
-    <!--friends' list-->
+    <!--friends' other-->
     <dimen name="friends_top_margin">116dp</dimen>
     <dimen name="tv_friend_name">16sp</dimen>
     <dimen name="tv_status">16sp</dimen>
@@ -92,6 +92,9 @@
 <dimen name="export">16sp</dimen>
     <dimen name="settleup">16sp</dimen>
     <dimen name="exp_actions_layout_bottom">8dp</dimen>
+<dimen name="settleup_img_height">48dp</dimen>
+    <dimen name="settleup_img_width">40dp</dimen>
+
 
 <!--    Others-->
     <dimen name="guildeline_grp_horizon">4dp</dimen>

@@ -19,6 +19,7 @@ import android.widget.Toast;
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.appcompat.widget.Toolbar;
 import androidx.core.app.ActivityCompat;
 import androidx.core.content.ContextCompat;
 import androidx.recyclerview.widget.LinearLayoutManager;
@@ -74,7 +75,11 @@ public class AddGroup extends AppCompatActivity implements GroupMembersAdapter.O
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.fragment_add_group);
+
+        Toolbar myToolbar = (Toolbar) findViewById(R.id.my_toolbar);
+        setSupportActionBar(myToolbar);
         getSupportActionBar().setTitle(getString(R.string.new_group));
+
         mFirebaseStorage = AppUtils.getDBStorage();
         mDatabaseReference = AppUtils.getDBReference();
         mPhotosStorageReference = mFirebaseStorage.getReference().child("images/groups");
@@ -219,14 +224,6 @@ public class AddGroup extends AppCompatActivity implements GroupMembersAdapter.O
                     if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
                         if (ContextCompat.checkSelfPermission(this, Manifest.permission.CAMERA)
                                 != PackageManager.PERMISSION_GRANTED) {
-//                            showMessageOKCancel("You need to allow access permissions",
-//                                    new DialogInterface.OnClickListener() {
-//                                        @Override
-//                                        public void onClick(DialogInterface dialog, int which) {
-//                                            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
-//                                            }
-//                                        }
-//                                    });
                         }
                     }
                 }
@@ -318,8 +315,6 @@ public class AddGroup extends AppCompatActivity implements GroupMembersAdapter.O
                     else {
                         nongroup_members.put(name, email);
                     }
-
-//                            it.remove(); // avoids a ConcurrentModificationException
                 }
 
                 //load image
@@ -387,7 +382,7 @@ public class AddGroup extends AppCompatActivity implements GroupMembersAdapter.O
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
         // Inflate the menu; this adds items to the action bar if it is present.
-        getMenuInflater().inflate(R.menu.add_group, menu);
+        getMenuInflater().inflate(R.menu.mnu_add_group, menu);
 
         MenuItem addMenu = menu.findItem(R.id.addGroup);
         MenuItem deleteMenu = menu.findItem(R.id.deleteGroup);

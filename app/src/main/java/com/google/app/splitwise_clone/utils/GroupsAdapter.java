@@ -21,12 +21,12 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.view.animation.Animation;
+import android.view.animation.ScaleAnimation;
 import android.widget.ImageView;
 import android.widget.TextView;
-
 import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
-
 import com.bumptech.glide.Glide;
 import com.google.android.gms.tasks.OnFailureListener;
 import com.google.android.gms.tasks.OnSuccessListener;
@@ -36,7 +36,6 @@ import com.google.app.splitwise_clone.model.SingleBalance;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.storage.FirebaseStorage;
 import com.google.firebase.storage.StorageReference;
-
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
@@ -90,7 +89,24 @@ public class GroupsAdapter extends RecyclerView.Adapter<GroupsAdapter.ReviewView
     public void onBindViewHolder(ReviewViewHolder holder, int position) {
         Log.d(TAG, "#" + position);
         holder.bind(position);
+        // call Animation function
+        setAnimation(holder.itemView, position);
     }
+
+
+    private int lastPosition = -1;
+
+    private void setAnimation(View viewToAnimate, int position) {
+        // If the bound view wasn't previously displayed on screen, it's animated
+        if (position > lastPosition) {
+            ScaleAnimation anim = new ScaleAnimation(0.0f, 1.0f, 0.0f, 1.0f, Animation.RELATIVE_TO_SELF, 0.5f, Animation.RELATIVE_TO_SELF, 0.5f);
+//            anim.setDuration(new Random().nextInt(501));//to make duration random number between [0,501)
+            anim.setDuration(1000);
+            viewToAnimate.startAnimation(anim);
+            lastPosition = position;
+        }
+    }
+
 
     @Override
     public int getItemCount() {
@@ -99,7 +115,7 @@ public class GroupsAdapter extends RecyclerView.Adapter<GroupsAdapter.ReviewView
 
     class ReviewViewHolder extends RecyclerView.ViewHolder {
 
-        // Will display the position in the list, ie 0 through getItemCount() - 1
+        // Will display the position in the other, ie 0 through getItemCount() - 1
         TextView tv_group_name;
         // Will display which ViewHolder is displaying this data
         TextView tv_member_status, tv_status, tv_amount;
@@ -117,9 +133,9 @@ public class GroupsAdapter extends RecyclerView.Adapter<GroupsAdapter.ReviewView
 
         /**
          * A method we wrote for convenience. This method will take an integer as input and
-         * use that integer to display the appropriate text within a list item.
+         * use that integer to display the appropriate text within a other item.
          *
-         * @param listIndex Position of the item in the list
+         * @param listIndex Position of the item in the other
          */
         void bind(final int listIndex) {
 

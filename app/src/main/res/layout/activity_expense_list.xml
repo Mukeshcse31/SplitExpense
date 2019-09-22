@@ -21,12 +21,13 @@
     </androidx.swiperefreshlayout.widget.SwipeRefreshLayout>
 
     <com.google.android.material.appbar.AppBarLayout
-        android:id="@+id/app_bar_layout_main"
+        android:id="@+id/app_bar_layout_exp"
         style="@style/AppBarLayoutStyle"
         android:layout_height="wrap_content">
 
+
         <com.google.android.material.appbar.CollapsingToolbarLayout
-            android:id="@+id/toolbar_container"
+            android:id="@+id/collap_toolbar_exp"
             style="@style/CollapsingToolbarLayoutStyle"
             android:layout_width="match_parent"
             android:layout_height="@dimen/exp_toolbar_height"
@@ -34,6 +35,17 @@
             app:expandedTitleTextAppearance="@style/TextAppearance.AppCompat.Widget.ActionBar.Title.Inverse"
             app:layout_scrollFlags="scroll|exitUntilCollapsed">
 
+            <androidx.appcompat.widget.Toolbar
+                android:id="@+id/my_toolbar"
+                style="@style/ToolbarStyle"
+                android:layout_gravity="top"
+                android:background="@color/skyBlue"
+                android:layout_marginLeft="@dimen/list_toolbar_side_margin"
+                android:layout_marginRight="@dimen/list_toolbar_side_margin"
+                android:elevation="4dp"
+                android:theme="@style/ThemeOverlay.AppCompat.ActionBar"
+                app:popupTheme="@style/ThemeOverlay.AppCompat.Light"
+                app:layout_collapseMode="pin" />
 
             <ImageView
                 android:layout_width="match_parent"
@@ -91,34 +103,6 @@
         android:layout_gravity="bottom"
         app:backgroundTint="@color/skyBlue" />
 
-
-    <Button
-        android:id="@+id/settleup_bn"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_gravity="start"
-        android:layout_marginStart="8dp"
-        android:text="@string/action_settleup"
-        android:elevation="4dp"
-        android:textSize="@dimen/settleup"
-        app:layout_anchor="@id/bottom_bar"
-        android:layout_marginBottom="@dimen/exp_actions_layout_bottom"
-        app:layout_anchorGravity="start|bottom"></Button>
-
-    <Button
-        android:id="@+id/export_bn"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_gravity="end"
-        android:layout_marginEnd="8dp"
-        android:elevation="4dp"
-        android:onClick="exportExpenses"
-        android:text="@string/action_export"
-        android:textSize="@dimen/export"
-        app:layout_anchor="@id/bottom_bar"
-        android:layout_marginBottom="@dimen/exp_actions_layout_bottom"
-        app:layout_anchorGravity="end|bottom"></Button>
-
     <com.google.android.material.floatingactionbutton.FloatingActionButton
         android:id="@+id/add_expense_fab"
         android:layout_width="wrap_content"
@@ -133,34 +117,45 @@
         app:pressedTranslationZ="@dimen/fab_press_translation_z" />
 
 
-    <LinearLayout
+    <androidx.constraintlayout.widget.ConstraintLayout
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:orientation="horizontal"
+        android:layout_gravity="center_horizontal"
         app:layout_behavior="@string/appbar_scrolling_view_behavior">
 
         <ImageView
             android:id="@+id/settleup_image"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintTop_toTopOf="parent"
+            android:layout_width="@dimen/settleup_img_width"
+            android:layout_height="@dimen/settleup_img_height"
             android:background="@drawable/settledup"
             android:scaleType="center"
+            android:onClick="populateSettledUpExpenses"
             android:visibility="gone">
 
         </ImageView>
 
         <TextView
             android:id="@+id/settleup_tv"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/settleup_image"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:text="@string/settledup"
             android:textSize="@dimen/label_exp"
+            android:onClick="populateSettledUpExpenses"
             android:visibility="gone">
 
         </TextView>
 
         <TextView
             android:id="@+id/noExpenses_tv"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintTop_toTopOf="parent"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:text="@string/no_expense"
@@ -168,7 +163,7 @@
             android:visibility="gone">
 
         </TextView>
-    </LinearLayout>
+    </androidx.constraintlayout.widget.ConstraintLayout>
 
 </androidx.coordinatorlayout.widget.CoordinatorLayout>
 

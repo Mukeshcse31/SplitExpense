@@ -4,7 +4,7 @@
 
     <dimen name="list_top_margin">160dp</dimen>
 
-    <!--friends' list-->
+    <!--friends' other-->
     <dimen name="tv_friend_name">24sp</dimen>
     <dimen name="tv_status">24sp</dimen>
 
@@ -41,7 +41,7 @@
     <dimen name="groupname_exp">40sp</dimen>
     <dimen name="userbalance_exp">28sp</dimen>
     <dimen name="exp_image_width">52dp</dimen>
-    <dimen name="exp_image_height">44dp</dimen>
+    <dimen name="exp_image_height">60dp</dimen>
 
     <dimen name="user_summary">20sp</dimen>
     <dimen name="paidby_expense">20sp</dimen>
@@ -63,6 +63,8 @@
     <dimen name="export">28sp</dimen>
     <dimen name="settleup">28sp</dimen>
     <dimen name="exp_actions_layout_bottom">12dp</dimen>
+    <dimen name="settleup_img_height">104dp</dimen>
+    <dimen name="settleup_img_width">64dp</dimen>
 
     <!--    Others-->
     <dimen name="guildeline_grp_horizon">8dp</dimen>

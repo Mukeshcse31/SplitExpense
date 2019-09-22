@@ -87,7 +87,7 @@ public class NonGroupMembersAdapter extends RecyclerView.Adapter<NonGroupMembers
 
     class ReviewViewHolder extends RecyclerView.ViewHolder {
 
-        // Will display the position in the list, ie 0 through getItemCount() - 1
+        // Will display the position in the other, ie 0 through getItemCount() - 1
         TextView tv_friend_name;
         ImageView member_iv;
 
@@ -103,9 +103,9 @@ public class NonGroupMembersAdapter extends RecyclerView.Adapter<NonGroupMembers
 
         /**
          * A method we wrote for convenience. This method will take an integer as input and
-         * use that integer to display the appropriate text within a list item.
+         * use that integer to display the appropriate text within a other item.
          *
-         * @param listIndex Position of the item in the list
+         * @param listIndex Position of the item in the other
          */
         void bind(int listIndex) {
 

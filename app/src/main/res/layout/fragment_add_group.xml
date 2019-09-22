@@ -19,7 +19,19 @@
     android:background="@color/gray"
     android:layout_height="match_parent">
 
-<androidx.constraintlayout.widget.Guideline
+    <androidx.appcompat.widget.Toolbar
+        android:id="@+id/my_toolbar"
+        style="@style/ToolbarStyle"
+        android:background="@color/colorPrimary"
+        android:layout_gravity="bottom"
+        android:layout_marginLeft="@dimen/list_toolbar_side_margin"
+        android:layout_marginRight="@dimen/list_toolbar_side_margin"
+        android:elevation="4dp"
+        android:theme="@style/ThemeOverlay.AppCompat.ActionBar"
+        app:popupTheme="@style/ThemeOverlay.AppCompat.Light"
+        app:layout_collapseMode="pin" />
+
+    <androidx.constraintlayout.widget.Guideline
     android:layout_width="1dp"
     android:layout_height="match_parent"
     android:orientation="vertical"

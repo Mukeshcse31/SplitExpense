@@ -39,7 +39,6 @@ public class ExportUtility {
 
                 String expensePayload = context.getString(R.string.export_heading);
                 expensePayload += ExpenseAdapter.expensePayload;
-//        Log.i(TAG, ExpenseAdapter.expensePayload);
                 Intent sharingIntent = new Intent(Intent.ACTION_SEND);
                 sharingIntent.setType("text/plain");
                 sharingIntent.putExtra(Intent.EXTRA_SUBJECT, group_name);

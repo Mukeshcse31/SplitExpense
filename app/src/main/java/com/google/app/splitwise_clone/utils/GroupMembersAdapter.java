@@ -35,10 +35,8 @@ public class GroupMembersAdapter extends RecyclerView.Adapter<GroupMembersAdapte
 
     private static final String TAG = GroupMembersAdapter.class.getSimpleName();
 
-//    private static int viewHolderCount;
     private Set membersSet;
     Iterator<String> it;
-    private Context mContext;
     private Map<String, String> group_members;
 private OnClickListener mOnClickListener;
 
@@ -48,10 +46,6 @@ private OnClickListener mOnClickListener;
 
         membersSet = group_members.keySet();
         it = membersSet.iterator();
-
-//        Set<Map.Entry<String, String>> ee = group_members.entrySet();
-//        ee.size();
-//        viewHolderCount = 0;
     }
 
     public interface OnClickListener{
@@ -89,7 +83,7 @@ private OnClickListener mOnClickListener;
 
     class ReviewViewHolder extends RecyclerView.ViewHolder {
 
-        // Will display the position in the list, ie 0 through getItemCount() - 1
+        // Will display the position in the other, ie 0 through getItemCount() - 1
         TextView tv_friend_name;
         ImageView member_iv;
 
@@ -106,9 +100,9 @@ private OnClickListener mOnClickListener;
 
         /**
          * A method we wrote for convenience. This method will take an integer as input and
-         * use that integer to display the appropriate text within a list item.
+         * use that integer to display the appropriate text within a other item.
          *
-         * @param listIndex Position of the item in the list
+         * @param listIndex Position of the item in the other
          */
         void bind(int listIndex) {
 

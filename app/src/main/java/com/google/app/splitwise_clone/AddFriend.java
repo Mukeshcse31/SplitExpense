@@ -18,7 +18,6 @@ import com.google.app.splitwise_clone.utils.FirebaseUtils;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
-import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.Query;
 import com.google.firebase.database.ValueEventListener;
 
@@ -42,7 +41,7 @@ public class AddFriend extends AppCompatActivity {
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
         // Inflate the menu; this adds items to the action bar if it is present.
-        getMenuInflater().inflate(R.menu.add_friend, menu);
+        getMenuInflater().inflate(R.menu.mnu_add_friend, menu);
         return true;
     }
 

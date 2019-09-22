@@ -21,6 +21,7 @@ import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.appcompat.widget.Toolbar;
 import androidx.fragment.app.DialogFragment;
 
 import com.google.app.splitwise_clone.R;
@@ -35,7 +36,6 @@ import com.google.app.splitwise_clone.utils.FirebaseUtils;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
-import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.Query;
 import com.google.firebase.database.ValueEventListener;
 
@@ -50,6 +50,7 @@ public class AddExpense extends AppCompatActivity implements ListView.OnItemClic
 
     private DatabaseReference mDatabaseReference;
     private String TAG = AddExpense.class.getSimpleName();
+    private Toolbar mToolbar;
     String userName;
     ListView listView;
     Spinner spinner2;
@@ -78,6 +79,8 @@ public class AddExpense extends AppCompatActivity implements ListView.OnItemClic
         //https://stackoverflow.com/questions/17423483/how-to-limit-edittext-length-to-7-integers-and-2-decimal-places/21802109
         mAmount.setFilters(new InputFilter[]{new DigitsInputFilter(10, 2, 99999999.99)});
 
+        mToolbar = (Toolbar) findViewById(R.id.my_toolbar);
+        setSupportActionBar(mToolbar);
         getSupportActionBar().setTitle(getString(R.string.add_expense));
         mDatabaseReference = AppUtils.getDBReference();
 
@@ -189,7 +192,7 @@ public class AddExpense extends AppCompatActivity implements ListView.OnItemClic
     public boolean onCreateOptionsMenu(Menu menu) {
         // Inflate the menu; this adds items to the action bar if it is present.
 
-        getMenuInflater().inflate(R.menu.add_expense, menu);
+        getMenuInflater().inflate(R.menu.mnu_add_expense, menu);
         MenuItem deleteMenu = menu.findItem(R.id.deleteExpense);
         MenuItem cancelMenu = menu.findItem(R.id.deleteExpense);
 
@@ -197,12 +200,7 @@ public class AddExpense extends AppCompatActivity implements ListView.OnItemClic
             deleteMenu.setVisible(false);
             cancelMenu.setVisible(false);
         }
-//        else
-//            menu.findItem(R.id.deleteExpense).setVisible(true);
-
         return true;
-
-        //check for edit or new expense
     }
 
     private List<String> getExpenseParticipants() {
@@ -247,7 +245,7 @@ public class AddExpense extends AppCompatActivity implements ListView.OnItemClic
                 String spender = (String) spinner2.getSelectedItem();
                 Log.i(TAG, "Expense Added");
                 Expense expense = new Expense(spentDate, spender, description, amount);
-expense.setCategory(category);
+                expense.setCategory(category);
 
                 for (int i = 0; i < participants.size(); i++) {
 
@@ -276,7 +274,7 @@ expense.setCategory(category);
                         }
                     });
                     notificationTitle = getString(R.string.expense_edited);
-                    notificationMessage = String.format("%s edited the expense for %s to %f in the group %s", userName, description, amount, group_name);
+                    notificationMessage = String.format("%s edited the expense for %s to %.2f in the group %s", userName, description, amount, group_name);
                 } else {//add expense
 
                     mDatabaseReference.child("groups/" + group_name + "/expenses").push().setValue(expense, new DatabaseReference.CompletionListener() {
@@ -287,7 +285,7 @@ expense.setCategory(category);
                         }
                     });
                     notificationTitle = getString(R.string.expense_added);
-                    notificationMessage = String.format("%s added %f for %s in the group %s", userName, amount, description, group_name);
+                    notificationMessage = String.format("%s added %.2f for %s in the group %s", userName, amount, description, group_name);
                 }
 
                 //Send Notification

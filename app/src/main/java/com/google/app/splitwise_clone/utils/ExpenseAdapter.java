@@ -21,44 +21,42 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.view.animation.Animation;
-import android.view.animation.ScaleAnimation;
 import android.widget.ImageView;
 import android.widget.TextView;
-
 import androidx.recyclerview.widget.RecyclerView;
-
 import com.google.app.splitwise_clone.R;
 import com.google.app.splitwise_clone.model.Expense;
 import com.google.app.splitwise_clone.model.SingleBalance;
-import com.google.firebase.database.DataSnapshot;
-
 import java.text.SimpleDateFormat;
 import java.util.Date;
-import java.util.List;
+import java.util.Iterator;
+import java.util.LinkedHashMap;
 import java.util.Map;
-import java.util.Random;
 
 public class ExpenseAdapter extends RecyclerView.Adapter<ExpenseAdapter.ExpenseViewHolder> {
 
     private static final String TAG = ExpenseAdapter.class.getSimpleName();
-    public static String expensePayload;
-    private static int viewHolderCount;
+    public static String expensePayload = "";
     String userName;
-    List<DataSnapshot> mDataSnapshotList;
+    LinkedHashMap<String, Expense> mExpenseMap;
+    Iterator it;
     Context mContext;
+    Expense expense;
+    String expenseId;
+    Boolean enabled;
+
     private OnClickListener mOnClickListener;
 
-    public ExpenseAdapter(List<DataSnapshot> dataSnapshotList, OnClickListener listener) {
-        mDataSnapshotList = dataSnapshotList;
+    public ExpenseAdapter(LinkedHashMap<String, Expense> map, OnClickListener listener, boolean enabled) {
+
+        mExpenseMap = map;
         mOnClickListener = listener;
         userName = FirebaseUtils.getUserName();
-
-        viewHolderCount = 0;
+        this.enabled = enabled;
     }
 
     public interface OnClickListener {
-        void gotoExpenseDetails(String expenseId, int index);
+        void gotoExpenseDetails(String expenseId);
     }
 
     @Override
@@ -66,14 +64,15 @@ public class ExpenseAdapter extends RecyclerView.Adapter<ExpenseAdapter.ExpenseV
 
         mContext = viewGroup.getContext();
         int layoutIdForListItem = R.layout.expense_list_item;
+        if (viewType == 0) layoutIdForListItem = R.layout.expense_list_item_category;
+
         LayoutInflater inflater = LayoutInflater.from(mContext);
         View view = inflater.inflate(layoutIdForListItem, viewGroup, false);
+        if (enabled == false) {
+            view.setAlpha(0.5f);
+            view.setEnabled(false);
+        }
         ExpenseViewHolder viewHolder = new ExpenseViewHolder(view);
-
-//        viewHolder.tv_review.setText("ViewHolder index: " + viewHolderCount);
-
-        viewHolderCount++;
-        Log.d(TAG, "onCreateViewHolder: number of ViewHolders created: " + viewHolderCount);
         return viewHolder;
     }
 
@@ -81,38 +80,42 @@ public class ExpenseAdapter extends RecyclerView.Adapter<ExpenseAdapter.ExpenseV
     public void onBindViewHolder(ExpenseViewHolder holder, int position) {
         Log.d(TAG, "#" + position);
         holder.bind(position);
-        // call Animation function
-        setAnimation(holder.itemView, position);
     }
 
+    @Override
+    public int getItemViewType(int pos) {
+//        https://stackoverflow.com/questions/5300962/getviewtypecount-and-getitemviewtype-methods-of-arrayadapter
 
-    private int lastPosition = -1;
-
-    private void setAnimation(View viewToAnimate, int position) {
-        // If the bound view wasn't previously displayed on screen, it's animated
-        if (position > lastPosition) {
-            ScaleAnimation anim = new ScaleAnimation(0.0f, 1.0f, 0.0f, 1.0f, Animation.RELATIVE_TO_SELF, 0.5f, Animation.RELATIVE_TO_SELF, 0.5f);
-//            anim.setDuration(new Random().nextInt(501));//to make duration random number between [0,501)
-            anim.setDuration(1000);
-            viewToAnimate.startAnimation(anim);
-            lastPosition = position;
-        }
+        if (pos == 0)
+            it = mExpenseMap.entrySet().iterator();
+        Map.Entry pair = (Map.Entry) it.next();
+        expense = (Expense) pair.getValue();
+        expenseId = (String) pair.getKey();
+        if (expense == null)
+            return 0;
+        else
+            return 1;
     }
 
     @Override
     public int getItemCount() {
-        return mDataSnapshotList.size();
+
+        return mExpenseMap.size();
     }
 
     class ExpenseViewHolder extends RecyclerView.ViewHolder {
 
-        // Will display the position in the list, ie 0 through getItemCount() - 1
-        TextView dateSpent_tv, tv_expenseDescription, tv_debt_credit, tv_amount, tv_paidBy;
+        // Will display the position in the other, ie 0 through getItemCount() - 1
+        TextView dateSpent_tv, tv_expenseDescription, tv_debt_credit, tv_amount, tv_paidBy, category_tv;
         ImageView expense_img;
 
         public ExpenseViewHolder(View itemView) {
             super(itemView);
 
+            if (expense == null) {
+                category_tv = itemView.findViewById(R.id.category_tv);
+                return;
+            }
             expense_img = itemView.findViewById(R.id.expense_img);
             dateSpent_tv = itemView.findViewById(R.id.dateSpent_tv);
             tv_expenseDescription = itemView.findViewById(R.id.tv_expenseDescription);
@@ -125,18 +128,16 @@ public class ExpenseAdapter extends RecyclerView.Adapter<ExpenseAdapter.ExpenseV
 
         /**
          * A method we wrote for convenience. This method will take an integer as input and
-         * use that integer to display the appropriate text within a list item.
+         * use that integer to display the appropriate text within a other item.
          *
-         * @param listIndex Position of the item in the list
+         * @param listIndex Position of the item in the other
          */
         void bind(final int listIndex) {
 
-            //the latest expense should be on top
-            final int index = mDataSnapshotList.size() -1 - listIndex;
-            DataSnapshot d = mDataSnapshotList.get(index);
-
-            Expense expense = d.getValue(Expense.class);
-
+            if (expense == null) {
+                category_tv.setText(expenseId.toUpperCase());
+                return;
+            }
             String date = expense.getDateSpent();
             String payer = expense.getPayer();
             String description = expense.getDescription();
@@ -175,10 +176,13 @@ public class ExpenseAdapter extends RecyclerView.Adapter<ExpenseAdapter.ExpenseV
             // so checking if the username is available
             Map<String, SingleBalance> splitExpense = expense.getSplitExpense();
 
-            if (splitExpense.containsKey(userName)) {
+            if (splitExpense.containsKey(userName) || TextUtils.equals(payer, mContext.getString(R.string.you))) {
                 SingleBalance sb = splitExpense.get(userName);
-                float amountDue = sb.getAmount();
 
+                float amountDue;
+                if (sb == null) { //if the user has paid and not sharing the expense
+                    amountDue = totalAmount;
+                } else amountDue = sb.getAmount();
 
                 if (amountDue < 0) {
                     tv_debt_credit.setTextColor(mContext.getColor(R.color.orange));
@@ -191,13 +195,17 @@ public class ExpenseAdapter extends RecyclerView.Adapter<ExpenseAdapter.ExpenseV
                 amountDueStr = String.format("$%.2f", Math.abs(amountDue));
                 tv_amount.setText(amountDueStr);
             }
+            else{//if the user has not participated
+                tv_debt_credit.setTextColor(mContext.getColor(R.color.black));
+                tv_amount.setTextColor(mContext.getColor(R.color.black));
+            }
 
             //click event handler to edit
-            final String expense_id = d.getKey();
+            final String expense_id = expenseId;
             tv_expenseDescription.getRootView().setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
-                    mOnClickListener.gotoExpenseDetails(expense_id, index);
+                    mOnClickListener.gotoExpenseDetails(expense_id);
                 }
             });
 

@@ -1,0 +1,33 @@
+<?xml version="1.0" encoding="utf-8"?>
+<menu xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto">
+
+
+    <item
+        android:id="@+id/orderbyCategory"
+        android:title="@string/mnu_orderbycategory"
+        app:showAsAction="ifRoom"
+
+        android:orderInCategory="0"/>
+
+    <item
+        android:id="@+id/orderbyDate"
+        android:title="@string/mnu_resetorder"
+        android:orderInCategory="1"/>
+
+    <item
+        android:id="@+id/settle_up"
+        android:title="@string/settle_up"
+        android:orderInCategory="2"/>
+
+    <item
+        android:id="@+id/export"
+        android:title="@string/mnu_export"
+        android:orderInCategory="3"/>
+
+    <item
+        android:id="@+id/signout"
+        android:title="@string/signout"
+        android:orderInCategory="4"/>
+
+</menu>

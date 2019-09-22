@@ -59,12 +59,13 @@
     <string name="add_group_image">click to add picture</string>
     <string name="group_image">image of group</string>
     <string name="groupname_warning">Please enter a Group Name</string>
+    <string name="settle_up">Settle Up</string>
     <string name="settledup">You are all settled up \n Tap to show settled expenses</string>
     <string name="action_settleup">Settle up</string>
     <string name="action_export">Export</string>
-    <string name="no_expense">No Expense in this Group</string>
+    <string name="no_expense">No (Active) Expense in this Group</string>
     <string name="export_title">Export Expenses</string>
-    <string name="export_heading">"Date,Description,PaidBy,DebtCredit,AmountDue"</string>
+    <string name="export_heading">Date,Description,PaidBy,DebtCredit,AmountDue</string>
     <string name="default_status">N/A</string>
     <string name="group_debt_separator">\n</string>
 
@@ -82,6 +83,7 @@
     <string name="warning_message">Are you sure,You want to delete this expense ?</string>
     <string name="yes">Yes</string>
     <string name="no">No</string>
+    <string name="ok">OK</string>
     <string name="date">Date:</string>
     <string name="split_expense_with">Split Expense with:</string>
     <string name="payer">Payer:</string>
@@ -97,6 +99,11 @@
     <string name="you_lent">you lent</string>
     <string name="you_borrowed">you borrowed</string>
     <string name="paid">paid</string>
+
+<!--    Expense Menu-->
+    <string name="mnu_resetorder">Reset Order</string>
+    <string name="mnu_orderbycategory">Order By Category</string>
+    <string name="mnu_export">Export</string>
 
     <!--TextUtils-->
     <string name="send_message">send Messages</string>
@@ -160,5 +167,5 @@
         <item>rent</item>
     </string-array>
 
-
+<string name="food">food</string>
 </resources>

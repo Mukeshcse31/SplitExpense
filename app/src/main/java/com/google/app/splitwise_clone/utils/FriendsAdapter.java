@@ -21,6 +21,8 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.view.animation.Animation;
+import android.view.animation.ScaleAnimation;
 import android.widget.ImageView;
 import android.widget.TextView;
 
@@ -43,32 +45,36 @@ import java.util.Set;
 public class FriendsAdapter extends RecyclerView.Adapter<FriendsAdapter.FriendsViewHolder> {
 
     private static final String TAG = FriendsAdapter.class.getSimpleName();
-private String userName;
+    private String userName;
     private StorageReference mPhotosStorageReference;
     private FirebaseStorage mFirebaseStorage;
-private Context mContext;
+    private FriendsAdapter.OnClickListener mOnClickListener;
+    private Context mContext;
     private static int viewHolderCount;
-    private Set friendsSet;
-    private Map<String, String> friendsImageMap = new HashMap<>();
     Iterator it;
     private Map<String, Map<String, Float>> expenseMatrix;
 
-    public FriendsAdapter(Map<String, Map<String, Float>> mBalance, Map<String, String> images, Context context) {
+    public FriendsAdapter(Map<String, Map<String, Float>> mBalance, OnClickListener mOnClickListener) {
         userName = FirebaseUtils.getUserName();
         this.expenseMatrix = mBalance;
-        friendsImageMap = images;
-        mContext = context;
+        this.mOnClickListener = mOnClickListener;
         it = expenseMatrix.entrySet().iterator();
         mFirebaseStorage = AppUtils.getDBStorage();
-        mPhotosStorageReference= mFirebaseStorage.getReference();
+        mPhotosStorageReference = mFirebaseStorage.getReference();
         viewHolderCount = 0;
     }
+
+
+    public interface OnClickListener {
+        void gotoGroup();
+    }
+
     @Override
     public FriendsViewHolder onCreateViewHolder(ViewGroup viewGroup, int viewType) {
 
-        Context context = viewGroup.getContext();
+        mContext = viewGroup.getContext();
         int layoutIdForListItem = R.layout.friends_list_item;
-        LayoutInflater inflater = LayoutInflater.from(context);
+        LayoutInflater inflater = LayoutInflater.from(mContext);
         boolean shouldAttachToParentImmediately = false;
 
         View view = inflater.inflate(layoutIdForListItem, viewGroup, shouldAttachToParentImmediately);
@@ -76,6 +82,7 @@ private Context mContext;
         viewHolderCount++;
         Log.d(TAG, "onCreateViewHolder: number of ViewHolders created: "
                 + viewHolderCount);
+
         return viewHolder;
     }
 
@@ -85,6 +92,23 @@ private Context mContext;
 
 //        holder.setIsRecyclable(false);
         holder.bind(position);
+
+    // call Animation function
+    setAnimation(holder.itemView, position);
+}
+
+
+    private int lastPosition = -1;
+
+    private void setAnimation(View viewToAnimate, int position) {
+        // If the bound view wasn't previously displayed on screen, it's animated
+        if (position > lastPosition) {
+            ScaleAnimation anim = new ScaleAnimation(0.0f, 1.0f, 0.0f, 1.0f, Animation.RELATIVE_TO_SELF, 0.5f, Animation.RELATIVE_TO_SELF, 0.5f);
+//            anim.setDuration(new Random().nextInt(501));//to make duration random number between [0,501)
+            anim.setDuration(1000);
+            viewToAnimate.startAnimation(anim);
+            lastPosition = position;
+        }
     }
 
     @Override
@@ -94,7 +118,7 @@ private Context mContext;
 
     class FriendsViewHolder extends RecyclerView.ViewHolder {
 
-        // Will display the position in the list, ie 0 through getItemCount() - 1
+        // Will display the position in the other, ie 0 through getItemCount() - 1
         TextView tv_friend_name;
         // Will display which ViewHolder is displaying this data
         TextView tv_status;
@@ -107,15 +131,23 @@ private Context mContext;
             friendImage = itemView.findViewById(R.id.friendImage);
             tv_friend_name = itemView.findViewById(R.id.tv_friend_name);
             tv_status = itemView.findViewById(R.id.tv_status);
+            itemView.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    mOnClickListener.gotoGroup();
+                }
+            });
+
         }
 
         /**
          * A method we wrote for convenience. This method will take an integer as input and
-         * use that integer to display the appropriate text within a list item.
-         * @param listIndex Position of the item in the list
+         * use that integer to display the appropriate text within a other item.
+         *
+         * @param listIndex Position of the item in the other
          */
         void bind(int listIndex) {
-            String stat="";
+            String stat = "";
             Map.Entry pair = (Map.Entry) it.next();
             String friendName = (String) pair.getKey();
             loadImage(friendName);
@@ -124,12 +156,12 @@ private Context mContext;
 
 //create text view for each group
             Iterator it2 = allGroups.entrySet().iterator();
-            while (it2.hasNext()){
+            while (it2.hasNext()) {
                 Map.Entry pair2 = (Map.Entry) it2.next();
                 String groupName = (String) pair2.getKey();
                 Float amount = (float) pair2.getValue();
-                String stat1 = getColoredSpanned("you owe $" + amount, "#ff7400");
-                if(amount > 0)
+                String stat1 = getColoredSpanned("you owe $" + Math.abs(amount), "#ff7400");
+                if (amount > 0)
                     stat1 = getColoredSpanned("owes you $" + amount, "#27AE60");
 //                String name = getColoredSpanned("Hiren", "#800000");
                 stat += stat1 + " from group " + groupName + "<br>";
@@ -137,17 +169,17 @@ private Context mContext;
             }
 
             tv_friend_name.setText(friendName);
-            tv_status.setText(HtmlCompat.fromHtml(stat,HtmlCompat.FROM_HTML_MODE_LEGACY), TextView.BufferType.SPANNABLE);
+            tv_status.setText(HtmlCompat.fromHtml(stat, HtmlCompat.FROM_HTML_MODE_LEGACY), TextView.BufferType.SPANNABLE);
 
         }
 
-//        https://stackoverflow.com/questions/6094315/single-textview-with-multiple-colored-text
+        //        https://stackoverflow.com/questions/6094315/single-textview-with-multiple-colored-text
         private String getColoredSpanned(String text, String color) {
             String input = "<font color=" + color + ">" + text + "</font>";
             return input;
         }
 
-        private void loadImage(String friendName){
+        private void loadImage(String friendName) {
 
             final StorageReference imageRef = mPhotosStorageReference.child("images/users/" + friendName);
             final long ONE_MEGABYTE = 1024 * 1024;

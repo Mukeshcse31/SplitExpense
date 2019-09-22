@@ -23,10 +23,10 @@
         android:id="@+id/expense_img"
         android:layout_width="@dimen/exp_image_width"
         android:layout_height="@dimen/exp_image_height"
-        android:layout_gravity="center_vertical|center_horizontal|end"
         android:layout_marginStart="@dimen/image_start_margin"
         android:contentDescription="@string/group_image"
         android:src="@drawable/house"
+        android:scaleType="fitXY"
         app:layout_constraintStart_toEndOf="@+id/guideline_1"
         app:layout_constraintTop_toTopOf="parent" />
 
@@ -69,7 +69,6 @@
     <TextView
         android:id="@+id/tv_amount"
         style="@style/expense_details_Amount_Style"
-        android:text="@string/default_amount"
         app:layout_constraintEnd_toStartOf="@+id/guideline_3"
         app:layout_constraintTop_toBottomOf="@id/tv_debt_credit"/>
 
