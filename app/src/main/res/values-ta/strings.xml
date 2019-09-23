@@ -1,0 +1,170 @@
+<?xml version="1.0" encoding="utf-8"?>
+
+<resources>
+<!--Registration-->
+    <string name="app_name">செலவு பகிர்வு</string>
+<string name="prompt_email">மின்னஞ்சல்</string>
+<string name="prompt_username">பயனர்பெயர்</string>
+<string name="prompt_password">கடவுச்சொல்</string>
+<string name="prompt_password_again">கடவுச்சொல்லை உறுதிப்படுத்தவும்</string>
+<string name="prompt_msg">செய்தியைத் தட்டச்சு செய்க</string>
+<string name="action_sign_in">உள்நுழைக அல்லது பதிவு செய்யுங்கள்</string>
+<string name="action_register">பதிவு</string>
+<string name="action_sign_in_short">உள்நுழைக</string>
+<string name="action_sign_up">பதிவுபெறுக</string>
+<string name="action_Login">உள்நுழைய</string>
+<string name="signup_success">பயனர் கையொப்பமிட்டது வெற்றிகரமாக</string>
+<string name="signout">வெளியேறு</string>
+<string name="action_getLogin">ஏற்கனவே ஒரு கணக்கு உள்ளதா? இங்கே உள்நுழைக</string>
+<string name="action_getSignUp">புதிய கணக்கை துவங்கு</string>
+
+<string name="action_send">அனுப்புக</string>
+<string name="error_title">அச்சச்சோ</string>
+<string name="error_registration">பதிவு முயற்சி தோல்வியடைந்தது</string>
+<string name="error_Login">உள்நுழைவு முயற்சி தோல்வியடைந்தது</string>
+<string name="error_invalid_email">இந்த மின்னஞ்சல் முகவரி தவறானது</string>
+<string name="error_invalid_password">கடவுச்சொல் மிகக் குறைவு அல்லது பொருந்தவில்லை</string>
+<string name="error_incorrect_password">இந்த கடவுச்சொல் தவறானது</string>
+<string name="error_field_required">இந்த புலம் தேவை</string>
+<string name="error_username">பயனர் பெயர் செல்லுபடியாகாது</string>
+
+<!--Add User-->
+<string name="sample_message">வணக்கம்!</string>
+<string name="add">கூட்டு</string>
+<string name="cancel">ரத்து</string>
+<string name="friends">நண்பர்கள்</string>
+<string name="add_friend">நண்பரை சேர்க்கவும்</string>
+<string name="add_friend_name">பெயர்</string>
+<string name="add_friend_email">மின்னஞ்சல்</string>
+<string name="email_exists">மின்னஞ்சல் முன்பே பதிவில் இருக்கிறது</string>
+<string name="friend_added">நண்பர் சேர்க்கப்பட்டார்</string>
+<string name="close">மூடப்பட்டது</string>
+<string name="friend_image">நண்பரின் படம்</string>
+
+<!--Add Group-->
+<string name="goto_details">கோட்டோ செலவு விவரங்கள்</string>
+<string name="group_list">குழு பட்டியல்</string>
+<string name="groups">குழுக்கள்</string>
+<string name="group_name">group_name</string>
+<string name="new_group">புதிய குழு</string>
+<string name="add_group">குழுவைச் சேர்க்கவும்</string>
+<string name="saved_group">சேமித்த குழு</string>
+<string name="add_group_name">குழு பெயர்</string>
+<string name="group_exists">குழு ஏற்கனவே உள்ளது</string>
+<string name="group_delete_warning">இந்த குழுவை நீக்க விரும்புகிறீர்களா?</string>
+<string name="group_added">குழு சேர்க்கப்பட்டது</string>
+<string name="members">உறுப்பினர்கள்</string>
+<string name="non_members">மற்றவைகள்</string>
+<string name="add_group_image">படத்தைச் சேர்க்க கிளிக் செய்க</string>
+<string name="group_image">குழுவின் படம்</string>
+<string name="groupname_warning">குழு பெயரை உள்ளிடவும்</string>
+<string name="settle_up">முடிவு செய்</string>
+<string name="settledup">நீங்கள் அனைத்து தீர்த்துவைக்கப்படுகின்ற \n செலவுகள் காண்பிக்க தட்டவும்</string>
+<string name="action_settleup">முடிவு செய்</string>
+<string name="action_export">ஏற்றுமதி</string>
+<string name="no_expense">இந்த குழுவில் (செயலில்) செலவு இல்லை</string>
+<string name="export_title">ஏற்றுமதி செலவுகள்</string>
+<string name="export_heading">தேதி, விளக்கம், பணம் செலுத்தியது, பற்று கடன், செலுத்த வேண்டிய தொகை</string>
+<string name="default_status">பொ / இ</string>
+<string name="group_debt_separator">\n</string>
+
+<!--DB schema names-->
+<string name="goto_groupDetails">குழு விவரங்களுக்குச் செல்லவும்</string>
+<string name="db_users">பயனர்கள்</string>
+<string name="db_groups">குழுக்கள்</string>
+
+<!--Expenses-->
+<string name="db_messages">செய்தி</string>
+<string name="save">சேமி</string>
+<string name="delete">அழி</string>
+<string name="desc_error">விளக்கம் காலியாக இருக்கக்கூடாது</string>
+<string name="amount_error">தொகை காலியாக இருக்கக்கூடாது</string>
+<string name="warning_message">நிச்சயமாக, இந்த செலவை நீக்க விரும்புகிறீர்கள் ?</string>
+<string name="yes">ஆம்</string>
+<string name="no">இல்லை</string>
+<string name="ok">சரி</string>
+<string name="date">தேதி:</string>
+<string name="split_expense_with">உடன் செலவைப் பிரிக்கவும்:</string>
+<string name="payer">செலுத்துவோர்:</string>
+<string name="description">விளக்கம்</string>
+<string name="amount">தொகை</string>
+<string name="status">நிலைமை</string>
+<string name="add_expense">செலவு சேர்க்கவும்</string>
+<string name="you_are_owed">நீங்கள் கடன்பட்டிருக்கிறீர்கள்</string>
+<string name="default_amount">$0</string>
+<string name="opted_out">விலகியது</string>
+<string name="edit_expense">edit_expense</string>
+<string name="you">நீங்கள்</string>
+<string name="you_lent">நீங்கள் கொடுத்தீர்கள்</string>
+<string name="you_borrowed">நீங்கள் கடன் வாங்கினீர்கள்</string>
+<string name="paid">செலுத்தப்படுகிறது</string>
+
+<!--    Expense Menu-->
+<string name="mnu_resetorder">ஆர்டரை மீட்டமை</string>
+<string name="mnu_orderbycategory">வகை வாரியாக ஆர்டர்</string>
+<string name="mnu_export">ஏற்றுமதி</string>
+
+<!--TextUtils-->
+<string name="send_message">செய்திகளை அனுப்புங்கள்</string>
+<string name="invite_friend">உங்கள் நண்பர்களுடன் பகிர்ந்து கொள்ளுங்கள்</string>
+<string name="inviteafriend">நண்பரை அழைக்கவும்</string>
+<string name="invite_text">புதிய பயன்பாட்டைப் பாருங்கள்: https://play.google.com/store/apps/details?id=</string>
+<string name="new_line">\n</string>
+
+
+<string name="no_user_signed">பயனர் உள்நுழையவில்லை</string>
+
+<!--    Notification-->
+<string name="server_key">AAAAs3JWc5U:APA91bE4JBDCWMBfb-oHZuBnmixezzdcP5MkOG3LVkjlwOpjZFVGEHOS7POx_oHxaC_D6GwKBzhbGWYBEDH_nIk6iCMAXUw_J4cow_YkJ2IapVp4XUuJ5ugdUw-wxs5jKE4vEzArvpqG</string>
+<string name="expense_added">செலவு சேர்க்கப்பட்டது</string>
+<string name="expense_edited">செலவு திருத்தப்பட்டது</string>
+<string name="expense_deleted">செலவு நீக்கப்பட்டது</string>
+<string name="notif_title">title</string>
+<string name="notif_message">message</string>
+<string name="notif_to">to</string>
+<string name="notif_data">data</string>
+<string name="notif_Authorization">Authorization</string>
+<string name="notif_Content_Type">Content-Type</string>
+<string name="notif_contentType">application/json</string>
+<string name="FCM_API">https://fcm.googleapis.com/fcm/send</string>
+
+<!--    shopping images-->
+<string-array name="food">
+    <item>drinks</item>
+    <item>alcohol</item>
+    <item>egg</item>
+    <item>milk</item>
+    <item>fruit</item>
+    <item>food</item>
+    <item>apple</item>
+    <item>banana</item>
+</string-array>
+
+<string-array name="bulb">
+    <item>bulb</item>
+    <item>learning</item>
+    <item>book</item>
+    <item>power</item>
+</string-array>
+
+<string-array name="gas">
+    <item>gas</item>
+    <item>fuel</item>
+</string-array>
+
+<string-array name="cart">
+    <item>costco</item>
+    <item>amazon</item>
+    <item>walmart</item>
+    <item>cart</item>
+    <item>winco</item>
+</string-array>
+
+<string-array name="house">
+    <item>internet</item>
+    <item>house</item>
+    <item>rent</item>
+</string-array>
+
+<string name="food">food</string>
+</resources>

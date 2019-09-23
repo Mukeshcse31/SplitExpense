@@ -166,5 +166,12 @@
         android:layout_marginBottom="@dimen/layout_marginBottom_16"
         android:textStyle="bold"/>
 
+<androidx.appcompat.widget.AppCompatImageView
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    app:srcCompat="@drawable/offline"
+    android:id="@+id/offline_iv">
+</androidx.appcompat.widget.AppCompatImageView>
+
 
 </androidx.constraintlayout.widget.ConstraintLayout>

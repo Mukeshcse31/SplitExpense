@@ -3,6 +3,8 @@ package com.google.app.splitwise_clone.utils;
 import android.content.Context;
 import android.content.SharedPreferences;
 import android.content.res.Resources;
+import android.net.ConnectivityManager;
+import android.net.NetworkInfo;
 import android.text.TextUtils;
 
 import com.google.app.splitwise_clone.MainActivity;
@@ -128,4 +130,19 @@ public class AppUtils {
         return reverseMap;
     }
 
+
+    /*
+  https://stackoverflow.com/questions/1560788/how-to-check-internet-access-on-android-inetaddress-never-times-out
+   */
+    public static  boolean isOnline(Context context) {
+//Complete move this to Network Utils class
+        boolean status = false;
+
+        ConnectivityManager cm =
+                (ConnectivityManager) context.getSystemService(Context.CONNECTIVITY_SERVICE);
+        NetworkInfo netInfo = cm.getActiveNetworkInfo();
+        status = netInfo != null && netInfo.isConnectedOrConnecting();
+
+        return status;
+    }
 }

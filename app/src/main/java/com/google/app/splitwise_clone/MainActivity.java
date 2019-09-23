@@ -16,6 +16,7 @@ import android.widget.TextView;
 import androidx.appcompat.app.AlertDialog;
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.appcompat.widget.AppCompatImageView;
 
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.Task;
@@ -37,6 +38,10 @@ import com.google.firebase.database.Query;
 import com.google.firebase.database.ValueEventListener;
 import com.google.firebase.messaging.FirebaseMessaging;
 
+import org.w3c.dom.Text;
+
+import java.util.regex.Pattern;
+
 public class MainActivity extends AppCompatActivity {
 
     // Constants
@@ -53,6 +58,7 @@ public class MainActivity extends AppCompatActivity {
     private EditText mPasswordView;
     private EditText mConfirmPasswordView;
     private Button mloginbutton, msignUp, mgetLogin, mgetSignUp;
+    private AppCompatImageView offline_iv;
     // Firebase instance variables
     private FirebaseAuth mAuth;
 
@@ -61,6 +67,8 @@ public class MainActivity extends AppCompatActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        setContentView(R.layout.activity_register);
+
 //        https://stackoverflow.com/questions/40081539/default-firebaseapp-is-not-initialized
 //        FirebaseApp.initializeApp(getBaseContext());
         mAuth = FirebaseAuth.getInstance();
@@ -69,22 +77,38 @@ public class MainActivity extends AppCompatActivity {
         String displayName = prefs.getString(DISPLAY_NAME_KEY, "");
         String email = prefs.getString(USERNAME_KEY, "");
         String password = prefs.getString(PASSWORD_KEY, "");
+        offline_iv = findViewById(R.id.offline_iv);
 
-//        FirebaseUtils.updateDB("group1");
+        mEmailView = findViewById(R.id.register_email);
+        mPasswordView = findViewById(R.id.register_password);
+        mConfirmPasswordView = findViewById(R.id.register_confirm_password);
+        mUsernameView = findViewById(R.id.register_username);
+        mloginbutton = findViewById(R.id.login_bn);
+        msignUp = findViewById(R.id.register_sign_up_button);
+        mgetLogin = findViewById(R.id.getLogin);
+        mgetSignUp = findViewById(R.id.getSignUp);
+
+        mUserNameLayout = findViewById(R.id.label_userName);
+        mlabel_confirm_password = findViewById(R.id.label_confirm_password);
+
+        if (!AppUtils.isOnline(this)) {
+            offline_iv.setVisibility(View.VISIBLE);
+            mEmailView.setVisibility(View.GONE);
+            mPasswordView.setVisibility(View.GONE);
+            mConfirmPasswordView.setVisibility(View.GONE);
+            mUsernameView.setVisibility(View.GONE);
+            mloginbutton.setVisibility(View.GONE);
+            msignUp.setVisibility(View.GONE);
+            mgetLogin.setVisibility(View.GONE);
+            mgetSignUp.setVisibility(View.GONE);
+            mUserNameLayout.setVisibility(View.GONE);
+            mlabel_confirm_password.setVisibility(View.GONE);
+            return;
+        } else {
+            offline_iv.setVisibility(View.GONE);
+        }
 
         if (TextUtils.isEmpty(email)) {
-            setContentView(R.layout.activity_register);
-            mEmailView = findViewById(R.id.register_email);
-            mPasswordView = findViewById(R.id.register_password);
-            mConfirmPasswordView = findViewById(R.id.register_confirm_password);
-            mUsernameView = findViewById(R.id.register_username);
-            mloginbutton = findViewById(R.id.login_bn);
-            msignUp = findViewById(R.id.register_sign_up_button);
-            mgetLogin = findViewById(R.id.getLogin);
-            mgetSignUp = findViewById(R.id.getSignUp);
-
-            mUserNameLayout = findViewById(R.id.label_userName);
-            mlabel_confirm_password = findViewById(R.id.label_confirm_password);
 
             // Keyboard sign in action
             mConfirmPasswordView.setOnEditorActionListener(new TextView.OnEditorActionListener() {
@@ -98,7 +122,7 @@ public class MainActivity extends AppCompatActivity {
                 }
             });
 
-        } else{
+        } else {
             signInWithCredentials(email, password);
         }
 
@@ -126,6 +150,15 @@ public class MainActivity extends AppCompatActivity {
         Log.d(TAG, "TextUtils.isEmpty(password): " + TextUtils.isEmpty(password));
         Log.d(TAG, "TextUtils.isEmpty(password) && !isPasswordValid(password): " + (TextUtils.isEmpty(password) && !isPasswordValid(password)));
 
+
+        //Check the userName
+        String displayName = mUsernameView.getText().toString();
+        Pattern pattern = Pattern.compile("[A-Za-z0-9_]+");
+        if (TextUtils.isEmpty(displayName) || !pattern.matcher(displayName).matches()) {
+            focusView = mUsernameView;
+            mUsernameView.setError(getString(R.string.error_username));
+            cancel = true;
+        }
 
         // Check for a valid password, if the user entered one.
         if (TextUtils.isEmpty(password) || !isPasswordValid(password)) {
@@ -204,32 +237,33 @@ public class MainActivity extends AppCompatActivity {
                             //if already added, don't add new user record so as to save the friend's link
                             Query query = mDatabaseReference.child("users/" + displayName);
                             query.addListenerForSingleValueEvent(new ValueEventListener() {
-                                 @Override
-                                 public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
-                                     if (dataSnapshot.exists()) {
-Log.i(TAG, displayName + " is already added by another user");
-                                     }
-                                     else{
-                                         User friend = new User(displayName, email);
-                                         mDatabaseReference.child("users/" + displayName).setValue(friend, new DatabaseReference.CompletionListener() {
-                                             @Override
-                                             public void onComplete(DatabaseError databaseError, DatabaseReference dataReference) {
+                                @Override
+                                public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+                                    if (dataSnapshot.exists()) {
+                                        Log.i(TAG, displayName + " is already added by another user");
+                                    } else {
+                                        User friend = new User(displayName, email);
+                                        mDatabaseReference.child("users/" + displayName).setValue(friend, new DatabaseReference.CompletionListener() {
+                                            @Override
+                                            public void onComplete(DatabaseError databaseError, DatabaseReference dataReference) {
 
-                                                 if(databaseError!= null){
-                                                     Log.e(TAG, databaseError.getDetails());
-                                                 }
-                                                 if (databaseError != null) Log.i(TAG, databaseError.getDetails());
-                                                 showSnackBar(getString(R.string.signup_success));
-                                                 finish();
-                                             }
-                                         });
-                                     }
-                                 }
+                                                if (databaseError != null) {
+                                                    Log.e(TAG, databaseError.getDetails());
+                                                }
+                                                if (databaseError != null)
+                                                    Log.i(TAG, databaseError.getDetails());
+                                                showSnackBar(getString(R.string.signup_success));
+                                                finish();
+                                            }
+                                        });
+                                    }
+                                }
+
                                 @Override
                                 public void onCancelled(@NonNull DatabaseError databaseError) {
 
                                 }
-                             });
+                            });
                             saveUserCredentials(email, password);
                             gotoNextPage();
                         }
@@ -247,19 +281,20 @@ Log.i(TAG, displayName + " is already added by another user");
         prefs.edit().putString(DISPLAY_NAME_KEY, FirebaseUtils.getUserName()).apply();
     }
 
-public void showSnackBar(String message){
+    public void showSnackBar(String message) {
 
 //https://stackoverflow.com/questions/30729312/how-to-dismiss-a-snackbar-using-its-own-action-button
-    final Snackbar snackBar = Snackbar.make(findViewById(android.R.id.content), message, Snackbar.LENGTH_LONG);
-    snackBar.setAction(getString(R.string.close), new View.OnClickListener() {
-        @Override
-        public void onClick(View v) {
-            // Call your action method here
-            snackBar.dismiss();
-        }
-    });
-    snackBar.show();
-}
+        final Snackbar snackBar = Snackbar.make(findViewById(android.R.id.content), message, Snackbar.LENGTH_LONG);
+        snackBar.setAction(getString(R.string.close), new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                // Call your action method here
+                snackBar.dismiss();
+            }
+        });
+        snackBar.show();
+    }
+
     // TODO: Create an alert dialog to show in case registration failed
     private void showErrorDialog(String message) {
 
@@ -307,12 +342,21 @@ public void showSnackBar(String message){
 
         final String email = mEmailView.getText().toString();
         final String password = mPasswordView.getText().toString();
+
+        if (TextUtils.isEmpty(email)) {
+            mEmailView.setError(getString(R.string.error_field_required));
+            return;
+        }
+        if (TextUtils.isEmpty(password)) {
+            mPasswordView.setError(getString(R.string.error_field_required));
+            return;
+        }
         signInWithCredentials(email, password);
 
     }
     //TODO Login and setTitle
 
-    private void signInWithCredentials(final String email, final String password){
+    private void signInWithCredentials(final String email, final String password) {
         mAuth.signInWithEmailAndPassword(email, password).addOnCompleteListener(this,
                 new OnCompleteListener<AuthResult>() {
 
@@ -326,7 +370,7 @@ public void showSnackBar(String message){
                         } else {
 
                             String userName = FirebaseUtils.getUserName();
-                            showSnackBar( userName + " signed in");
+                            showSnackBar(userName + " signed in");
                             saveUserCredentials(email, password);
                             gotoNextPage();
                             FirebaseMessaging.getInstance().subscribeToTopic(userName);
