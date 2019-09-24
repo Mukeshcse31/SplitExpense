@@ -63,6 +63,7 @@
 <string name="action_settleup">முடிவு செய்</string>
 <string name="action_export">ஏற்றுமதி</string>
 <string name="no_expense">இந்த குழுவில் (செயலில்) செலவு இல்லை</string>
+    <string name="no_arch_expense">No (Archived) Expense in this Group</string>
 <string name="export_title">ஏற்றுமதி செலவுகள்</string>
 <string name="export_heading">தேதி, விளக்கம், பணம் செலுத்தியது, பற்று கடன், செலுத்த வேண்டிய தொகை</string>
 <string name="default_status">பொ / இ</string>
@@ -96,15 +97,17 @@
 <string name="edit_expense">edit_expense</string>
 <string name="you">நீங்கள்</string>
 <string name="you_lent">நீங்கள் கொடுத்தீர்கள்</string>
-<string name="you_borrowed">நீங்கள் கடன் வாங்கினீர்கள்</string>
+<string name="you_borrowed">you borrowed</string>
 <string name="paid">செலுத்தப்படுகிறது</string>
 
 <!--    Expense Menu-->
 <string name="mnu_resetorder">ஆர்டரை மீட்டமை</string>
 <string name="mnu_orderbycategory">வகை வாரியாக ஆர்டர்</string>
 <string name="mnu_export">ஏற்றுமதி</string>
+<string name="archivedExp">காப்பகப்படுத்தப்பட்ட செலவு</string>
 
-<!--TextUtils-->
+
+    <!--TextUtils-->
 <string name="send_message">செய்திகளை அனுப்புங்கள்</string>
 <string name="invite_friend">உங்கள் நண்பர்களுடன் பகிர்ந்து கொள்ளுங்கள்</string>
 <string name="inviteafriend">நண்பரை அழைக்கவும்</string>

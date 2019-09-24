@@ -2,6 +2,7 @@ package com.google.app.splitwise_clone.expense;
 
 import android.content.DialogInterface;
 import android.content.Intent;
+import android.graphics.Color;
 import android.os.Bundle;
 import android.text.TextUtils;
 import android.util.Log;
@@ -12,6 +13,7 @@ import android.widget.ImageView;
 import android.widget.TextView;
 
 import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
 import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.Toolbar;
@@ -40,8 +42,10 @@ import com.google.firebase.database.ValueEventListener;
 import com.google.firebase.storage.FirebaseStorage;
 import com.google.firebase.storage.StorageReference;
 
+import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.LinkedHashMap;
+import java.util.List;
 import java.util.Map;
 
 public class ExpenseList extends AppCompatActivity implements ExpenseAdapter.OnClickListener {
@@ -52,15 +56,17 @@ public class ExpenseList extends AppCompatActivity implements ExpenseAdapter.OnC
     private String TAG = ExpenseList.class.getSimpleName();
     LinkedHashMap<String, Expense> expenseSnapshotMap, categorizedExpenseMap, archivedExpenseSnapshotMap;
     private ExpenseAdapter mExpenseAdapter;
+    CollapsingToolbarLayout collapsingToolbarLayout;
     private RecyclerView expenses_rv;
     private FloatingActionButton mFloatingActionButton;
     private AppBarLayout mAppBarLayout;
     private Toolbar mToolbar;
     private CollapsingToolbarLayout mCollapsingToolbarLayout;
     private String group_name;
+    private Menu mMenu;
     private ImageView groupImage, settleup_image;
     private String userName = "";
-    private TextView groupName_tv, user_balance, user_summary, noExpenses_tv, settleup_tv;
+    private TextView user_balance, user_summary, noExpenses_tv, settleup_tv;
     public static String GROUP_NAME = "group_name";
     public static String EDIT_EXPENSE = "edit_expense";
     public static String EDIT_EXPENSEID = "edit_expenseID";
@@ -79,7 +85,7 @@ public class ExpenseList extends AppCompatActivity implements ExpenseAdapter.OnC
         mCollapsingToolbarLayout = findViewById(R.id.collap_toolbar_exp);
 
         mDatabaseReference = AppUtils.getDBReference();
-        groupName_tv = findViewById(R.id.groupName_tv);
+//        groupName_tv = findViewById(R.id.groupName_tv);
         settleup_tv = findViewById(R.id.settleup_tv);
         noExpenses_tv = findViewById(R.id.noExpenses_tv);
         settleup_image = findViewById(R.id.settleup_image);
@@ -95,11 +101,15 @@ public class ExpenseList extends AppCompatActivity implements ExpenseAdapter.OnC
         mFirebaseStorage = AppUtils.getDBStorage();
         userName = FirebaseUtils.getUserName();
 
+        collapsingToolbarLayout = (CollapsingToolbarLayout) findViewById(R.id.collap_toolbar_exp);
+
+//        collapsingToolbarLayout.setContentScrimColor(Color.GREEN);
+
+
         Intent intent = getIntent();
         if (intent.hasExtra("group_name")) {
             group_name = intent.getStringExtra("group_name");
-//            getSupportActionBar().setTitle(group_name);
-            groupName_tv.setText(group_name);
+            collapsingToolbarLayout.setTitle(group_name);
         }
 
         mFloatingActionButton.setOnClickListener(new View.OnClickListener() {
@@ -108,19 +118,66 @@ public class ExpenseList extends AppCompatActivity implements ExpenseAdapter.OnC
                 Intent intent = new Intent(ExpenseList.this, AddExpense.class);
                 intent.putExtra(GROUP_NAME, group_name);
                 startActivity(intent);
+//                finish();
             }
         });
         loadGroupImage(group_name);
+
+        AppBarLayout mAppBarLayout = (AppBarLayout) findViewById(R.id.app_bar_layout_exp);
+        mAppBarLayout.addOnOffsetChangedListener(new AppBarLayout.OnOffsetChangedListener() {
+            boolean isShow = false;
+            int scrollRange = -1;
+
+            //            https://www.journaldev.com/13927/android-collapsingtoolbarlayout-example
+            @Override
+            public void onOffsetChanged(AppBarLayout appBarLayout, int verticalOffset) {
+                if (scrollRange == -1) {
+                    scrollRange = appBarLayout.getTotalScrollRange();
+                }
+                if (scrollRange + verticalOffset == 0) {
+                    isShow = true;
+//                    showOption(R.id.orderbyCategory);
+                    Log.i(TAG, "collapsed");
+                } else if (isShow) {
+                    isShow = false;
+//                    hideOption(R.id.orderbyCategory);
+                    Log.i(TAG, "expanded");
+                }
+            }
+        });
+    }
+
+
+    private void hideOption(int[] ids) {
+        for (int id : ids) {
+            MenuItem item = mMenu.findItem(id);
+            item.setVisible(false);
+        }
+    }
+
+    private void showOption(int[] ids) {
+
+        for (int id : ids) {
+            MenuItem item = mMenu.findItem(id);
+            item.setVisible(true);
+        }
     }
 
     //populate all the archived expenses
     public void populateSettledUpExpenses(View view) {
+        getArchivedExpense();
+//showSettledUpExpenses();
+    }
+
+    private void showSettledUpExpenses() {
         settleup_tv.setVisibility(View.GONE);
         settleup_image.setVisibility(View.GONE);
         expenses_rv.setVisibility(View.VISIBLE);
-        archivedExpenseSnapshotMap = AppUtils.reverseExpense(archivedExpenseSnapshotMap);
+//        archivedExpenseSnapshotMap = AppUtils.reverseExpense(archivedExpenseSnapshotMap);
         mExpenseAdapter = new ExpenseAdapter(archivedExpenseSnapshotMap, ExpenseList.this, false);
         expenses_rv.setAdapter(mExpenseAdapter);
+        hideOption(new int[]{R.id.orderbyCategory, R.id.settle_up, R.id.export, R.id.archivedExp});
+        showOption(new int[]{R.id.orderbyDate});
     }
 
     public void settleUpExpenses() {
@@ -139,9 +196,10 @@ public class ExpenseList extends AppCompatActivity implements ExpenseAdapter.OnC
             public void onSuccess(Object o) {
                 resetMembersBalances();
                 populateExpenseList();
+
             }
         });
-
+        hideOption(new int[]{R.id.orderbyCategory, R.id.orderbyDate, R.id.settle_up, R.id.export});
     }
 
 
@@ -161,6 +219,7 @@ public class ExpenseList extends AppCompatActivity implements ExpenseAdapter.OnC
     private void resetMembersBalances() {
 
         //Get all the group members
+        //reset them to init values
         Query query = mDatabaseReference.child("groups/" + group_name + "/members");
         query.addListenerForSingleValueEvent(new ValueEventListener() {
             @Override
@@ -173,7 +232,12 @@ public class ExpenseList extends AppCompatActivity implements ExpenseAdapter.OnC
                         SingleBalance sb = new SingleBalance(groupMemberName);
                         groupMembers.put(groupMemberName, sb);
                     }
-                    mDatabaseReference.child("groups/" + group_name + "/members/").setValue(groupMembers);
+                    mDatabaseReference.child("groups/" + group_name + "/members/").setValue(groupMembers, new DatabaseReference.CompletionListener() {
+                        @Override
+                        public void onComplete(@Nullable DatabaseError databaseError, @NonNull DatabaseReference databaseReference) {
+                            populateAppBar();
+                        }
+                    });
                 }
             }
 
@@ -182,6 +246,9 @@ public class ExpenseList extends AppCompatActivity implements ExpenseAdapter.OnC
 
             }
         });
+
+//reset the total Amount
+        mDatabaseReference.child("groups/" + group_name + "/totalAmount/").setValue(0.0);
     }
 
     private void populateExpenseList() {
@@ -198,10 +265,29 @@ public class ExpenseList extends AppCompatActivity implements ExpenseAdapter.OnC
                 }
                 //TODO display either no expense or settled up
                 if (expenseSnapshotMap.size() == 0) {
-                    settleup_tv.setVisibility(View.VISIBLE);
-                    settleup_image.setVisibility(View.VISIBLE);
-                    expenses_rv.setVisibility(View.GONE);
-                    getArchivedExpense();
+                    //check if there is any archived expense
+                    Query query = mDatabaseReference.child("groups/" + group_name + "/archivedExpenses").limitToFirst(1);
+                    query.addListenerForSingleValueEvent(new ValueEventListener() {
+                        @Override
+                        public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+                            if (dataSnapshot.exists()) {
+
+                                settleup_tv.setVisibility(View.VISIBLE);
+                                settleup_image.setVisibility(View.VISIBLE);
+                                expenses_rv.setVisibility(View.GONE);
+                            } else
+                                noExpenses_tv.setVisibility(View.VISIBLE);
+
+                            //placed here so it takes a while to reach this and onCreateItemsOption is already called
+                            hideOption(new int[]{R.id.orderbyCategory, R.id.orderbyDate, R.id.settle_up, R.id.export, R.id.archivedExp});
+                        }
+
+                        @Override
+                        public void onCancelled(@NonNull DatabaseError databaseError) {
+                        }
+                    });
+
+
                 } else {
                     settleup_tv.setVisibility(View.GONE);
                     settleup_image.setVisibility(View.INVISIBLE);
@@ -210,7 +296,9 @@ public class ExpenseList extends AppCompatActivity implements ExpenseAdapter.OnC
                     expenseSnapshotMap = AppUtils.reverseExpense(expenseSnapshotMap);
                     mExpenseAdapter = new ExpenseAdapter(expenseSnapshotMap, ExpenseList.this, true);
                     expenses_rv.setAdapter(mExpenseAdapter);
-                    getExpenseByCategory();
+//                    getExpenseByCategory();
+                    showOption(new int[]{R.id.orderbyCategory, R.id.settle_up, R.id.export, R.id.archivedExp});
+
                 }
             }
 
@@ -229,23 +317,39 @@ public class ExpenseList extends AppCompatActivity implements ExpenseAdapter.OnC
 
                 categorizedExpenseMap = new LinkedHashMap<>();//to maintain the order of elements
                 if (dataSnapshot.exists()) {
-                    String prev_Category = "";
+
+                    int catCount = 0;
+                    String catAry[] = new String[6];
                     for (DataSnapshot i : dataSnapshot.getChildren()) {
 
                         Expense expense = i.getValue(Expense.class);
-                        String category = expense.getCategory();
-
-                        if(TextUtils.isEmpty(prev_Category)) prev_Category = category;// to handle the reverse order
-
+                        String cur_Category = expense.getCategory();
                         categorizedExpenseMap.put(i.getKey(), i.getValue(Expense.class));
-                        if (!TextUtils.equals(prev_Category, category)) {
-                            //add a dummy object for category
-                            categorizedExpenseMap.put(category, null);
-                            prev_Category = category;
-                        }
 
+                        if (catCount == 0) {
+                            catAry[0] = cur_Category;
+                            catCount++;
+                        } else {
+                            if (!TextUtils.equals(catAry[catCount - 1], cur_Category)) {
+                                categorizedExpenseMap.put(catAry[catCount - 1], null);
+                                catAry[catCount] = cur_Category;
+                                catCount++;
+                            }
+                        }
                     }
+                    //just add for the last item
+                    categorizedExpenseMap.put(catAry[catCount - 1], null);
                     Log.i(TAG, categorizedExpenseMap.size() + "");
+
+//                    if (categorizedExpenseMap.size() > 0) {
+                    categorizedExpenseMap = AppUtils.reverseExpense(categorizedExpenseMap);
+                    mExpenseAdapter = new ExpenseAdapter(categorizedExpenseMap, ExpenseList.this, true);
+                    expenses_rv.setVisibility(View.VISIBLE);
+                    expenses_rv.setAdapter(mExpenseAdapter);
+                    hideOption(new int[]{R.id.orderbyCategory});
+                    showOption(new int[]{R.id.orderbyDate, R.id.settle_up, R.id.export, R.id.archivedExp});
+                    noExpenses_tv.setVisibility(View.GONE);
+//                    }
                 }
             }
 
@@ -256,11 +360,12 @@ public class ExpenseList extends AppCompatActivity implements ExpenseAdapter.OnC
     }
 
     private void getArchivedExpense() {
-        Query query = mDatabaseReference.child("groups/" + group_name + "/archivedExpenses");
+        Query query = mDatabaseReference.child("groups/" + group_name + "/archivedExpenses").orderByChild("category");
 
         query.addListenerForSingleValueEvent(new ValueEventListener() {
             @Override
             public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+
                 archivedExpenseSnapshotMap = new LinkedHashMap<>();
                 if (dataSnapshot.exists()) {
                     String prev_Category = "";
@@ -278,11 +383,13 @@ public class ExpenseList extends AppCompatActivity implements ExpenseAdapter.OnC
                 }
 
                 if (archivedExpenseSnapshotMap.size() == 0) {
+                    expenses_rv.setVisibility(View.GONE);
                     noExpenses_tv.setVisibility(View.VISIBLE);
+                    noExpenses_tv.setText(getString(R.string.no_arch_expense));
                     settleup_tv.setVisibility(View.GONE);
                 } else {
-
-                    settleup_tv.setVisibility(View.VISIBLE);
+                    showSettledUpExpenses();
+//                    settleup_tv.setVisibility(View.VISIBLE);
                 }
 
             }
@@ -314,6 +421,7 @@ public class ExpenseList extends AppCompatActivity implements ExpenseAdapter.OnC
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
         // Inflate the menu; this adds items to the action bar if it is present.
+        mMenu = menu;
         getMenuInflater().inflate(R.menu.expense_list_menu, menu);
         return true;
     }
@@ -327,7 +435,7 @@ public class ExpenseList extends AppCompatActivity implements ExpenseAdapter.OnC
 
     private void populateAppBar() {
 
-    //get the user's splitDues
+        //get the user's splitDues
         Query query = mDatabaseReference.child("groups/" + group_name + "/members/" + userName + "/splitDues");
         query.addListenerForSingleValueEvent(new ValueEventListener() {
             @Override
@@ -340,13 +448,16 @@ public class ExpenseList extends AppCompatActivity implements ExpenseAdapter.OnC
 
                         Map.Entry pair = (Map.Entry) it.next();
                         String friendName = (String) pair.getKey();
-                        String status = "spent";
-                        float amount = Float.parseFloat(String.valueOf(pair.getValue()));
-                        if (amount > 0) status = "owes you";
-                        summary += String.format("%s %s $%.2f \n", friendName, status, Math.abs(amount));
+                        if (!TextUtils.equals(userName, friendName)) {
+                            String status = "spent";
+                            float amount = Float.parseFloat(String.valueOf(pair.getValue()));
+                            if (amount > 0) status = "owes you";
+                            summary += String.format("%s %s $%.2f \n", friendName, status, Math.abs(amount));
+                        }
                     }
                     user_summary.setText(summary);
-                }
+                } else
+                    user_summary.setText("");
             }
 
             @Override
@@ -420,11 +531,8 @@ public class ExpenseList extends AppCompatActivity implements ExpenseAdapter.OnC
 
             case R.id.orderbyCategory:
                 Log.i(TAG, "order by category");
-                if (categorizedExpenseMap.size() > 0) {
-                    categorizedExpenseMap = AppUtils.reverseExpense(categorizedExpenseMap);
-                    mExpenseAdapter = new ExpenseAdapter(categorizedExpenseMap, ExpenseList.this, true);
-                    expenses_rv.setAdapter(mExpenseAdapter);
-                }
+                getExpenseByCategory();
+
                 break;
 
             case R.id.orderbyDate:
@@ -447,6 +555,10 @@ public class ExpenseList extends AppCompatActivity implements ExpenseAdapter.OnC
                 }
                 break;
 
+            case R.id.archivedExp:
+                getArchivedExpense();
+                break;
+
             //Sign Out
             case R.id.signout:
                 AppUtils.signOut(this);
@@ -458,6 +570,11 @@ public class ExpenseList extends AppCompatActivity implements ExpenseAdapter.OnC
 
         }
         return super.onOptionsItemSelected(item);
+    }
+
+    @Override
+    public void onBackPressed() {
+        finish();
     }
 
     private void showAlertForNoExpense() {

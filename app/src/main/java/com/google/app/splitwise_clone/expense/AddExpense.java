@@ -66,7 +66,7 @@ public class AddExpense extends AppCompatActivity implements ListView.OnItemClic
     private Map<String, SingleBalance> members;
     Map<String, Expense> expenses;
     private Group group;
-    float totalGroupExpense = 0.2f;
+    float totalGroupExpense = 0.0f;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -225,9 +225,9 @@ public class AddExpense extends AppCompatActivity implements ListView.OnItemClic
             case R.id.saveExpense:
 
                 String spentDate = date_btn.getText().toString();
-                String description = mDescription.getText().toString();
+                final String description = mDescription.getText().toString();
                 String category = AppUtils.getExpenseCategory(this, description);
-                String amountStr = mAmount.getText().toString();
+                final String amountStr = mAmount.getText().toString();
                 float amount = 0.0f;
 
                 //check if amount or description is empty
@@ -241,7 +241,7 @@ public class AddExpense extends AppCompatActivity implements ListView.OnItemClic
                     break;
                 }
                 amount = Float.valueOf(amountStr);
-
+                final float amountNot = amount;
                 String spender = (String) spinner2.getSelectedItem();
                 Log.i(TAG, "Expense Added");
                 Expense expense = new Expense(spentDate, spender, description, amount);
@@ -264,41 +264,38 @@ public class AddExpense extends AppCompatActivity implements ListView.OnItemClic
                     expense.addMember(participant, singleBalance);
                 }
 
-                String notificationMessage = "";
-                String notificationTitle = "";
                 if (expenseId != null) {//update individual expense
                     mDatabaseReference.child("groups/" + group_name + "/expenses/" + expenseId).setValue(expense, new DatabaseReference.CompletionListener() {
                         @Override
                         public void onComplete(@Nullable DatabaseError databaseError, @NonNull DatabaseReference databaseReference) {
                             updateGroup(group_name);
+                            String notificationMessage = String.format("%s edited the expense for %s to %.2f in the group %s", userName, description, amountNot, group_name);
+                            sendNotification(getString(R.string.expense_edited), notificationMessage, participants);
                         }
                     });
-                    notificationTitle = getString(R.string.expense_edited);
-                    notificationMessage = String.format("%s edited the expense for %s to %.2f in the group %s", userName, description, amount, group_name);
                 } else {//add expense
 
                     mDatabaseReference.child("groups/" + group_name + "/expenses").push().setValue(expense, new DatabaseReference.CompletionListener() {
                         @Override
                         public void onComplete(DatabaseError databaseError, DatabaseReference dataReference) {
                             updateGroup(group_name);
+                            String notificationMessage = String.format("%s added %.2f for %s in the group %s", userName, amountNot, description, group_name);
+                            sendNotification(getString(R.string.expense_added), notificationMessage, participants);
                             Toast.makeText(AddExpense.this, " added", Toast.LENGTH_LONG).show();
                         }
                     });
-                    notificationTitle = getString(R.string.expense_added);
-                    notificationMessage = String.format("%s added %.2f for %s in the group %s", userName, amount, description, group_name);
                 }
-
-                //Send Notification
-                SendNotificationLogic notification = new SendNotificationLogic(this);
-                //loop through the people sharing expense
-                for (int i = 0; i < participants.size(); i++) {
-                    if (!TextUtils.equals(userName, participants.get(i))) {
-                        notification.setData(participants.get(i), notificationTitle, notificationMessage);
-                        notification.send();
-                    }
-                }
-
-                finish();
+//
+//                //Send Notification
+//                SendNotificationLogic notification = new SendNotificationLogic(this);
+//                //loop through the people sharing expense
+//                for (int i = 0; i < participants.size(); i++) {
+//                    if (!TextUtils.equals(userName, participants.get(i))) {
+//                        notification.setData(participants.get(i), notificationTitle, notificationMessage);
+//                        notification.send();
+//                    }
+//                }
+//                finish();
                 break;
 
             case R.id.deleteExpense:
@@ -326,7 +323,7 @@ public class AddExpense extends AppCompatActivity implements ListView.OnItemClic
                                     }
                                 }
 
-                                finish();
+//                                finish();
 
                             }
                         });
@@ -348,6 +345,20 @@ public class AddExpense extends AppCompatActivity implements ListView.OnItemClic
         }
         return super.onOptionsItemSelected(item);
     }
+
+    private void sendNotification(String title, String msg, List<String> participants) {
+
+        //Send Notification
+        SendNotificationLogic notification = new SendNotificationLogic(this);
+        //loop through the people sharing expense
+        for (int i = 0; i < participants.size(); i++) {
+            if (!TextUtils.equals(userName, participants.get(i))) {
+                notification.setData(participants.get(i), title, msg);
+                notification.send();
+            }
+        }
+    }
+
 
     private void setDefaultDate() {
         final Calendar c = Calendar.getInstance();
@@ -448,7 +459,12 @@ public class AddExpense extends AppCompatActivity implements ListView.OnItemClic
                     }
 
                     //write group total and members into DB
-                    mDatabaseReference.child("groups/" + groupName + "/members/").setValue(members);
+                    mDatabaseReference.child("groups/" + groupName + "/members/").setValue(members, new DatabaseReference.CompletionListener() {
+                        @Override
+                        public void onComplete(@Nullable DatabaseError databaseError, @NonNull DatabaseReference databaseReference) {
+                            finish();
+                        }
+                    });
                     mDatabaseReference.child("groups/" + groupName + "/totalAmount/").setValue(totalGroupExpense);
                 }
             }

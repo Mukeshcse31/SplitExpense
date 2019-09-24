@@ -24,10 +24,14 @@
         android:id="@+id/export"
         android:title="@string/mnu_export"
         android:orderInCategory="3"/>
+    <item
+        android:id="@+id/archivedExp"
+        android:title="@string/archivedExp"
+        android:orderInCategory="4"/>
 
     <item
         android:id="@+id/signout"
         android:title="@string/signout"
-        android:orderInCategory="4"/>
+        android:orderInCategory="6"/>
 
 </menu>

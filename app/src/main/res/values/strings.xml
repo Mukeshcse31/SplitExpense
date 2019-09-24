@@ -62,6 +62,7 @@
     <string name="action_settleup">Settle up</string>
     <string name="action_export">Export</string>
     <string name="no_expense">No (Active) Expense in this Group</string>
+    <string name="no_arch_expense">No (Archived) Expense in this Group</string>
     <string name="export_title">Export Expenses</string>
     <string name="export_heading">Date,Description,PaidBy,DebtCredit,AmountDue</string>
     <string name="default_status">N/A</string>
@@ -99,9 +100,11 @@
     <string name="paid">paid</string>
 
 <!--    Expense Menu-->
-    <string name="mnu_resetorder">Reset Order</string>
+    <string name="mnu_resetorder">Reset</string>
     <string name="mnu_orderbycategory">Order By Category</string>
     <string name="mnu_export">Export</string>
+    <string name="archivedExp">Archived Expenses</string>
+
 
     <!--TextUtils-->
     <string name="send_message">send Messages</string>
