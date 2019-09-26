@@ -8,11 +8,9 @@
         <item name="colorAccent">@color/colorAccent</item>
     </style>
 
-
     <!-- RecyclerView -->
-    <style name="RecyclerViewStyle">
-        <item name="android:layout_width">match_parent</item>
-        <item name="android:layout_height">wrap_content</item>
+    <style name="RecyclerViewStyle1">
+        <item name="android:layout_width">match_parent</item>>
         <item name="android:clipToPadding">false</item>
         <item name="android:paddingStart">@dimen/list_side_margin</item>
         <item name="android:paddingEnd">@dimen/list_side_margin</item>
@@ -20,6 +18,19 @@
         <item name="android:paddingTop">@dimen/list_top_margin</item>
         <item name="android:scrollbarStyle">outsideOverlay</item>
     </style>
+
+
+    <!-- RecyclerView -->
+    <style name="RecyclerViewStyle">
+        <item name="android:layout_width">match_parent</item>
+        <item name="android:layout_height">match_parent</item>
+        <item name="android:clipToPadding">false</item>
+        <item name="android:paddingStart">@dimen/list_side_margin</item>
+        <item name="android:paddingEnd">@dimen/list_side_margin</item>
+        <item name="android:paddingBottom">@dimen/list_bottom_margin</item>
+        <item name="android:scrollbarStyle">outsideOverlay</item>
+    </style>
+
 
     <style name="memberRecyclerViewStyle">
         <item name="android:layout_width">match_parent</item>

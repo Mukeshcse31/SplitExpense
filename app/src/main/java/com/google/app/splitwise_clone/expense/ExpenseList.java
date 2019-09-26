@@ -4,11 +4,13 @@ import android.content.DialogInterface;
 import android.content.Intent;
 import android.graphics.Color;
 import android.os.Bundle;
+import android.os.Handler;
 import android.text.TextUtils;
 import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
+import android.view.ViewGroup;
 import android.widget.ImageView;
 import android.widget.TextView;
 
@@ -17,6 +19,7 @@ import androidx.annotation.Nullable;
 import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.Toolbar;
+import androidx.coordinatorlayout.widget.CoordinatorLayout;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
@@ -27,6 +30,7 @@ import com.google.android.gms.tasks.Task;
 import com.google.android.material.appbar.AppBarLayout;
 import com.google.android.material.appbar.CollapsingToolbarLayout;
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
+import com.google.android.material.snackbar.Snackbar;
 import com.google.app.splitwise_clone.MainActivity;
 import com.google.app.splitwise_clone.R;
 import com.google.app.splitwise_clone.model.Expense;
@@ -59,13 +63,13 @@ public class ExpenseList extends AppCompatActivity implements ExpenseAdapter.OnC
     CollapsingToolbarLayout collapsingToolbarLayout;
     private RecyclerView expenses_rv;
     private FloatingActionButton mFloatingActionButton;
-    private AppBarLayout mAppBarLayout;
-    private Toolbar mToolbar;
-    private CollapsingToolbarLayout mCollapsingToolbarLayout;
+    private AppBarLayout app_bar_layout_exp;
+    private Toolbar my_toolbar;
+    private CollapsingToolbarLayout collap_toolbar_exp;
     private String group_name;
-    private Menu mMenu;
+    private static Menu mMenu;
     private ImageView groupImage, settleup_image;
-    private String userName = "";
+    private String userName = "", snackBarMsg = "";
     private TextView user_balance, user_summary, noExpenses_tv, settleup_tv;
     public static String GROUP_NAME = "group_name";
     public static String EDIT_EXPENSE = "edit_expense";
@@ -76,13 +80,13 @@ public class ExpenseList extends AppCompatActivity implements ExpenseAdapter.OnC
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_expense_list);
 
-        mToolbar = (Toolbar) findViewById(R.id.my_toolbar);
-        setSupportActionBar(mToolbar);
+        my_toolbar = (Toolbar) findViewById(R.id.my_toolbar);
+        setSupportActionBar(my_toolbar);
         //this line shows back button
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
 
-        mAppBarLayout = findViewById(R.id.app_bar_layout_exp);
-        mCollapsingToolbarLayout = findViewById(R.id.collap_toolbar_exp);
+        app_bar_layout_exp = findViewById(R.id.app_bar_layout_exp);
+        collap_toolbar_exp = findViewById(R.id.collap_toolbar_exp);
 
         mDatabaseReference = AppUtils.getDBReference();
 //        groupName_tv = findViewById(R.id.groupName_tv);
@@ -107,10 +111,21 @@ public class ExpenseList extends AppCompatActivity implements ExpenseAdapter.OnC
 
 
         Intent intent = getIntent();
-        if (intent.hasExtra("group_name")) {
-            group_name = intent.getStringExtra("group_name");
+        if (intent.hasExtra(GROUP_NAME)) {
+            group_name = intent.getStringExtra(GROUP_NAME);
             collapsingToolbarLayout.setTitle(group_name);
         }
+
+        if(intent.hasExtra(AddExpense.EXPENSE_EDITED)){
+            snackBarMsg = intent.getStringExtra(AddExpense.EXPENSE_EDITED);
+        }
+        if(intent.hasExtra(AddExpense.EXPENSE_ADDED)){
+            snackBarMsg = intent.getStringExtra(AddExpense.EXPENSE_ADDED);
+        }
+        if(intent.hasExtra(AddExpense.EXPENSE_DELETED)){
+            snackBarMsg = intent.getStringExtra(AddExpense.EXPENSE_DELETED);
+        }
+
 
         mFloatingActionButton.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -118,7 +133,7 @@ public class ExpenseList extends AppCompatActivity implements ExpenseAdapter.OnC
                 Intent intent = new Intent(ExpenseList.this, AddExpense.class);
                 intent.putExtra(GROUP_NAME, group_name);
                 startActivity(intent);
-//                finish();
+                finish();
             }
         });
         loadGroupImage(group_name);
@@ -145,8 +160,30 @@ public class ExpenseList extends AppCompatActivity implements ExpenseAdapter.OnC
                 }
             }
         });
+
+//        expenses_rv.addOnScrollListener(new RecyclerView.OnScrollListener() {
+//            @Override
+//            public void onScrollStateChanged(@NonNull RecyclerView recyclerView, int newState) {
+//                super.onScrollStateChanged(recyclerView, newState);
+//                turnOnToolbarScrolling();
+//            }
+//
+//            @Override
+//            public void onScrolled(@NonNull RecyclerView recyclerView, int dx, int dy) {
+//                super.onScrolled(recyclerView, dx, dy);
+//                turnOnToolbarScrolling();
+//            }
+//        });
+        showSnackBar(snackBarMsg);
     }
 
+
+    public void showSnackBar(String message) {
+//        https://www.techotopia.com/index.php/Working_with_the_Floating_Action_Button_and_Snackbar
+        if(!TextUtils.isEmpty(message))
+        Snackbar.make(mFloatingActionButton, message, Snackbar.LENGTH_LONG)
+            .setAction(getString(R.string.close), null).show();
+    }
 
     private void hideOption(int[] ids) {
         for (int id : ids) {
@@ -176,6 +213,8 @@ public class ExpenseList extends AppCompatActivity implements ExpenseAdapter.OnC
 //        archivedExpenseSnapshotMap = AppUtils.reverseExpense(archivedExpenseSnapshotMap);
         mExpenseAdapter = new ExpenseAdapter(archivedExpenseSnapshotMap, ExpenseList.this, false);
         expenses_rv.setAdapter(mExpenseAdapter);
+
+        updateToolbarBehaviour(archivedExpenseSnapshotMap.size());
         hideOption(new int[]{R.id.orderbyCategory, R.id.settle_up, R.id.export, R.id.archivedExp});
         showOption(new int[]{R.id.orderbyDate});
     }
@@ -296,6 +335,7 @@ public class ExpenseList extends AppCompatActivity implements ExpenseAdapter.OnC
                     expenseSnapshotMap = AppUtils.reverseExpense(expenseSnapshotMap);
                     mExpenseAdapter = new ExpenseAdapter(expenseSnapshotMap, ExpenseList.this, true);
                     expenses_rv.setAdapter(mExpenseAdapter);
+                    updateToolbarBehaviour(expenseSnapshotMap.size());
 //                    getExpenseByCategory();
                     showOption(new int[]{R.id.orderbyCategory, R.id.settle_up, R.id.export, R.id.archivedExp});
 
@@ -306,6 +346,21 @@ public class ExpenseList extends AppCompatActivity implements ExpenseAdapter.OnC
             public void onCancelled(@NonNull DatabaseError databaseError) {
             }
         });
+    }
+
+    public void updateToolbarBehaviour(final int rvLength){
+
+//expenses_rv.postDelayed(new Runnable() {
+//    @Override
+//    public void run() {
+//        if (((LinearLayoutManager)expenses_rv.getLayoutManager()).findLastCompletelyVisibleItemPosition() == rvLength - 1) {
+//            turnOffToolbarScrolling();
+//        } else {
+//            turnOnToolbarScrolling();
+//        }
+//    }
+//}, 1000);
+
     }
 
     private void getExpenseByCategory() {
@@ -344,6 +399,8 @@ public class ExpenseList extends AppCompatActivity implements ExpenseAdapter.OnC
 //                    if (categorizedExpenseMap.size() > 0) {
                     categorizedExpenseMap = AppUtils.reverseExpense(categorizedExpenseMap);
                     mExpenseAdapter = new ExpenseAdapter(categorizedExpenseMap, ExpenseList.this, true);
+                    updateToolbarBehaviour(categorizedExpenseMap.size());
+
                     expenses_rv.setVisibility(View.VISIBLE);
                     expenses_rv.setAdapter(mExpenseAdapter);
                     hideOption(new int[]{R.id.orderbyCategory});
@@ -575,6 +632,31 @@ public class ExpenseList extends AppCompatActivity implements ExpenseAdapter.OnC
     @Override
     public void onBackPressed() {
         finish();
+    }
+
+    public void turnOffToolbarScrolling() {
+
+        //turn off scrolling
+//        Toolbar.LayoutParams toolbarLayoutParams = (Toolbar.LayoutParams) my_toolbar.getLayoutParams();
+//
+//        toolbarLayoutParams.setScrollFlags(0);
+//        my_toolbar.setLayoutParams(toolbarLayoutParams);
+
+        CoordinatorLayout.LayoutParams appBarLayoutParams = (CoordinatorLayout.LayoutParams) app_bar_layout_exp.getLayoutParams();
+        appBarLayoutParams.setBehavior(null);
+        app_bar_layout_exp.setLayoutParams(appBarLayoutParams);
+    }
+
+//    https://stackoverflow.com/questions/32404979/dont-collapse-toolbar-when-recyclerview-fits-the-screen
+    public void turnOnToolbarScrolling() {
+        //turn on scrolling
+//        AppBarLayout.LayoutParams toolbarLayoutParams = (AppBarLayout.LayoutParams) my_toolbar.getLayoutParams();
+//        toolbarLayoutParams.setScrollFlags(AppBarLayout.LayoutParams.SCROLL_FLAG_SCROLL | AppBarLayout.LayoutParams.SCROLL_FLAG_ENTER_ALWAYS);
+//        my_toolbar.setLayoutParams(toolbarLayoutParams);
+
+        CoordinatorLayout.LayoutParams appBarLayoutParams = (CoordinatorLayout.LayoutParams) app_bar_layout_exp.getLayoutParams();
+        appBarLayoutParams.setBehavior(new AppBarLayout.Behavior());
+        app_bar_layout_exp.setLayoutParams(appBarLayoutParams);
     }
 
     private void showAlertForNoExpense() {

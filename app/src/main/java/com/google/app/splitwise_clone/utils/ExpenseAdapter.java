@@ -28,10 +28,13 @@ import com.google.app.splitwise_clone.R;
 import com.google.app.splitwise_clone.model.Expense;
 import com.google.app.splitwise_clone.model.SingleBalance;
 import java.text.SimpleDateFormat;
+import java.util.ArrayList;
 import java.util.Date;
 import java.util.Iterator;
 import java.util.LinkedHashMap;
+import java.util.List;
 import java.util.Map;
+import java.util.Set;
 
 public class ExpenseAdapter extends RecyclerView.Adapter<ExpenseAdapter.ExpenseViewHolder> {
 
@@ -39,7 +42,8 @@ public class ExpenseAdapter extends RecyclerView.Adapter<ExpenseAdapter.ExpenseV
     public static String expensePayload = "";
     String userName;
     LinkedHashMap<String, Expense> mExpenseMap;
-    Iterator it;
+    List<String> expList;
+    static Iterator it;
     Context mContext;
     Expense expense;
     String expenseId;
@@ -50,6 +54,7 @@ public class ExpenseAdapter extends RecyclerView.Adapter<ExpenseAdapter.ExpenseV
     public ExpenseAdapter(LinkedHashMap<String, Expense> map, OnClickListener listener, boolean enabled) {
 
         mExpenseMap = map;
+        expList = new ArrayList<>(mExpenseMap.keySet());
         mOnClickListener = listener;
         userName = FirebaseUtils.getUserName();
         this.enabled = enabled;
@@ -86,11 +91,17 @@ public class ExpenseAdapter extends RecyclerView.Adapter<ExpenseAdapter.ExpenseV
     public int getItemViewType(int pos) {
 //        https://stackoverflow.com/questions/5300962/getviewtypecount-and-getitemviewtype-methods-of-arrayadapter
 
-        if (pos == 0)
-            it = mExpenseMap.entrySet().iterator();
-        Map.Entry pair = (Map.Entry) it.next();
-        expense = (Expense) pair.getValue();
-        expenseId = (String) pair.getKey();
+//        if (pos == 0)
+//            it = mExpenseMap.entrySet().iterator();
+//
+//        Map.Entry pair = (Map.Entry) it.next();
+
+//        expense = (Expense) pair.getValue();
+//        expenseId = (String) pair.getKey();
+
+        expenseId = expList.get(pos);
+        expense = mExpenseMap.get(expenseId);
+
         if (expense == null)
             return 0;
         else

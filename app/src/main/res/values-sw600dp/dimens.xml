@@ -2,7 +2,7 @@
 <resources>
 
 
-    <dimen name="list_top_margin">160dp</dimen>
+    <dimen name="list_top_margin">4dp</dimen>
 
     <!--friends' other-->
     <dimen name="tv_friend_name">24sp</dimen>

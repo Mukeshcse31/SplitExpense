@@ -1,6 +1,7 @@
 package com.google.app.splitwise_clone.expense;
 
 import android.content.DialogInterface;
+import android.content.Intent;
 import android.os.Bundle;
 import android.text.InputFilter;
 import android.text.TextUtils;
@@ -39,6 +40,7 @@ import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.Query;
 import com.google.firebase.database.ValueEventListener;
 
+import java.security.PublicKey;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.HashMap;
@@ -50,6 +52,11 @@ public class AddExpense extends AppCompatActivity implements ListView.OnItemClic
 
     private DatabaseReference mDatabaseReference;
     private String TAG = AddExpense.class.getSimpleName();
+    public static String EXPENSE_EDITED = "EXPENSE_EDITED";
+public static String EXPENSE_ADDED = "EXPENSE_ADDED";
+public static String ACTION_CANCEL = "ACTION_CANCEL";
+public static String EXPENSE_DELETED = "EXPENSE_DELETED";
+
     private Toolbar mToolbar;
     String userName;
     ListView listView;
@@ -220,12 +227,13 @@ public class AddExpense extends AppCompatActivity implements ListView.OnItemClic
     public boolean onOptionsItemSelected(MenuItem item) {
 
         final List<String> participants = getExpenseParticipants();
+        final String description = mDescription.getText().toString();
         switch (item.getItemId()) {
 
             case R.id.saveExpense:
 
                 String spentDate = date_btn.getText().toString();
-                final String description = mDescription.getText().toString();
+
                 String category = AppUtils.getExpenseCategory(this, description);
                 final String amountStr = mAmount.getText().toString();
                 float amount = 0.0f;
@@ -269,8 +277,10 @@ public class AddExpense extends AppCompatActivity implements ListView.OnItemClic
                         @Override
                         public void onComplete(@Nullable DatabaseError databaseError, @NonNull DatabaseReference databaseReference) {
                             updateGroup(group_name);
-                            String notificationMessage = String.format("%s edited the expense for %s to %.2f in the group %s", userName, description, amountNot, group_name);
-                            sendNotification(getString(R.string.expense_edited), notificationMessage, participants);
+                            String action = getString(R.string.expense_edited);
+                            String notificationMessage = String.format("%s %s for %s to %.2f in the group %s", userName, action, description, amountNot, group_name);
+                            sendNotification(action, notificationMessage, participants);
+                            gotoExpenseList(EXPENSE_EDITED, String.format("%s %s", action, description));
                         }
                     });
                 } else {//add expense
@@ -279,23 +289,13 @@ public class AddExpense extends AppCompatActivity implements ListView.OnItemClic
                         @Override
                         public void onComplete(DatabaseError databaseError, DatabaseReference dataReference) {
                             updateGroup(group_name);
+                            String action = getString(R.string.expense_added);
                             String notificationMessage = String.format("%s added %.2f for %s in the group %s", userName, amountNot, description, group_name);
-                            sendNotification(getString(R.string.expense_added), notificationMessage, participants);
-                            Toast.makeText(AddExpense.this, " added", Toast.LENGTH_LONG).show();
+                            sendNotification(action, notificationMessage, participants);
+                            gotoExpenseList(EXPENSE_ADDED, String.format("%s %s", action, description));
                         }
                     });
                 }
-//
-//                //Send Notification
-//                SendNotificationLogic notification = new SendNotificationLogic(this);
-//                //loop through the people sharing expense
-//                for (int i = 0; i < participants.size(); i++) {
-//                    if (!TextUtils.equals(userName, participants.get(i))) {
-//                        notification.setData(participants.get(i), notificationTitle, notificationMessage);
-//                        notification.send();
-//                    }
-//                }
-//                finish();
                 break;
 
             case R.id.deleteExpense:
@@ -312,26 +312,17 @@ public class AddExpense extends AppCompatActivity implements ListView.OnItemClic
                                 updateGroup(group_name);
 
                                 //Send Notification
-                                SendNotificationLogic notification = new SendNotificationLogic(AddExpense.this);
-                                //loop through the people sharing expense
-
-                                for (int i = 0; i < participants.size(); i++) {
-                                    if (!TextUtils.equals(userName, participants.get(i))) {
-                                        notification.setData(participants.get(i), getString(R.string.expense_deleted),
-                                                String.format("%s deleted the expense for %s %f", userName, mExpense.getDescription(), mExpense.getTotal()));
-                                        notification.send();
-                                    }
-                                }
-
-//                                finish();
-
+                                String action = getString(R.string.expense_deleted);
+                                String notificationMessage = String.format("%s %s for %s %f", userName, action, mExpense.getDescription(), mExpense.getTotal());
+                                sendNotification(action, notificationMessage, participants);
+                                gotoExpenseList(EXPENSE_DELETED, String.format("%s %s", getString(R.string.expense_deleted), description));
                             }
                         });
 
                 alertDialogBuilder.setNegativeButton(getString(R.string.no), new DialogInterface.OnClickListener() {
                     @Override
                     public void onClick(DialogInterface dialog, int which) {
-
+                        //do nothing
                     }
                 });
 
@@ -340,12 +331,20 @@ public class AddExpense extends AppCompatActivity implements ListView.OnItemClic
                 break;
 
             case R.id.cancelUpdate:
-                finish();
+                gotoExpenseList(ACTION_CANCEL, "");
                 break;
         }
         return super.onOptionsItemSelected(item);
     }
 
+    private void gotoExpenseList(String name, String value){
+
+        final Intent intent = new Intent(AddExpense.this, ExpenseList.class);
+        intent.putExtra(ExpenseList.GROUP_NAME, group_name);
+        intent.putExtra(name, value);
+        startActivity(intent);
+        finish();
+    }
     private void sendNotification(String title, String msg, List<String> participants) {
 
         //Send Notification
@@ -462,7 +461,7 @@ public class AddExpense extends AppCompatActivity implements ListView.OnItemClic
                     mDatabaseReference.child("groups/" + groupName + "/members/").setValue(members, new DatabaseReference.CompletionListener() {
                         @Override
                         public void onComplete(@Nullable DatabaseError databaseError, @NonNull DatabaseReference databaseReference) {
-                            finish();
+//                            finish();
                         }
                     });
                     mDatabaseReference.child("groups/" + groupName + "/totalAmount/").setValue(totalGroupExpense);
@@ -475,5 +474,9 @@ public class AddExpense extends AppCompatActivity implements ListView.OnItemClic
         });
     }
 
+@Override
+    public void onBackPressed(){
+        Log.i(TAG, "back pressed in Add Expense");
 
+}
 }
