@@ -2,6 +2,10 @@ package com.google.app.splitwise_clone;
 
 import android.content.Intent;
 import android.content.SharedPreferences;
+import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
+import android.graphics.drawable.BitmapDrawable;
+import android.graphics.drawable.Drawable;
 import android.net.Uri;
 import android.os.Bundle;
 import android.text.TextUtils;
@@ -11,16 +15,15 @@ import android.view.MenuItem;
 import android.view.View;
 import android.widget.ImageView;
 import android.widget.TextView;
-
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.Toolbar;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
-
 import com.bumptech.glide.Glide;
 import com.google.android.gms.tasks.OnFailureListener;
 import com.google.android.gms.tasks.OnSuccessListener;
+import com.google.android.material.appbar.CollapsingToolbarLayout;
 import com.google.app.splitwise_clone.groups.GroupsList;
 import com.google.app.splitwise_clone.model.Balance;
 import com.google.app.splitwise_clone.model.Group;
@@ -28,7 +31,6 @@ import com.google.app.splitwise_clone.model.SingleBalance;
 import com.google.app.splitwise_clone.utils.AppUtils;
 import com.google.app.splitwise_clone.utils.FirebaseUtils;
 import com.google.app.splitwise_clone.utils.FriendsAdapter;
-import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
@@ -51,6 +53,7 @@ public class FriendsList extends AppCompatActivity implements FriendsAdapter.OnC
     private StorageReference mPhotosStorageReference;
     private String userName = "anonymous";
     private ImageView profilePicture;
+    private CollapsingToolbarLayout toolbar_container;
     private static final int RC_PHOTO_PICKER = 2;
     private TextView balance_summary_tv;
     Map<String, Float> amountSpentByMember = null;
@@ -67,6 +70,7 @@ public class FriendsList extends AppCompatActivity implements FriendsAdapter.OnC
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_friend_list);
 
+        toolbar_container = findViewById(R.id.toolbar_container);
         Toolbar myToolbar = (Toolbar) findViewById(R.id.my_toolbar);
         setSupportActionBar(myToolbar);
 
@@ -233,10 +237,14 @@ public class FriendsList extends AppCompatActivity implements FriendsAdapter.OnC
                                 public void onSuccess(byte[] bytes) {
 //                                           https://stackoverflow.com/questions/46619510/how-can-i-download-image-on-firebase-storage
                                     //            https://github.com/bumptech/glide/issues/458
-                                    Glide.with(FriendsList.this)
-                                            .load(bytes)
-                                            .asBitmap()
-                                            .into(profilePicture);
+
+                                    Bitmap bmp = BitmapFactory.decodeByteArray(bytes, 0, bytes.length);
+                                    profilePicture.setImageBitmap(bmp);
+
+//                                    Glide.with(FriendsList.this)
+//                                            .load(bytes)
+//                                            .asBitmap()
+//                                            .into(profilePicture);
 
 //                                    Log.i(TAG, "photo download " + mPhotosStorageReference.getPath());
                                 }
@@ -273,10 +281,25 @@ public class FriendsList extends AppCompatActivity implements FriendsAdapter.OnC
                         @Override
                         public void onSuccess(byte[] bytes) {
                             // Data for "images/island.jpg" is returns, use this as needed
+//                            Bitmap bmp = BitmapFactory.decodeByteArray(bytes, 0, bytes.length);
+//                            profilePicture.setImageBitmap(bmp);
+//                            Drawable image1 = new BitmapDrawable(FriendsList.getResources(), canvasBitmap);
+                            Drawable image = new BitmapDrawable(BitmapFactory.decodeByteArray(bytes, 0, bytes.length));
+                            toolbar_container.setContentScrim(image);
+//                            toolbar_container.setForeground();
+//
+//                            Glide.with(FriendsList.this)
+//                                    .load(bytes)
+//                                    .asBitmap()
+//                                    .placeholder(R.drawable.person)
+//                                    .into(toolbar_container);
+
                             Glide.with(FriendsList.this)
                                     .load(bytes)
                                     .asBitmap()
+                                    .placeholder(R.drawable.person)
                                     .into(profilePicture);
+
                         }
                     }).addOnFailureListener(new OnFailureListener() {
                         @Override

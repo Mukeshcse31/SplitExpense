@@ -19,4 +19,5 @@
 
     <color name="ltgray">#ffe0e0e0</color>
     <color name="lineColor">#FF888484</color>
+    <color name="photo_placeholder">#ccc</color>
 </resources>

@@ -8,6 +8,14 @@
         <item name="colorAccent">@color/colorAccent</item>
     </style>
 
+
+    <!--  NetworkImageView -->
+    <style name="NetworkImageViewStyle">
+        <item name="android:layout_width">match_parent</item>
+        <item name="android:layout_height">match_parent</item>
+        <item name="android:scaleType">fitXY</item>
+    </style>
+
     <!-- RecyclerView -->
     <style name="RecyclerViewStyle1">
         <item name="android:layout_width">match_parent</item>>
