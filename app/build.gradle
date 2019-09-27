@@ -1,6 +1,14 @@
 apply plugin: 'com.android.application'
 
 android {
+    signingConfigs {
+        debug {
+            storeFile file('../keystore.jks')
+            storePassword 'password'
+            keyAlias = 'alias'
+            keyPassword 'password'
+        }
+    }
     compileSdkVersion 28
     defaultConfig {
         applicationId "com.google.app.splitwise_clone"
@@ -14,6 +22,7 @@ android {
         release {
             minifyEnabled false
             proguardFiles getDefaultProguardFile('proguard-android-optimize.txt'), 'proguard-rules.pro'
+            signingConfig signingConfigs.debug
         }
     }
     flavorDimensions "version"
@@ -21,6 +30,7 @@ android {
         free {
             applicationId "com.google.app.splitwise_clone.free"
             versionName "1.0-free"
+            signingConfig signingConfigs.debug
         }
         paid {
             applicationId "com.google.app.splitwise_clone.paid"
