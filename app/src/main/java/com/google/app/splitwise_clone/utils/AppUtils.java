@@ -6,6 +6,8 @@ import android.content.res.Resources;
 import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
 import android.text.TextUtils;
+import android.view.Menu;
+import android.view.MenuItem;
 
 import com.google.app.splitwise_clone.SignIn;
 import com.google.app.splitwise_clone.R;
@@ -14,6 +16,7 @@ import com.google.app.splitwise_clone.model.ExpenseCategory;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
+import com.google.firebase.messaging.FirebaseMessaging;
 import com.google.firebase.storage.FirebaseStorage;
 
 import java.util.ArrayList;
@@ -111,15 +114,6 @@ public class AppUtils {
         return firebaseStorage;
     }
 
-    public static void signOut(Context context) {
-
-        FirebaseAuth mAuth = FirebaseAuth.getInstance();
-        mAuth.signOut();
-        SharedPreferences prefs = context.getSharedPreferences(SignIn.SPLIT_PREFS, 0);
-        prefs.edit().remove(SignIn.USERNAME_KEY).commit();
-        prefs.edit().remove(SignIn.PASSWORD_KEY).commit();
-    }
-
     public static LinkedHashMap reverseExpense(LinkedHashMap map) {
 
         LinkedHashMap<String, Expense> reverseMap = new LinkedHashMap<>();
@@ -161,6 +155,7 @@ public class AppUtils {
         return true;
     }
 
+    //verifies the userName, groupName
     public static boolean checkUserName(String name) {
 
         Pattern pattern = Pattern.compile("[A-Za-z0-9_]+");
@@ -170,6 +165,7 @@ public class AppUtils {
         return true;
     }
 
+    //verifies the user's and friends's email id
     public static boolean checkEmail(String email) {
         // You can add more checking logic here.
         if(email == null || TextUtils.isEmpty(email))
@@ -179,4 +175,19 @@ public class AppUtils {
     }
 
 
+    public static void showOption(Menu mMenu, int[] ids) {
+
+        for (int id : ids) {
+            MenuItem item = mMenu.findItem(id);
+            item.setVisible(true);
+        }
+    }
+
+
+    public static void hideOption(Menu mMenu, int[] ids) {
+        for (int id : ids) {
+            MenuItem item = mMenu.findItem(id);
+            item.setVisible(false);
+        }
+    }
 }

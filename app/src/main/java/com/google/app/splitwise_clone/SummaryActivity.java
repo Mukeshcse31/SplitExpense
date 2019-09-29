@@ -103,7 +103,7 @@ public class SummaryActivity extends AppCompatActivity implements GroupsFragment
     @Override
     public void gotoClickedGroup(int index, String name) {
         Intent intent = new Intent(this, ExpenseList.class);
-        intent.putExtra(GroupsFragment.GROUP_NAME, name);
+        intent.putExtra(AddGroup.GROUP_NAME, name);
         startActivity(intent);
     }
 
@@ -111,7 +111,7 @@ public class SummaryActivity extends AppCompatActivity implements GroupsFragment
     public void gotoEditGroup(int index, String groupName, List<DataSnapshot> dataSnapshotGroupList) {
         Intent intent = new Intent(this, AddGroup.class);
         Group group = dataSnapshotGroupList.get(index).getValue(Group.class);
-        intent.putExtra(GroupsFragment.GROUP_NAME, groupName);
+        intent.putExtra(AddGroup.GROUP_NAME, groupName);
         intent.putExtra(EDIT_GROUP, group);
         startActivity(intent);
     }
@@ -146,7 +146,7 @@ public class SummaryActivity extends AppCompatActivity implements GroupsFragment
 
             //Sign Out
             case R.id.signout:
-                AppUtils.signOut(this);
+                FirebaseUtils.signOut(this);
                 intent = new Intent(SummaryActivity.this, SignIn.class);
                 startActivity(intent);
                 finish();
@@ -232,14 +232,8 @@ public class SummaryActivity extends AppCompatActivity implements GroupsFragment
                         @Override
                         public void onSuccess(byte[] bytes) {
                             userImageByte= bytes;
-                            // Data for "images/island.jpg" is returns, use this as needed
-//                            Bitmap bmp = BitmapFactory.decodeByteArray(bytes, 0, bytes.length);
-//                            profilePicture.setImageBitmap(bmp);
-//                            Drawable image1 = new BitmapDrawable(FriendsList.getResources(), canvasBitmap);
-                            Drawable image = new BitmapDrawable(BitmapFactory.decodeByteArray(bytes, 0, bytes.length));
-                            toolbar_container.setContentScrim(image);
-//                            toolbar_container.setForeground();
-
+//                            Drawable image = new BitmapDrawable(BitmapFactory.decodeByteArray(bytes, 0, bytes.length));
+//                            toolbar_container.setContentScrim(image);
                             Glide.with(SummaryActivity.this)
                                     .load(bytes)
                                     .asBitmap()

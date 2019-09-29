@@ -36,8 +36,6 @@ import com.google.firebase.database.Query;
 import com.google.firebase.database.ValueEventListener;
 import com.google.firebase.messaging.FirebaseMessaging;
 
-import java.util.regex.Pattern;
-
 public class SignIn extends AppCompatActivity {
 
     // Constants
@@ -218,6 +216,8 @@ public class SignIn extends AppCompatActivity {
                                         @Override
                                         public void onComplete(@NonNull Task<Void> task) {
                                             if (task.isSuccessful()) {
+                                                saveUserCredentials(email, password);
+                                                gotoSummaryPage();
                                                 Log.d(TAG, "User profile updated.");
                                             }
                                         }
@@ -254,8 +254,6 @@ public class SignIn extends AppCompatActivity {
 
                                 }
                             });
-                            saveUserCredentials(email, password);
-                            gotoNextPage();
                         }
                     }
                 });
@@ -322,7 +320,7 @@ public class SignIn extends AppCompatActivity {
 
     }
 
-    private void gotoNextPage() {
+    private void gotoSummaryPage() {
 //        Intent intent = new Intent(SignIn.this, FriendsList.class);
         Intent intent = new Intent(SignIn.this, SummaryActivity.class);
 
@@ -364,7 +362,7 @@ public class SignIn extends AppCompatActivity {
                             String userName = FirebaseUtils.getUserName();
                             showSnackBar(userName + " signed in");
                             saveUserCredentials(email, password);
-                            gotoNextPage();
+                            gotoSummaryPage();
                             FirebaseMessaging.getInstance().subscribeToTopic(userName);
                         }
                     }

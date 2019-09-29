@@ -5,10 +5,10 @@
     <application
         android:allowBackup="true"
         android:icon="@mipmap/ic_launcher"
-        android:configChanges="orientation|screenSize"
         android:label="@string/app_name"
         android:roundIcon="@mipmap/ic_launcher_round"
         android:supportsRtl="true"
+        android:configChanges="keyboardHidden|orientation|screenSize"
         android:theme="@style/Theme.Design.Light.NoActionBar">
 
         <activity
@@ -32,7 +32,9 @@
     android:parentActivityName=".groups.GroupsList"></activity>
 
         <activity android:name=".expense.AddExpense"></activity>
-        <activity android:name=".groups.AddGroup" />
+
+        <activity android:name=".groups.AddGroup"
+            android:screenOrientation="sensor"/>
 
         <meta-data
             android:name="com.google.android.gms.ads.AD_MANAGER_APP"
@@ -71,7 +73,7 @@
     </application>
     <uses-permission android:name="android.permission.ACCESS_FINE_LOCATION" />
     <uses-permission android:name="android.permission.CAMERA" />
-
+<uses-permission android:name="WRITE_SETTINGS"/>
     <uses-permission android:name="android.permission.INTERNET" />
 
 </manifest>

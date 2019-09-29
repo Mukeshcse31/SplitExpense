@@ -109,8 +109,8 @@ public static String EXPENSE_DELETED = "EXPENSE_DELETED";
             }
         }
 
-
-        Query query = mDatabaseReference.child("groups/" + group_name + "/members").orderByChild("active").equalTo("Yes");
+//        Query query = mDatabaseReference.child("groups/" + group_name + "/members").orderByChild("active").equalTo("Yes");
+        Query query = mDatabaseReference.child("groups/" + group_name + "/members");
         query.addListenerForSingleValueEvent(new ValueEventListener() {
             @Override
             public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
@@ -319,12 +319,7 @@ public static String EXPENSE_DELETED = "EXPENSE_DELETED";
                             }
                         });
 
-                alertDialogBuilder.setNegativeButton(getString(R.string.no), new DialogInterface.OnClickListener() {
-                    @Override
-                    public void onClick(DialogInterface dialog, int which) {
-                        //do nothing
-                    }
-                });
+                alertDialogBuilder.setNegativeButton(getString(R.string.no), null);
 
                 AlertDialog alertDialog = alertDialogBuilder.create();
                 alertDialog.show();
@@ -345,6 +340,7 @@ public static String EXPENSE_DELETED = "EXPENSE_DELETED";
         startActivity(intent);
         finish();
     }
+
     private void sendNotification(String title, String msg, List<String> participants) {
 
         //Send Notification

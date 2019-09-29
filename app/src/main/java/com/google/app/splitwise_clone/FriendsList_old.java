@@ -204,7 +204,7 @@ public class FriendsList_old extends AppCompatActivity implements FriendsAdapter
 
             //Sign Out
             case R.id.signout:
-                AppUtils.signOut(this);
+                FirebaseUtils.signOut(this);
                 finish();
                 break;
 

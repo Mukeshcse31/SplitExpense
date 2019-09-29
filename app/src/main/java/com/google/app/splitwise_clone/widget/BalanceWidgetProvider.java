@@ -38,7 +38,7 @@ public class BalanceWidgetProvider extends AppWidgetProvider {
     static String userName;
     static String TAG = BalanceWidgetProvider.class.getSimpleName();
     static Map<String, Map<String, Float>> amountGroup;
-    static Float amountSpentByUser = 0.2f;
+    static Float amountSpentByUser = 0.0f;
 
     @Override
     public void onUpdate(final Context context, final AppWidgetManager appWidgetManager, final int[] appWidgetIds) {
@@ -86,7 +86,7 @@ public class BalanceWidgetProvider extends AppWidgetProvider {
 //create text view for each group
             Iterator it2 = allGroups.entrySet().iterator();
             String stat = "";
-            Float amount = 0.2f;
+            Float amount = 0.0f;
             while (it2.hasNext()) {
                 Map.Entry pair2 = (Map.Entry) it2.next();
                 String groupName = (String) pair2.getKey();

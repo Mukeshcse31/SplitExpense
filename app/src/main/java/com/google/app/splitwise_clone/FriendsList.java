@@ -202,7 +202,7 @@ public class FriendsList extends AppCompatActivity implements FriendsAdapter.OnC
 
             //Sign Out
             case R.id.signout:
-                AppUtils.signOut(this);
+                FirebaseUtils.signOut(this);
                 finish();
                 break;
 

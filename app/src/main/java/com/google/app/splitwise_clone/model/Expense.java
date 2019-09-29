@@ -11,7 +11,7 @@ public class Expense implements Parcelable {
     private String payer;
     private String description;
     private String category;
-    private float total = 0.2f;
+    private float total = 0.0f;
     private Map<String, SingleBalance> splitExpense = new HashMap<>();
 
 

@@ -4,10 +4,12 @@ import android.Manifest;
 import android.app.Activity;
 import android.content.DialogInterface;
 import android.content.Intent;
+import android.content.pm.ActivityInfo;
 import android.content.pm.PackageManager;
 import android.net.Uri;
 import android.os.Build;
 import android.os.Bundle;
+import android.provider.Settings;
 import android.text.TextUtils;
 import android.util.Log;
 import android.view.Menu;
@@ -17,6 +19,7 @@ import android.widget.AutoCompleteTextView;
 import android.widget.ImageView;
 import android.widget.Toast;
 import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
 import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.Toolbar;
@@ -29,6 +32,9 @@ import com.google.android.gms.tasks.OnFailureListener;
 import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.android.material.snackbar.Snackbar;
 import com.google.app.splitwise_clone.R;
+import com.google.app.splitwise_clone.SummaryActivity;
+import com.google.app.splitwise_clone.expense.AddExpense;
+import com.google.app.splitwise_clone.expense.ExpenseList;
 import com.google.app.splitwise_clone.model.Group;
 import com.google.app.splitwise_clone.model.SingleBalance;
 import com.google.app.splitwise_clone.utils.AppUtils;
@@ -55,6 +61,11 @@ public class AddGroup extends AppCompatActivity implements GroupMembersAdapter.O
     private FirebaseStorage mFirebaseStorage;
     private StorageReference mPhotosStorageReference;
     private static final int RC_PHOTO_PICKER = 2;
+    public static String GROUP_NAME = "group_name";
+    public static String GROUP_ADDED = "group_added";
+    public static String GROUP_EDITED = "group_edited";
+    public static String GROUP_DELETED = "group_deleted";
+    public static String ACTION_CANCEL = "ACTION_CANCEL";
     private static final String TAG = AddGroup.class.getSimpleName();
     private Uri selectedImageUri;
     private RecyclerView members_rv;
@@ -79,6 +90,9 @@ public class AddGroup extends AppCompatActivity implements GroupMembersAdapter.O
         Toolbar myToolbar = (Toolbar) findViewById(R.id.my_toolbar);
         setSupportActionBar(myToolbar);
         getSupportActionBar().setTitle(getString(R.string.new_group));
+
+//        setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_UNSPECIFIED);
+//        Settings.System.putInt( getContentResolver(), Settings.System.ACCELEROMETER_ROTATION, 1);
 
         mFirebaseStorage = AppUtils.getDBStorage();
         mDatabaseReference = AppUtils.getDBReference();
@@ -231,16 +245,6 @@ public class AddGroup extends AppCompatActivity implements GroupMembersAdapter.O
         }
     }
 
-    private void showMessageOKCancel(String message, DialogInterface.OnClickListener okListener) {
-        new AlertDialog.Builder(AddGroup.this)
-                .setMessage(message)
-                .setIcon(R.drawable.camera)
-                .setPositiveButton("OK", okListener)
-                .setNegativeButton("Cancel", null)
-                .create()
-                .show();
-    }
-
     private void membersViews() {
         final String path1 = getString(R.string.db_users);
 
@@ -307,15 +311,18 @@ public class AddGroup extends AppCompatActivity implements GroupMembersAdapter.O
                     String name = (String) pair.getKey();
                     SingleBalance sb = (SingleBalance) pair.getValue();
                     String email = sb.getEmail();
-
-                    //get only the active members
-                    if(TextUtils.equals(sb.getActive(), "Yes")){
-                        group_members.put(name, email);
-                    }
-                    else {
-                        nongroup_members.put(name, email);
-                    }
+                    group_members.put(name, email);
                 }
+                Map<String, SingleBalance> nonMembers = mGroup.getNonMembers();
+                it = nonMembers.entrySet().iterator();
+                while (it.hasNext()) {
+                    Map.Entry pair = (Map.Entry) it.next();
+                    String name = (String) pair.getKey();
+                    SingleBalance sb = (SingleBalance) pair.getValue();
+                    String email = sb.getEmail();
+                    nongroup_members.put(name, email);
+                }
+
 
                 //load image
                 final StorageReference imageRef = mPhotosStorageReference.child(group_name);
@@ -389,25 +396,37 @@ public class AddGroup extends AppCompatActivity implements GroupMembersAdapter.O
         MenuItem deleteMenu = menu.findItem(R.id.deleteGroup);
         MenuItem saveMenu = menu.findItem(R.id.saveGroup);
 
-        deleteMenu.setVisible(false);
-        saveMenu.setVisible(false);
+//        deleteMenu.setVisible(false);
+//        saveMenu.setVisible(false);
+        AppUtils.hideOption(menu, new int[]{R.id.deleteGroup, R.id.saveGroup});
         if (mGroup == null) {
-
-            addMenu.setVisible(true);
+            AppUtils.showOption(menu, new int[]{R.id.addGroup});
         } else {
-            addMenu.setVisible(false);
-            if (TextUtils.equals(mGroup.getOwner(), userName)) {
-                deleteMenu.setVisible(true);
-                saveMenu.setVisible(true);
+            AppUtils.hideOption(menu, new int[]{R.id.addGroup});
+//            addMenu.setVisible(false);
+            if (TextUtils.equals(mGroup.getOwner(), userName)) {//only the group owner should be allowed to edit
+                AppUtils.showOption(menu, new int[]{R.id.deleteGroup, R.id.saveGroup});
+//                deleteMenu.setVisible(true);
+//                saveMenu.setVisible(true);
             }
         }
-
         return true;
     }
 
+        private void gotoSummaryActivity(String name, String value){
+
+            final Intent intent = new Intent(AddGroup.this, SummaryActivity.class);
+            intent.putExtra(GROUP_NAME, group_name);
+            intent.putExtra(name, value);
+            startActivity(intent);
+            finish();
+        }
+
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
+
         switch (item.getItemId()) {
+
             case R.id.addGroup:
 
                 boolean cancel = false;
@@ -426,7 +445,7 @@ public class AddGroup extends AppCompatActivity implements GroupMembersAdapter.O
                 }
                 if (!cancel){
 
-                    Query query = mDatabaseReference.child("groups").startAt(name).endAt(name);
+                    Query query = mDatabaseReference.child("groups").orderByKey().startAt(name).endAt(name);
                     query.addListenerForSingleValueEvent(new ValueEventListener() {
                         @Override
                         public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
@@ -449,26 +468,28 @@ public class AddGroup extends AppCompatActivity implements GroupMembersAdapter.O
                                     grp.addMember(groupMemberName, sb);
 
                                 }
+
+
+//                          // add all the non group members to the group
+                                it = nongroup_members.entrySet().iterator();
+                                while (it.hasNext()) {
+
+                                    Map.Entry pair = (Map.Entry) it.next();
+                                    String groupMemberName = (String) pair.getKey();
+                                    String email = (String) pair.getValue();
+                                    SingleBalance sb = new SingleBalance(groupMemberName);
+                                    sb.setEmail(email);
+                                    grp.addNonMember(groupMemberName, sb);
+
+                                }
+
                                 //add the group creator as a member when the group is created
                                 grp.setPhotoUrl(photoUrl);
                                 grp.setOwner(userName);
                                 mDatabaseReference.child("groups/" + name).setValue(grp, new DatabaseReference.CompletionListener() {
                                     @Override
                                     public void onComplete(DatabaseError databaseError, DatabaseReference dataReference) {
-                                        final Snackbar snackBar = Snackbar.make(findViewById(android.R.id.content),
-                                                getString(R.string.group_added), Snackbar.LENGTH_LONG);
-
-                                        snackBar.setAction(getString(R.string.close), new View.OnClickListener() {
-                                            @Override
-                                            public void onClick(View v) {
-                                                // Call your action method here
-                                                snackBar.dismiss();
-                                            }
-                                        });
-                                        snackBar.show();
-                                        if (databaseError != null)
-                                            Log.i(TAG, databaseError.getDetails());
-                                        finish();
+                                        gotoSummaryActivity(GROUP_ADDED, String.format("%s %s", getString(R.string.group_added), name));
                                     }
                                 });
                             }
@@ -491,30 +512,33 @@ public class AddGroup extends AppCompatActivity implements GroupMembersAdapter.O
                     e.printStackTrace();
                 }
 
-                final String newGroupNname = mGroupName.getText().toString();
+                final String newGroupNname = mGroupName.getText().toString().trim();
                 newGroup.setName(newGroupNname);
 
-                // add all the new group members to the group
+
+                newGroup.setMembers(new HashMap<String, SingleBalance>());
+                newGroup.setNonMembers(new HashMap<String, SingleBalance>());
+
+                // add all the new group members to the groupmembers of group
                 Iterator it = group_members.entrySet().iterator();
                 while (it.hasNext()) {
                     Map.Entry pair = (Map.Entry) it.next();
                     String groupMemberName = (String) pair.getKey();
-                    if (!newGroup.getMembers().containsKey(groupMemberName)) {
-                        String email = (String) pair.getValue();
-                        SingleBalance sb = new SingleBalance(groupMemberName);
-                        sb.setEmail(email);
-                        newGroup.addMember(groupMemberName, sb);
-                    }
+                    String email = (String) pair.getValue();
+                    SingleBalance sb = new SingleBalance(groupMemberName);
+                    sb.setEmail(email);
+                    newGroup.addMember(groupMemberName, sb);
                 }
 
-//                if non members are in the group, set them as active No
+                // add all the new group members to the non-groupmembers of group
                 it = nongroup_members.entrySet().iterator();
                 while (it.hasNext()) {
                     Map.Entry pair = (Map.Entry) it.next();
-                    String groupMemberName = (String) pair.getKey();
-                    if (newGroup.getMembers().containsKey(groupMemberName)) {
-                        newGroup.getMembers().get(groupMemberName).setActive("No");
-                    }
+                    String nonGroupMemberName = (String) pair.getKey();
+                    String email = (String) pair.getValue();
+                    SingleBalance sb = new SingleBalance(nonGroupMemberName);
+                    sb.setEmail(email);
+                    newGroup.getNonMembers().put(nonGroupMemberName, sb);
                 }
 
                 //update the image if the image name is updated after changing the image
@@ -560,17 +584,7 @@ public class AddGroup extends AppCompatActivity implements GroupMembersAdapter.O
                 mDatabaseReference.child("groups/" + newGroupNname).setValue(newGroup, new DatabaseReference.CompletionListener() {
                     @Override
                     public void onComplete(DatabaseError databaseError, DatabaseReference dataReference) {
-                        final Snackbar snackBar = Snackbar.make(findViewById(android.R.id.content),
-                                getString(R.string.saved_group), Snackbar.LENGTH_LONG);
-
-                        snackBar.setAction(getString(R.string.close), new View.OnClickListener() {
-                            @Override
-                            public void onClick(View v) {
-                                // Call your action method here
-                                snackBar.dismiss();
-                            }
-                        });
-                        snackBar.show();
+                        gotoSummaryActivity(GROUP_EDITED, String.format("%s %s", getString(R.string.saved_group), newGroupNname));
                         if (databaseError != null)
                             Log.i(TAG, databaseError.getDetails());
                         finish();
@@ -578,7 +592,7 @@ public class AddGroup extends AppCompatActivity implements GroupMembersAdapter.O
                 });
 
                 //delete the old photo storage
-                if (!TextUtils.equals(prev_imageName, newGroupNname)) {
+                if (!TextUtils.isEmpty(prev_imageName) && !TextUtils.equals(prev_imageName, newGroupNname)) {
                     mPhotosStorageReference.child(prev_imageName).delete();
 
                     //Delete the old group
@@ -597,28 +611,35 @@ public class AddGroup extends AppCompatActivity implements GroupMembersAdapter.O
                         new DialogInterface.OnClickListener() {
                             @Override
                             public void onClick(DialogInterface arg0, int arg1) {
-                                mDatabaseReference.child("groups/" + group_name).removeValue();
-                                finish();
+                                mDatabaseReference.child("groups/" + group_name).removeValue(new DatabaseReference.CompletionListener() {
+                                    @Override
+                                    public void onComplete(@Nullable DatabaseError databaseError, @NonNull DatabaseReference databaseReference) {
+                                        gotoSummaryActivity(GROUP_DELETED, String.format("%s %s", getString(R.string.group_deleted), group_name));
+                                    }
+                                });
 
                             }
                         });
 
-                alertDialogBuilder.setNegativeButton(getString(R.string.no), new DialogInterface.OnClickListener() {
-                    @Override
-                    public void onClick(DialogInterface dialog, int which) {
-
-                    }
-                });
+                alertDialogBuilder.setNegativeButton(getString(R.string.no), null);
 
                 AlertDialog alertDialog = alertDialogBuilder.create();
                 alertDialog.show();
                 break;
 
             case R.id.gotoGroupList:
-                finish();
+                gotoSummaryActivity(ACTION_CANCEL, getString(R.string.cancel));
+//                finish();
                 break;
         }
         return super.onOptionsItemSelected(item);
+    }
+
+    @Override
+    protected void onSaveInstanceState(Bundle bundle) {
+
+        bundle.putString(getResources().getString(R.string.group_name), group_name);
+        super.onSaveInstanceState(bundle);
     }
 
 }

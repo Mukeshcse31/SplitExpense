@@ -13,6 +13,7 @@ public class Group implements Parcelable, Cloneable {
     private String owner;
     private Float totalAmount;
     private Map<String, SingleBalance> members = new HashMap<>();
+    private Map<String, SingleBalance> nonMembers = new HashMap<>();
     private Map<String, Expense> expenses = new HashMap<>();
     private Map<String, Expense> archivedExpenses = new HashMap<>();
 
@@ -21,7 +22,7 @@ public class Group implements Parcelable, Cloneable {
 
     public Group(String name) {
         this.name = name;
-        totalAmount = .2f;
+        totalAmount = .0f;
     }
 
     public Group(String name, Map<String, SingleBalance> members) {
@@ -41,6 +42,8 @@ public class Group implements Parcelable, Cloneable {
         totalAmount = in.readFloat();
         members = new HashMap<String, SingleBalance>();
         in.readMap(members, SingleBalance.class.getClassLoader());
+        nonMembers = new HashMap<String, SingleBalance>();
+        in.readMap(nonMembers, SingleBalance.class.getClassLoader());
         expenses = new HashMap<String, Expense>();
         in.readMap(expenses, Expense.class.getClassLoader());
         archivedExpenses = new HashMap<String, Expense>();
@@ -102,6 +105,18 @@ public class Group implements Parcelable, Cloneable {
         this.members.put(memberName, sb);
     }
 
+    public Map<String, SingleBalance> getNonMembers() {
+        return nonMembers;
+    }
+
+    public void setNonMembers(Map<String, SingleBalance> nonMembers) {
+        this.nonMembers = nonMembers;
+    }
+
+    public void addNonMember(String memberName, SingleBalance sb){
+        this.nonMembers.put(memberName, sb);
+    }
+
     public Map<String, Expense> getExpenses() {
         return expenses;
     }
@@ -133,6 +148,7 @@ public class Group implements Parcelable, Cloneable {
         dest.writeString(owner);
         dest.writeFloat(totalAmount);
         dest.writeMap(members);
+        dest.writeMap(nonMembers);
         dest.writeMap(expenses);
         dest.writeMap(archivedExpenses);
     }

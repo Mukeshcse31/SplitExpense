@@ -157,21 +157,6 @@ public class ExpenseList extends AppCompatActivity implements ExpenseAdapter.OnC
             .setAction(getString(R.string.close), null).show();
     }
 
-    private void hideOption(int[] ids) {
-        for (int id : ids) {
-            MenuItem item = mMenu.findItem(id);
-            item.setVisible(false);
-        }
-    }
-
-    private void showOption(int[] ids) {
-
-        for (int id : ids) {
-            MenuItem item = mMenu.findItem(id);
-            item.setVisible(true);
-        }
-    }
-
     //populate all the archived expenses
     public void populateSettledUpExpenses(View view) {
         getArchivedExpense();
@@ -185,8 +170,8 @@ public class ExpenseList extends AppCompatActivity implements ExpenseAdapter.OnC
         mExpenseAdapter = new ExpenseAdapter(archivedExpenseSnapshotMap, ExpenseList.this, false);
         expenses_rv.setAdapter(mExpenseAdapter);
 
-        hideOption(new int[]{R.id.orderbyCategory, R.id.settle_up, R.id.export, R.id.archivedExp});
-        showOption(new int[]{R.id.orderbyDate});
+        AppUtils.hideOption(mMenu,new int[]{R.id.orderbyCategory, R.id.settle_up, R.id.export, R.id.archivedExp});
+        AppUtils.showOption(mMenu, new int[]{R.id.orderbyDate});
     }
 
     public void settleUpExpenses() {
@@ -208,7 +193,7 @@ public class ExpenseList extends AppCompatActivity implements ExpenseAdapter.OnC
 
             }
         });
-        hideOption(new int[]{R.id.orderbyCategory, R.id.orderbyDate, R.id.settle_up, R.id.export});
+        AppUtils.hideOption(mMenu, new int[]{R.id.orderbyCategory, R.id.orderbyDate, R.id.settle_up, R.id.export});
     }
 
 
@@ -288,7 +273,7 @@ public class ExpenseList extends AppCompatActivity implements ExpenseAdapter.OnC
                                 noExpenses_tv.setVisibility(View.VISIBLE);
 
                             //placed here so it takes a while to reach this and onCreateItemsOption is already called
-                            hideOption(new int[]{R.id.orderbyCategory, R.id.orderbyDate, R.id.settle_up, R.id.export, R.id.archivedExp});
+                            AppUtils.hideOption(mMenu, new int[]{R.id.orderbyCategory, R.id.orderbyDate, R.id.settle_up, R.id.export, R.id.archivedExp});
                         }
 
                         @Override
@@ -305,7 +290,7 @@ public class ExpenseList extends AppCompatActivity implements ExpenseAdapter.OnC
                     expenseSnapshotMap = AppUtils.reverseExpense(expenseSnapshotMap);
                     mExpenseAdapter = new ExpenseAdapter(expenseSnapshotMap, ExpenseList.this, true);
                     expenses_rv.setAdapter(mExpenseAdapter);
-                    showOption(new int[]{R.id.orderbyCategory, R.id.settle_up, R.id.export, R.id.archivedExp});
+                    AppUtils.showOption(mMenu, new int[]{R.id.orderbyCategory, R.id.settle_up, R.id.export, R.id.archivedExp});
 
                 }
             }
@@ -354,8 +339,8 @@ public class ExpenseList extends AppCompatActivity implements ExpenseAdapter.OnC
 
                     expenses_rv.setVisibility(View.VISIBLE);
                     expenses_rv.setAdapter(mExpenseAdapter);
-                    hideOption(new int[]{R.id.orderbyCategory});
-                    showOption(new int[]{R.id.orderbyDate, R.id.settle_up, R.id.export, R.id.archivedExp});
+                    AppUtils.hideOption(mMenu, new int[]{R.id.orderbyCategory});
+                    AppUtils.showOption(mMenu, new int[]{R.id.orderbyDate, R.id.settle_up, R.id.export, R.id.archivedExp});
                     noExpenses_tv.setVisibility(View.GONE);
 //                    }
                 }
@@ -554,7 +539,7 @@ public class ExpenseList extends AppCompatActivity implements ExpenseAdapter.OnC
 
             //Sign Out
             case R.id.signout:
-                AppUtils.signOut(this);
+                FirebaseUtils.signOut(this);
 
                 intent = new Intent(ExpenseList.this, SignIn.class);
                 startActivity(intent);

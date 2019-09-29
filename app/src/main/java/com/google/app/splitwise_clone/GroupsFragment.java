@@ -1,6 +1,7 @@
 package com.google.app.splitwise_clone;
 
 import android.content.Context;
+import android.content.Intent;
 import android.os.Bundle;
 import android.text.TextUtils;
 import android.view.LayoutInflater;
@@ -12,6 +13,9 @@ import androidx.fragment.app.Fragment;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
+import com.google.android.material.snackbar.Snackbar;
+import com.google.app.splitwise_clone.expense.AddExpense;
+import com.google.app.splitwise_clone.groups.AddGroup;
 import com.google.app.splitwise_clone.utils.AppUtils;
 import com.google.app.splitwise_clone.utils.FirebaseUtils;
 import com.google.app.splitwise_clone.utils.GroupsAdapter;
@@ -29,8 +33,8 @@ public class GroupsFragment extends Fragment implements GroupsAdapter.OnClickLis
     private DatabaseReference mDatabaseReference;
     List<DataSnapshot> dataSnapshotGroupList = new ArrayList<>();
     private RecyclerView groups_rv;
-    public static String GROUP_NAME = "group_name";
-    private String userName = "";
+    private String group_name;
+    private String userName = "", snackBarMsg;
     onGroupClickListener mGroupListener;
     private GroupsAdapter mGroupsAdapter;
 
@@ -48,7 +52,6 @@ public class GroupsFragment extends Fragment implements GroupsAdapter.OnClickLis
         groups_rv = rootView.findViewById(R.id.groups_rv);
         LinearLayoutManager layoutManager = new LinearLayoutManager(getContext());
         groups_rv.setLayoutManager(layoutManager);
-
 
         return rootView;
     }
@@ -72,7 +75,38 @@ public class GroupsFragment extends Fragment implements GroupsAdapter.OnClickLis
         void gotoEditGroup(int index, String groupName, List<DataSnapshot> data );
     }
 
+private void showSnackBar(){
 
+    Intent intent = getActivity().getIntent();
+    if (intent.hasExtra(AddGroup.GROUP_NAME)) {
+        group_name = intent.getStringExtra(AddGroup.GROUP_NAME);
+    }
+
+    if(intent.hasExtra(AddGroup.GROUP_ADDED)){
+        snackBarMsg = intent.getStringExtra(AddGroup.GROUP_ADDED);
+    }
+    if(intent.hasExtra(AddGroup.GROUP_EDITED)){
+        snackBarMsg = intent.getStringExtra(AddGroup.GROUP_EDITED);
+    }
+    if(intent.hasExtra(AddGroup.GROUP_DELETED)){
+        snackBarMsg = intent.getStringExtra(AddGroup.GROUP_DELETED);
+    }
+    if(intent.hasExtra(AddGroup.ACTION_CANCEL)){
+        snackBarMsg = intent.getStringExtra(AddGroup.ACTION_CANCEL);
+    }
+
+    if(!TextUtils.isEmpty(snackBarMsg)) {
+        final Snackbar snackBar = Snackbar.make(getActivity().findViewById(android.R.id.content),snackBarMsg, Snackbar.LENGTH_LONG);
+        snackBar.setAction(getString(R.string.close), new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                // Call your action method here
+                snackBar.dismiss();
+            }
+        });
+        snackBar.show();
+    }
+}
     @Override
     public void onDestroyView() {
         super.onDestroyView();
@@ -110,7 +144,6 @@ public class GroupsFragment extends Fragment implements GroupsAdapter.OnClickLis
 
 
     private void populateGroupList() {
-        String userName = FirebaseUtils.getUserName();
         Query query = mDatabaseReference.child("groups").orderByChild("members/" + userName + "/name").equalTo(userName);
 
         query.addListenerForSingleValueEvent(new ValueEventListener() {
@@ -136,6 +169,7 @@ public class GroupsFragment extends Fragment implements GroupsAdapter.OnClickLis
     @Override
     public void onResume(){
         super.onResume();
+        showSnackBar();
         populateGroupList();
     }
 }
