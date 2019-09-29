@@ -17,19 +17,17 @@ import android.widget.TextView;
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.Toolbar;
-import androidx.recyclerview.widget.LinearLayoutManager;
-import androidx.recyclerview.widget.RecyclerView;
+import androidx.viewpager.widget.ViewPager;
 import com.bumptech.glide.Glide;
 import com.google.android.gms.tasks.OnFailureListener;
 import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.android.material.appbar.CollapsingToolbarLayout;
-import com.google.app.splitwise_clone.groups.GroupsList;
-import com.google.app.splitwise_clone.model.Balance;
+import com.google.android.material.tabs.TabLayout;
+import com.google.app.splitwise_clone.expense.ExpenseList;
+import com.google.app.splitwise_clone.groups.AddGroup;
 import com.google.app.splitwise_clone.model.Group;
-import com.google.app.splitwise_clone.model.SingleBalance;
 import com.google.app.splitwise_clone.utils.AppUtils;
 import com.google.app.splitwise_clone.utils.FirebaseUtils;
-import com.google.app.splitwise_clone.utils.FriendsAdapter;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
@@ -38,59 +36,57 @@ import com.google.firebase.database.ValueEventListener;
 import com.google.firebase.storage.FirebaseStorage;
 import com.google.firebase.storage.StorageReference;
 import com.google.firebase.storage.UploadTask;
-
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.Iterator;
 import java.util.List;
-import java.util.Map;
+import static com.google.app.splitwise_clone.groups.GroupsList.EDIT_GROUP;
 
-public class FriendsList extends AppCompatActivity implements FriendsAdapter.OnClickListener {
+public class SummaryActivity extends AppCompatActivity implements GroupsFragment.onGroupClickListener, FriendsFragment.onFriendClickListener{
 
     private FirebaseStorage mFirebaseStorage;
     private DatabaseReference mDatabaseReference;
+    private String TAG = "Friendslist_Page";
     private StorageReference mPhotosStorageReference;
-    private String userName = "anonymous";
-    public static String USER_IMAGE = "user_image";
-    public static String BALANCE_SUMMARY = "balance_summary";
-
-    private byte[] userImageByte;
-    private String balanceSummaryTxt;
-
     private ImageView profilePicture;
     private CollapsingToolbarLayout toolbar_container;
     private static final int RC_PHOTO_PICKER = 2;
+    private String balanceSummaryTxt, userName = "anonymous";
     private TextView balance_summary_tv;
-    Map<String, Float> amountSpentByMember = null;
-    Map<String, Float> amountDueByMember = null;
-    Map<String, Map<String, Float>> expenseMatrix = null;
-    List<String> friends = new ArrayList<>();
-    private String TAG = "Friendslist_Page";
-    private RecyclerView friends_rv;
-    private FriendsAdapter mFriendsAdapter;
-    float amountSpentByUser = 0.0f, balanceAmount = 0.0f;
+    private byte[] userImageByte;
+    ViewPager viewPager;
+    TabLayout tabLayout;
+    public static String POSITION = "POSITION";
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_friend_list);
+
+//        https://android.jlelse.eu/tablayout-and-viewpager-in-your-android-app-738b8840c38a
+        // Set the content of the activity to use the  activity_main.xml layout file
+        setContentView(R.layout.activity_summary);
 
         toolbar_container = findViewById(R.id.toolbar_container);
         Toolbar myToolbar = (Toolbar) findViewById(R.id.my_toolbar);
         setSupportActionBar(myToolbar);
-
+        getSupportActionBar().setTitle(getString(R.string.group_list));
         mFirebaseStorage = AppUtils.getDBStorage();
+        mDatabaseReference = AppUtils.getDBReference();
         userName = FirebaseUtils.getUserName();
         profilePicture = findViewById(R.id.profilePicture);
         balance_summary_tv = findViewById(R.id.balance_summary_tv);
 
-//        imageCard = findViewById(R.id.roundCardView);
-        getSupportActionBar().setTitle(userName);
-        mDatabaseReference = AppUtils.getDBReference();
-        friends_rv = findViewById(R.id.friends_rv);
+        // Find the view pager that will allow the user to swipe between fragments
+        viewPager = (ViewPager) findViewById(R.id.viewpager);
 
-        LinearLayoutManager layoutManager = new LinearLayoutManager(this);
-        friends_rv.setLayoutManager(layoutManager);
+        // Create an adapter that knows which fragment should be shown on each page
+        SummaryPagerAdapter adapter = new SummaryPagerAdapter(this, getSupportFragmentManager());
+
+        // Set the adapter onto the view pager
+        viewPager.setAdapter(adapter);
+
+        // Give the TabLayout the ViewPager
+        tabLayout = (TabLayout) findViewById(R.id.sliding_tabs);
+        tabLayout.setupWithViewPager(viewPager);
+
         profilePicture.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -104,73 +100,20 @@ public class FriendsList extends AppCompatActivity implements FriendsAdapter.OnC
         loadUserImage();
     }
 
-    public void updateUsersAmount() {
+    @Override
+    public void gotoClickedGroup(int index, String name) {
+        Intent intent = new Intent(this, ExpenseList.class);
+        intent.putExtra(GroupsFragment.GROUP_NAME, name);
+        startActivity(intent);
+    }
 
-        amountSpentByMember = new HashMap<>();
-        amountDueByMember = new HashMap<>();
-        expenseMatrix = new HashMap<>();
-        friends = new ArrayList<>();
-
-        //update the participant's total amount
-        Query query = mDatabaseReference.child("groups/").orderByChild("members/" + userName + "/name").equalTo(userName);
-
-        query.addListenerForSingleValueEvent(new ValueEventListener() {
-            @Override
-            public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
-
-                if (dataSnapshot.exists()) {
-                    balanceAmount = 0f;
-                    amountSpentByUser = 0.0f;
-                    Balance balance = new Balance();
-                    Map<String, Map<String, Float>> amountGroup = new HashMap<>();
-
-                    //loop through the groups
-                    for (DataSnapshot i : dataSnapshot.getChildren()) {
-                        Group group = i.getValue(Group.class);
-                        String groupName = i.getKey();
-                        Map<String, SingleBalance> sb = group.getMembers();
-                        SingleBalance sb1 = sb.get(userName);
-                        Float amountSpentForGroup = sb1.getAmount();
-                        Map<String, Float> dues = sb1.getSplitDues();
-
-                        Iterator it = dues.entrySet().iterator();
-                        while (it.hasNext()) {
-                            Map.Entry pair = (Map.Entry) it.next();
-                            String expenseParticipant = (String) pair.getKey();
-                            Float amount = (Float) pair.getValue();
-
-                            //update user Balance
-                            balanceAmount += amount;
-
-                            //group-wise balance
-                            Map<String, Float> eachGroup = new HashMap<>();
-                            eachGroup.put(groupName, amount);
-                            if (amountGroup.containsKey(expenseParticipant)) {
-                                amountGroup.get(expenseParticipant).put(groupName, amount);
-                            } else
-                                amountGroup.put(expenseParticipant, eachGroup);
-
-                        }
-                        amountSpentByUser += amountSpentForGroup; //TODO put it in the APP BAR
-                    }
-                    balance.setAmount(amountSpentByUser);
-                    amountGroup.remove(userName);
-                    balance.setGroups(amountGroup);
-
-                    balanceSummaryTxt = String.format("%s $%.2f\n%s %.2f", "total amount spent by you", amountSpentByUser, "others owe", balanceAmount);
-                    balance_summary_tv.setText(balanceSummaryTxt);
-
-                    mFriendsAdapter = new FriendsAdapter(amountGroup, FriendsList.this);
-                    friends_rv.setAdapter(mFriendsAdapter);
-                    mDatabaseReference.child("users/" + userName + "/balances/").setValue(balance);
-                    Log.i(TAG, "total calculation");
-                }
-            }
-
-            @Override
-            public void onCancelled(@NonNull DatabaseError databaseError) {
-            }
-        });
+    @Override
+    public void gotoEditGroup(int index, String groupName, List<DataSnapshot> dataSnapshotGroupList) {
+        Intent intent = new Intent(this, AddGroup.class);
+        Group group = dataSnapshotGroupList.get(index).getValue(Group.class);
+        intent.putExtra(GroupsFragment.GROUP_NAME, groupName);
+        intent.putExtra(EDIT_GROUP, group);
+        startActivity(intent);
     }
 
 
@@ -188,13 +131,14 @@ public class FriendsList extends AppCompatActivity implements FriendsAdapter.OnC
         switch (item.getItemId()) {
 
             case R.id.saveFriend:
-                intent = new Intent(FriendsList.this, AddFriend.class);
+                intent = new Intent(SummaryActivity.this, AddFriend.class);
                 startActivity(intent);
                 break;
 
-//            case R.id.gotoGroups:
-//                gotoGroupsList();
-//                break;
+            case R.id.gotoAddGroup:
+                intent = new Intent(SummaryActivity.this, AddGroup.class);
+                startActivity(intent);
+                break;
 
             case R.id.invite_friend:
                 inviteAFriend();
@@ -203,6 +147,8 @@ public class FriendsList extends AppCompatActivity implements FriendsAdapter.OnC
             //Sign Out
             case R.id.signout:
                 AppUtils.signOut(this);
+                intent = new Intent(SummaryActivity.this, SignIn.class);
+                startActivity(intent);
                 finish();
                 break;
 
@@ -210,13 +156,6 @@ public class FriendsList extends AppCompatActivity implements FriendsAdapter.OnC
         return super.onOptionsItemSelected(item);
     }
 
-    private void gotoGroupsList() {
-
-        Intent intent = new Intent(FriendsList.this, GroupsList.class);
-        if(userImageByte != null) intent.putExtra(USER_IMAGE, userImageByte);
-        intent.putExtra(BALANCE_SUMMARY, balanceSummaryTxt);
-        startActivity(intent);
-    }
 
     @Override
     public void onActivityResult(int requestCode, int resultCode, Intent data) {
@@ -238,9 +177,9 @@ public class FriendsList extends AppCompatActivity implements FriendsAdapter.OnC
                             //update the path of image in the DB users'
                             mDatabaseReference.child("users/" + userName + "/imageUrl").setValue(photoRef.getPath());
 
-                            final StorageReference group1 = mPhotosStorageReference.child("images/users/" + userName);
+                            final StorageReference userImgRef = mPhotosStorageReference.child(userName);
                             final long ONE_MEGABYTE = 1024 * 1024;
-                            group1.getBytes(ONE_MEGABYTE).addOnSuccessListener(new OnSuccessListener<byte[]>() {
+                            userImgRef.getBytes(ONE_MEGABYTE).addOnSuccessListener(new OnSuccessListener<byte[]>() {
                                 @Override
                                 public void onSuccess(byte[] bytes) {
                                     userImageByte = bytes;
@@ -248,12 +187,14 @@ public class FriendsList extends AppCompatActivity implements FriendsAdapter.OnC
                                     //            https://github.com/bumptech/glide/issues/458
 
                                     Bitmap bmp = BitmapFactory.decodeByteArray(bytes, 0, bytes.length);
-                                    profilePicture.setImageBitmap(bmp);
+//                                    profilePicture.setImageBitmap(bmp);
 
-//                                    Glide.with(FriendsList.this)
-//                                            .load(bytes)
-//                                            .asBitmap()
-//                                            .into(profilePicture);
+                                    //TODO
+                                    Glide.with(SummaryActivity.this)
+                                            .load(bytes)
+                                            .asBitmap()
+                                            .placeholder(R.drawable.people_unselected)
+                                            .into(profilePicture);
 
 //                                    Log.i(TAG, "photo download " + mPhotosStorageReference.getPath());
                                 }
@@ -269,6 +210,7 @@ public class FriendsList extends AppCompatActivity implements FriendsAdapter.OnC
                     });
         }
     }
+
 
     private void loadUserImage() {
 
@@ -298,7 +240,7 @@ public class FriendsList extends AppCompatActivity implements FriendsAdapter.OnC
                             toolbar_container.setContentScrim(image);
 //                            toolbar_container.setForeground();
 
-                            Glide.with(FriendsList.this)
+                            Glide.with(SummaryActivity.this)
                                     .load(bytes)
                                     .asBitmap()
                                     .placeholder(R.drawable.person)
@@ -321,16 +263,8 @@ public class FriendsList extends AppCompatActivity implements FriendsAdapter.OnC
         });
     }
 
-
-    @Override
-    public void onResume() {
-        super.onResume();
-        updateUsersAmount();
-    }
-
     public void inviteAFriend() {
 
-//        Log.i(TAG, "package name" + getPackageName());
         String invite_text = getString(R.string.invite_text) + getPackageName();
         Intent sharingIntent = new Intent(android.content.Intent.ACTION_SEND);
         sharingIntent.setType("text/plain");
@@ -343,7 +277,39 @@ public class FriendsList extends AppCompatActivity implements FriendsAdapter.OnC
     }
 
     @Override
-    public void gotoGroup() {
-        gotoGroupsList();
+    public void gotoGroupsList() {
+        viewPager.setCurrentItem(1);
+    }
+
+    @Override
+    public void onSaveInstanceState(Bundle outState) {
+        super.onSaveInstanceState(outState);
+        outState.putInt(POSITION, tabLayout.getSelectedTabPosition());
+    }
+
+    @Override
+    protected void onRestoreInstanceState(Bundle savedInstanceState) {
+        super.onRestoreInstanceState(savedInstanceState);
+        viewPager.setCurrentItem(savedInstanceState.getInt(POSITION));
+    }
+
+    @Override
+    public void updateUserSummary(String balanceSummaryTxt){
+        balance_summary_tv.setText(balanceSummaryTxt);
+    }
+
+    @Override
+    public void onResume(){
+        super.onResume();
+
+        Log.i(TAG, "Activity on start");
+
+    }
+
+    @Override
+    public void onBackPressed(){
+//navigate from groups list to friends list
+        if(viewPager.getCurrentItem() == 1)
+        viewPager.setCurrentItem(0);
     }
 }

@@ -9,6 +9,14 @@
     <dimen name="tv_status">24sp</dimen>
 
 
+    <dimen name="list_bottom_margin">24dp</dimen>
+    <dimen name="app_bar_layout_main_height">200dp</dimen>
+    <dimen name="app_bar_layout_elevation">4dp</dimen>
+
+    <dimen name="detail_toolbar_elevation">2dp</dimen>
+    <dimen name="collap_layout_height">200dp</dimen>
+
+
     <!--    Group-->
     <dimen name="tv_group_name">24sp</dimen>
     <dimen name="tv_member_status">20sp</dimen>

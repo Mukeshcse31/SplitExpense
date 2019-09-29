@@ -10,6 +10,7 @@ import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.appcompat.widget.Toolbar;
 
 import com.google.android.material.snackbar.Snackbar;
 import com.google.app.splitwise_clone.model.User;
@@ -31,7 +32,11 @@ public class AddFriend extends AppCompatActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.fragment_add_friend);
+        setContentView(R.layout.activity_add_friend);
+
+        Toolbar myToolbar = (Toolbar) findViewById(R.id.my_toolbar);
+        setSupportActionBar(myToolbar);
+        getSupportActionBar().setTitle(getString(R.string.add_friend));
 
         mFriendName = findViewById(R.id.friend_name);
         mFriendEmail = findViewById(R.id.friend_email);
@@ -99,6 +104,10 @@ public class AddFriend extends AppCompatActivity {
                     }
                 });
 
+                break;
+
+            case R.id.cancel:
+                finish();
                 break;
         }
         return super.onOptionsItemSelected(item);

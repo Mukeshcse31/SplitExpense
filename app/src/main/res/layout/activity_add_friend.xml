@@ -19,10 +19,12 @@
     android:background="@color/gray"
     android:layout_height="match_parent">
 
+    <include layout="@layout/toolbar_add_friend_group"></include>
+
     <com.google.android.material.textfield.TextInputLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_marginTop="@dimen/layout_marginTop_10"
+        android:layout_marginTop="?android:actionBarSize"
         android:id="@+id/add_friend_Name"
         android:textColorHint="@color/white"
         app:layout_constraintStart_toStartOf="parent"

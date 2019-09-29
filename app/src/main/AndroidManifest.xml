@@ -12,7 +12,7 @@
         android:theme="@style/Theme.Design.Light.NoActionBar">
 
         <activity
-            android:name=".MainActivity">
+            android:name=".SignIn">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
 
@@ -20,9 +20,15 @@
             </intent-filter>
         </activity>
 
+        <activity android:name=".SummaryActivity"
+            ></activity>
+<!--        android:parentActivityName=".SignIn"-->
         <activity android:name=".FriendsList"></activity>
+        <activity android:name=".AddFriend"
+            android:parentActivityName=".SummaryActivity"></activity>
+
         <activity android:name=".groups.GroupsList"></activity>
-<activity android:name=".expense.ExpenseList"
+        <activity android:name=".expense.ExpenseList"
     android:parentActivityName=".groups.GroupsList"></activity>
 
         <activity android:name=".expense.AddExpense"></activity>

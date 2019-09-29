@@ -68,7 +68,7 @@ public class SendNotificationLogic {
                 new Response.ErrorListener() {
                     @Override
                     public void onErrorResponse(VolleyError error) {
-//                        Toast.makeText(MainActivity.this, "Request error", Toast.LENGTH_LONG).show();
+//                        Toast.makeText(SignIn.this, "Request error", Toast.LENGTH_LONG).show();
                         Log.i(TAG, "onErrorResponse: Didn't work");
                     }
                 }) {

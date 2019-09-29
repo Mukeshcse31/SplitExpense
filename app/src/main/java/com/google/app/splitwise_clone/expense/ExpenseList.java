@@ -2,27 +2,21 @@ package com.google.app.splitwise_clone.expense;
 
 import android.content.DialogInterface;
 import android.content.Intent;
-import android.graphics.Color;
 import android.os.Bundle;
-import android.os.Handler;
 import android.text.TextUtils;
 import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
-import android.view.ViewGroup;
 import android.widget.ImageView;
 import android.widget.TextView;
-
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.Toolbar;
-import androidx.coordinatorlayout.widget.CoordinatorLayout;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
-
 import com.bumptech.glide.Glide;
 import com.google.android.gms.tasks.OnFailureListener;
 import com.google.android.gms.tasks.OnSuccessListener;
@@ -31,7 +25,7 @@ import com.google.android.material.appbar.AppBarLayout;
 import com.google.android.material.appbar.CollapsingToolbarLayout;
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
 import com.google.android.material.snackbar.Snackbar;
-import com.google.app.splitwise_clone.MainActivity;
+import com.google.app.splitwise_clone.SignIn;
 import com.google.app.splitwise_clone.R;
 import com.google.app.splitwise_clone.model.Expense;
 import com.google.app.splitwise_clone.model.SingleBalance;
@@ -45,11 +39,8 @@ import com.google.firebase.database.Query;
 import com.google.firebase.database.ValueEventListener;
 import com.google.firebase.storage.FirebaseStorage;
 import com.google.firebase.storage.StorageReference;
-
-import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.LinkedHashMap;
-import java.util.List;
 import java.util.Map;
 
 public class ExpenseList extends AppCompatActivity implements ExpenseAdapter.OnClickListener {
@@ -89,7 +80,6 @@ public class ExpenseList extends AppCompatActivity implements ExpenseAdapter.OnC
         collap_toolbar_exp = findViewById(R.id.collap_toolbar_exp);
 
         mDatabaseReference = AppUtils.getDBReference();
-//        groupName_tv = findViewById(R.id.groupName_tv);
         settleup_tv = findViewById(R.id.settleup_tv);
         noExpenses_tv = findViewById(R.id.noExpenses_tv);
         settleup_image = findViewById(R.id.settleup_image);
@@ -106,9 +96,6 @@ public class ExpenseList extends AppCompatActivity implements ExpenseAdapter.OnC
         userName = FirebaseUtils.getUserName();
 
         collapsingToolbarLayout = (CollapsingToolbarLayout) findViewById(R.id.collap_toolbar_exp);
-
-//        collapsingToolbarLayout.setContentScrimColor(Color.GREEN);
-
 
         Intent intent = getIntent();
         if (intent.hasExtra(GROUP_NAME)) {
@@ -151,29 +138,14 @@ public class ExpenseList extends AppCompatActivity implements ExpenseAdapter.OnC
                 }
                 if (scrollRange + verticalOffset == 0) {
                     isShow = true;
-//                    showOption(R.id.orderbyCategory);
                     Log.i(TAG, "collapsed");
                 } else if (isShow) {
                     isShow = false;
-//                    hideOption(R.id.orderbyCategory);
                     Log.i(TAG, "expanded");
                 }
             }
         });
 
-//        expenses_rv.addOnScrollListener(new RecyclerView.OnScrollListener() {
-//            @Override
-//            public void onScrollStateChanged(@NonNull RecyclerView recyclerView, int newState) {
-//                super.onScrollStateChanged(recyclerView, newState);
-//                turnOnToolbarScrolling();
-//            }
-//
-//            @Override
-//            public void onScrolled(@NonNull RecyclerView recyclerView, int dx, int dy) {
-//                super.onScrolled(recyclerView, dx, dy);
-//                turnOnToolbarScrolling();
-//            }
-//        });
         showSnackBar(snackBarMsg);
     }
 
@@ -210,11 +182,9 @@ public class ExpenseList extends AppCompatActivity implements ExpenseAdapter.OnC
         settleup_tv.setVisibility(View.GONE);
         settleup_image.setVisibility(View.GONE);
         expenses_rv.setVisibility(View.VISIBLE);
-//        archivedExpenseSnapshotMap = AppUtils.reverseExpense(archivedExpenseSnapshotMap);
         mExpenseAdapter = new ExpenseAdapter(archivedExpenseSnapshotMap, ExpenseList.this, false);
         expenses_rv.setAdapter(mExpenseAdapter);
 
-        updateToolbarBehaviour(archivedExpenseSnapshotMap.size());
         hideOption(new int[]{R.id.orderbyCategory, R.id.settle_up, R.id.export, R.id.archivedExp});
         showOption(new int[]{R.id.orderbyDate});
     }
@@ -335,8 +305,6 @@ public class ExpenseList extends AppCompatActivity implements ExpenseAdapter.OnC
                     expenseSnapshotMap = AppUtils.reverseExpense(expenseSnapshotMap);
                     mExpenseAdapter = new ExpenseAdapter(expenseSnapshotMap, ExpenseList.this, true);
                     expenses_rv.setAdapter(mExpenseAdapter);
-                    updateToolbarBehaviour(expenseSnapshotMap.size());
-//                    getExpenseByCategory();
                     showOption(new int[]{R.id.orderbyCategory, R.id.settle_up, R.id.export, R.id.archivedExp});
 
                 }
@@ -346,21 +314,6 @@ public class ExpenseList extends AppCompatActivity implements ExpenseAdapter.OnC
             public void onCancelled(@NonNull DatabaseError databaseError) {
             }
         });
-    }
-
-    public void updateToolbarBehaviour(final int rvLength){
-
-//expenses_rv.postDelayed(new Runnable() {
-//    @Override
-//    public void run() {
-//        if (((LinearLayoutManager)expenses_rv.getLayoutManager()).findLastCompletelyVisibleItemPosition() == rvLength - 1) {
-//            turnOffToolbarScrolling();
-//        } else {
-//            turnOnToolbarScrolling();
-//        }
-//    }
-//}, 1000);
-
     }
 
     private void getExpenseByCategory() {
@@ -396,10 +349,8 @@ public class ExpenseList extends AppCompatActivity implements ExpenseAdapter.OnC
                     categorizedExpenseMap.put(catAry[catCount - 1], null);
                     Log.i(TAG, categorizedExpenseMap.size() + "");
 
-//                    if (categorizedExpenseMap.size() > 0) {
                     categorizedExpenseMap = AppUtils.reverseExpense(categorizedExpenseMap);
                     mExpenseAdapter = new ExpenseAdapter(categorizedExpenseMap, ExpenseList.this, true);
-                    updateToolbarBehaviour(categorizedExpenseMap.size());
 
                     expenses_rv.setVisibility(View.VISIBLE);
                     expenses_rv.setAdapter(mExpenseAdapter);
@@ -446,7 +397,6 @@ public class ExpenseList extends AppCompatActivity implements ExpenseAdapter.OnC
                     settleup_tv.setVisibility(View.GONE);
                 } else {
                     showSettledUpExpenses();
-//                    settleup_tv.setVisibility(View.VISIBLE);
                 }
 
             }
@@ -539,20 +489,12 @@ public class ExpenseList extends AppCompatActivity implements ExpenseAdapter.OnC
         });
     }
 
-    private void loadGroupImage(String group_name) {
+    private void loadGroupImage(final String group_name) {
 
-        Query query = mDatabaseReference.child("groups/" + group_name + "/photoUrl");
-        query.addListenerForSingleValueEvent(new ValueEventListener() {
-            @Override
-            public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
-
-                if (dataSnapshot.exists()) {
-                    String imagePath = (String) dataSnapshot.getValue();
-                    if (TextUtils.isEmpty(imagePath)) return;
-
+        //TODO reuse this with userImage load in SummaryActivity
 //                    https://firebase.google.com/docs/storage/android/download-files
                     mPhotosStorageReference = mFirebaseStorage.getReference();
-                    StorageReference islandRef = mPhotosStorageReference.child(imagePath);
+                    StorageReference islandRef = mPhotosStorageReference.child("images/groups/" + group_name);
 
                     final long ONE_MEGABYTE = 1024 * 1024;
                     islandRef.getBytes(ONE_MEGABYTE).addOnSuccessListener(new OnSuccessListener<byte[]>() {
@@ -562,6 +504,7 @@ public class ExpenseList extends AppCompatActivity implements ExpenseAdapter.OnC
                             Glide.with(ExpenseList.this)
                                     .load(bytes)
                                     .asBitmap()
+                                    .placeholder(R.drawable.people_unselected)
                                     .into(groupImage);
                         }
                     }).addOnFailureListener(new OnFailureListener() {
@@ -572,13 +515,6 @@ public class ExpenseList extends AppCompatActivity implements ExpenseAdapter.OnC
                         }
                     });
                 }
-            }
-
-            @Override
-            public void onCancelled(@NonNull DatabaseError databaseError) {
-            }
-        });
-    }
 
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
@@ -620,7 +556,7 @@ public class ExpenseList extends AppCompatActivity implements ExpenseAdapter.OnC
             case R.id.signout:
                 AppUtils.signOut(this);
 
-                intent = new Intent(ExpenseList.this, MainActivity.class);
+                intent = new Intent(ExpenseList.this, SignIn.class);
                 startActivity(intent);
                 finish();
                 break;
@@ -629,34 +565,10 @@ public class ExpenseList extends AppCompatActivity implements ExpenseAdapter.OnC
         return super.onOptionsItemSelected(item);
     }
 
+    //TODO when started by notification, how back should work ?
     @Override
     public void onBackPressed() {
         finish();
-    }
-
-    public void turnOffToolbarScrolling() {
-
-        //turn off scrolling
-//        Toolbar.LayoutParams toolbarLayoutParams = (Toolbar.LayoutParams) my_toolbar.getLayoutParams();
-//
-//        toolbarLayoutParams.setScrollFlags(0);
-//        my_toolbar.setLayoutParams(toolbarLayoutParams);
-
-        CoordinatorLayout.LayoutParams appBarLayoutParams = (CoordinatorLayout.LayoutParams) app_bar_layout_exp.getLayoutParams();
-        appBarLayoutParams.setBehavior(null);
-        app_bar_layout_exp.setLayoutParams(appBarLayoutParams);
-    }
-
-//    https://stackoverflow.com/questions/32404979/dont-collapse-toolbar-when-recyclerview-fits-the-screen
-    public void turnOnToolbarScrolling() {
-        //turn on scrolling
-//        AppBarLayout.LayoutParams toolbarLayoutParams = (AppBarLayout.LayoutParams) my_toolbar.getLayoutParams();
-//        toolbarLayoutParams.setScrollFlags(AppBarLayout.LayoutParams.SCROLL_FLAG_SCROLL | AppBarLayout.LayoutParams.SCROLL_FLAG_ENTER_ALWAYS);
-//        my_toolbar.setLayoutParams(toolbarLayoutParams);
-
-        CoordinatorLayout.LayoutParams appBarLayoutParams = (CoordinatorLayout.LayoutParams) app_bar_layout_exp.getLayoutParams();
-        appBarLayoutParams.setBehavior(new AppBarLayout.Behavior());
-        app_bar_layout_exp.setLayoutParams(appBarLayoutParams);
     }
 
     private void showAlertForNoExpense() {

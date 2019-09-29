@@ -7,7 +7,7 @@ import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
 import android.text.TextUtils;
 
-import com.google.app.splitwise_clone.MainActivity;
+import com.google.app.splitwise_clone.SignIn;
 import com.google.app.splitwise_clone.R;
 import com.google.app.splitwise_clone.model.Expense;
 import com.google.app.splitwise_clone.model.ExpenseCategory;
@@ -114,9 +114,9 @@ public class AppUtils {
 
         FirebaseAuth mAuth = FirebaseAuth.getInstance();
         mAuth.signOut();
-        SharedPreferences prefs = context.getSharedPreferences(MainActivity.SPLIT_PREFS, 0);
-        prefs.edit().remove(MainActivity.USERNAME_KEY).commit();
-        prefs.edit().remove(MainActivity.PASSWORD_KEY).commit();
+        SharedPreferences prefs = context.getSharedPreferences(SignIn.SPLIT_PREFS, 0);
+        prefs.edit().remove(SignIn.USERNAME_KEY).commit();
+        prefs.edit().remove(SignIn.PASSWORD_KEY).commit();
     }
 
     public static LinkedHashMap reverseExpense(LinkedHashMap map){

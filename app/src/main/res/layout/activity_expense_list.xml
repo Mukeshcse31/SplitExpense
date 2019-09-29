@@ -109,14 +109,6 @@
         </com.google.android.material.appbar.CollapsingToolbarLayout>
     </com.google.android.material.appbar.AppBarLayout>
 
-<!--    <com.google.android.material.bottomappbar.BottomAppBar-->
-<!--        android:id="@+id/bottom_bar"-->
-<!--        style="@style/Widget.MaterialComponents.BottomAppBar"-->
-<!--        android:layout_width="match_parent"-->
-<!--        android:layout_height="@dimen/bottom_app_bar_height"-->
-<!--        android:layout_gravity="bottom"-->
-<!--        app:backgroundTint="@color/skyBlue" />-->
-
     <com.google.android.material.floatingactionbutton.FloatingActionButton
         android:id="@+id/add_expense_fab"
         android:layout_width="wrap_content"

@@ -14,11 +14,13 @@ import android.view.MenuItem;
 import android.view.View;
 import android.widget.ImageView;
 import android.widget.TextView;
+
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.Toolbar;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
+
 import com.bumptech.glide.Glide;
 import com.google.android.gms.tasks.OnFailureListener;
 import com.google.android.gms.tasks.OnSuccessListener;
@@ -45,7 +47,7 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 
-public class FriendsList extends AppCompatActivity implements FriendsAdapter.OnClickListener {
+public class FriendsList_old extends AppCompatActivity implements FriendsAdapter.OnClickListener {
 
     private FirebaseStorage mFirebaseStorage;
     private DatabaseReference mDatabaseReference;
@@ -160,7 +162,7 @@ public class FriendsList extends AppCompatActivity implements FriendsAdapter.OnC
                     balanceSummaryTxt = String.format("%s $%.2f\n%s %.2f", "total amount spent by you", amountSpentByUser, "others owe", balanceAmount);
                     balance_summary_tv.setText(balanceSummaryTxt);
 
-                    mFriendsAdapter = new FriendsAdapter(amountGroup, FriendsList.this);
+                    mFriendsAdapter = new FriendsAdapter(amountGroup, FriendsList_old.this);
                     friends_rv.setAdapter(mFriendsAdapter);
                     mDatabaseReference.child("users/" + userName + "/balances/").setValue(balance);
                     Log.i(TAG, "total calculation");
@@ -188,7 +190,7 @@ public class FriendsList extends AppCompatActivity implements FriendsAdapter.OnC
         switch (item.getItemId()) {
 
             case R.id.saveFriend:
-                intent = new Intent(FriendsList.this, AddFriend.class);
+                intent = new Intent(FriendsList_old.this, AddFriend.class);
                 startActivity(intent);
                 break;
 
@@ -212,7 +214,7 @@ public class FriendsList extends AppCompatActivity implements FriendsAdapter.OnC
 
     private void gotoGroupsList() {
 
-        Intent intent = new Intent(FriendsList.this, GroupsList.class);
+        Intent intent = new Intent(FriendsList_old.this, GroupsList.class);
         if(userImageByte != null) intent.putExtra(USER_IMAGE, userImageByte);
         intent.putExtra(BALANCE_SUMMARY, balanceSummaryTxt);
         startActivity(intent);
@@ -298,7 +300,7 @@ public class FriendsList extends AppCompatActivity implements FriendsAdapter.OnC
                             toolbar_container.setContentScrim(image);
 //                            toolbar_container.setForeground();
 
-                            Glide.with(FriendsList.this)
+                            Glide.with(FriendsList_old.this)
                                     .load(bytes)
                                     .asBitmap()
                                     .placeholder(R.drawable.person)
@@ -332,10 +334,10 @@ public class FriendsList extends AppCompatActivity implements FriendsAdapter.OnC
 
 //        Log.i(TAG, "package name" + getPackageName());
         String invite_text = getString(R.string.invite_text) + getPackageName();
-        Intent sharingIntent = new Intent(android.content.Intent.ACTION_SEND);
+        Intent sharingIntent = new Intent(Intent.ACTION_SEND);
         sharingIntent.setType("text/plain");
-        sharingIntent.putExtra(android.content.Intent.EXTRA_SUBJECT, getString(R.string.invite_friend));
-        sharingIntent.putExtra(android.content.Intent.EXTRA_TEXT, invite_text);
+        sharingIntent.putExtra(Intent.EXTRA_SUBJECT, getString(R.string.invite_friend));
+        sharingIntent.putExtra(Intent.EXTRA_TEXT, invite_text);
 
         //verify that this intent can be launched before starting
         if (sharingIntent.resolveActivity(getPackageManager()) != null)

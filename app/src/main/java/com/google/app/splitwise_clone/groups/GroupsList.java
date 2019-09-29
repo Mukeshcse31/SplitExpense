@@ -5,6 +5,8 @@ import android.os.Bundle;
 import android.text.TextUtils;
 import android.view.Menu;
 import android.view.MenuItem;
+import android.widget.ImageView;
+import android.widget.TextView;
 
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
@@ -12,6 +14,9 @@ import androidx.appcompat.widget.Toolbar;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
+import com.bumptech.glide.Glide;
+import com.google.app.splitwise_clone.AddFriend;
+import com.google.app.splitwise_clone.FriendsList;
 import com.google.app.splitwise_clone.R;
 import com.google.app.splitwise_clone.expense.ExpenseList;
 import com.google.app.splitwise_clone.model.Group;
@@ -37,9 +42,14 @@ public class GroupsList extends AppCompatActivity implements GroupsAdapter.OnCli
     public static String GROUP_NAME = "group_name";
     public static String GROUP_DETAIL = "group_detail";
     public static String EDIT_GROUP = "edit_group";
+    private String balanceSummaryTxt;
     private static final int RC_PHOTO_PICKER = 2;
     private GroupsAdapter mGroupsAdapter;
     private RecyclerView groups_rv;
+    private ImageView profilePicture;
+    private TextView balance_summary_tv;
+    private static byte[] userImageByte;
+
 //    private ImageView groupImage;
 
     @Override
@@ -55,9 +65,21 @@ public class GroupsList extends AppCompatActivity implements GroupsAdapter.OnCli
 //        groupImage = findViewById(R.id.group_image);
         getSupportActionBar().setTitle(getString(R.string.group_list));
         mDatabaseReference = AppUtils.getDBReference();
+
+        profilePicture = findViewById(R.id.profilePicture);
+        balance_summary_tv = findViewById(R.id.balance_summary_tv);
+
         groups_rv = findViewById(R.id.groups_rv);
         LinearLayoutManager layoutManager = new LinearLayoutManager(this);
         groups_rv.setLayoutManager(layoutManager);
+
+        Intent intent = getIntent();
+        if(intent.hasExtra(FriendsList.USER_IMAGE))
+userImageByte = intent.getByteArrayExtra(FriendsList.USER_IMAGE);
+
+        if(intent.hasExtra(FriendsList.BALANCE_SUMMARY))
+            balanceSummaryTxt = intent.getStringExtra(FriendsList.BALANCE_SUMMARY);
+
 //        groupImage.setOnClickListener(new View.OnClickListener() {
 //            @Override
 //            public void onClick(View v) {
@@ -153,10 +175,24 @@ public class GroupsList extends AppCompatActivity implements GroupsAdapter.OnCli
         });
     }
 
+    private void populateAppBar(){
+
+        userImageByte = null;
+        Glide.with(GroupsList.this)
+                .load(userImageByte)
+                .asBitmap()
+                .placeholder(R.drawable.person)
+                .into(profilePicture);
+
+        if(balanceSummaryTxt != null)
+            balance_summary_tv.setText(balanceSummaryTxt);
+
+    }
 
     @Override
     public void onResume() {
         super.onResume();
         populateGroupList();
+        populateAppBar();
     }
 }

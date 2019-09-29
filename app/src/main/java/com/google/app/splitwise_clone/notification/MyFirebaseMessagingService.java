@@ -16,7 +16,7 @@ import android.util.Log;
 import androidx.annotation.RequiresApi;
 import androidx.core.app.NotificationCompat;
 
-import com.google.app.splitwise_clone.MainActivity;
+import com.google.app.splitwise_clone.SignIn;
 import com.google.app.splitwise_clone.R;
 import com.google.app.splitwise_clone.utils.FirebaseUtils;
 import com.google.firebase.messaging.FirebaseMessaging;
@@ -45,7 +45,7 @@ public class MyFirebaseMessagingService extends FirebaseMessagingService {
 
     @Override
     public void onMessageReceived(RemoteMessage remoteMessage) {
-        final Intent intent = new Intent(this, MainActivity.class);
+        final Intent intent = new Intent(this, SignIn.class);
         NotificationManager notificationManager = (NotificationManager) getSystemService(Context.NOTIFICATION_SERVICE);
         int notificationID = new Random().nextInt(3000);
 

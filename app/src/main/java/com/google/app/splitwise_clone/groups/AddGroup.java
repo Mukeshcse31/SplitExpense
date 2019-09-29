@@ -74,7 +74,7 @@ public class AddGroup extends AppCompatActivity implements GroupMembersAdapter.O
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.fragment_add_group);
+        setContentView(R.layout.activity_add_group);
 
         Toolbar myToolbar = (Toolbar) findViewById(R.id.my_toolbar);
         setSupportActionBar(myToolbar);
@@ -326,6 +326,7 @@ public class AddGroup extends AppCompatActivity implements GroupMembersAdapter.O
                         Glide.with(AddGroup.this)
                                 .load(bytes)
                                 .asBitmap()
+                                .placeholder(R.drawable.people_unselected)
                                 .into(mPhotoPickerButton);
                     }
                 }).addOnFailureListener(new OnFailureListener() {

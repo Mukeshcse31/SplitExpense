@@ -9,10 +9,11 @@
         android:orderInCategory="0"/>
 
     <item
-        android:id="@+id/gotoGroups"
-        android:title="@string/groups"
+        android:id="@+id/gotoAddGroup"
+        android:title="@string/add_group"
         app:showAsAction="always"
         android:orderInCategory="1"/>
+
 
     <item
         android:id="@+id/invite_friend"

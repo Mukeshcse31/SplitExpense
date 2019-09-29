@@ -16,7 +16,7 @@ import android.widget.RemoteViews;
 import androidx.annotation.NonNull;
 
 import com.google.app.splitwise_clone.FriendsList;
-import com.google.app.splitwise_clone.MainActivity;
+import com.google.app.splitwise_clone.SignIn;
 import com.google.app.splitwise_clone.R;
 import com.google.app.splitwise_clone.model.Balance;
 import com.google.app.splitwise_clone.model.Group;
@@ -25,7 +25,6 @@ import com.google.app.splitwise_clone.utils.AppUtils;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
-import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.Query;
 import com.google.firebase.database.ValueEventListener;
 import java.util.ArrayList;
@@ -109,7 +108,7 @@ public class BalanceWidgetProvider extends AppWidgetProvider {
         // Construct an Intent object includes web adresss.
         Intent intent = new Intent(context, FriendsList.class);//TODO show the correct recipe's step activity
 
-//        intent.putExtra(MainActivity.RECIPE_SELECTED, mRecipe);
+//        intent.putExtra(SignIn.RECIPE_SELECTED, mRecipe);
 
         // In widget we are not allowing to use intents as usually. We have to use PendingIntent instead of 'startActivity'
         PendingIntent pendingIntent = PendingIntent.getActivity(context, 0, intent, 0);
@@ -124,8 +123,8 @@ public class BalanceWidgetProvider extends AppWidgetProvider {
     static void updateAppWidget(final Context context, final AppWidgetManager appWidgetManager,
                                 final int appWidgetId) {
 
-        SharedPreferences prefs = context.getSharedPreferences(MainActivity.SPLIT_PREFS, 0);
-        userName = prefs.getString(MainActivity.DISPLAY_NAME_KEY, "");
+        SharedPreferences prefs = context.getSharedPreferences(SignIn.SPLIT_PREFS, 0);
+        userName = prefs.getString(SignIn.DISPLAY_NAME_KEY, "");
 
         Map<String, Float> amountSpentByMember = new HashMap<>();
         Map<String, Float> amountDueByMember  = new HashMap<>();

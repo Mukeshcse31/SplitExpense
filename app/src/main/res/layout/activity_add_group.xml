@@ -19,17 +19,21 @@
     android:background="@color/gray"
     android:layout_height="match_parent">
 
-    <androidx.appcompat.widget.Toolbar
-        android:id="@+id/my_toolbar"
-        style="@style/ToolbarStyle"
-        android:background="@color/colorPrimary"
-        android:layout_gravity="bottom"
-        android:layout_marginLeft="@dimen/list_toolbar_side_margin"
-        android:layout_marginRight="@dimen/list_toolbar_side_margin"
-        android:elevation="4dp"
-        android:theme="@style/ThemeOverlay.AppCompat.ActionBar"
-        app:popupTheme="@style/ThemeOverlay.AppCompat.Light"
-        app:layout_collapseMode="pin" />
+    <include layout="@layout/toolbar_add_friend_group"></include>
+<!--    -->
+<!--    <androidx.appcompat.widget.Toolbar-->
+<!--        app:layout_constraintTop_toTopOf="parent"-->
+<!--        app:layout_constraintStart_toStartOf="parent"-->
+<!--        android:id="@+id/my_toolbar"-->
+<!--        style="@style/ToolbarStyle"-->
+<!--        android:background="@color/colorPrimary"-->
+<!--        android:layout_gravity="bottom"-->
+<!--        android:layout_marginLeft="@dimen/list_toolbar_side_margin"-->
+<!--        android:layout_marginRight="@dimen/list_toolbar_side_margin"-->
+<!--        android:elevation="4dp"-->
+<!--        android:theme="@style/ThemeOverlay.AppCompat.ActionBar"-->
+<!--        app:popupTheme="@style/ThemeOverlay.AppCompat.Light"-->
+<!--        app:layout_collapseMode="pin" />-->
 
     <androidx.constraintlayout.widget.Guideline
     android:layout_width="1dp"
@@ -42,6 +46,7 @@
         android:id="@+id/photoPickerButton"
         app:layout_constraintStart_toEndOf="@+id/guildeline_1"
         app:layout_constraintTop_toTopOf="parent"
+        android:layout_marginTop="?android:actionBarSize"
         android:layout_width="@dimen/camera_image_width"
         android:layout_height="80dp"
         app:srcCompat="@drawable/camera"
@@ -50,7 +55,7 @@
     <com.google.android.material.textfield.TextInputLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_marginTop="@dimen/layout_marginTop_10"
+        android:layout_marginTop="?android:actionBarSize"
         android:layout_marginStart="@dimen/grpname_marginStart"
         android:textColorHint="@color/white"
         app:layout_constraintEnd_toEndOf="parent"
