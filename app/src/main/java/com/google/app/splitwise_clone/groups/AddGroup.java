@@ -409,62 +409,78 @@ public class AddGroup extends AppCompatActivity implements GroupMembersAdapter.O
     public boolean onOptionsItemSelected(MenuItem item) {
         switch (item.getItemId()) {
             case R.id.addGroup:
-                final String name = mGroupName.getText().toString();
-                Query query = mDatabaseReference.child("groups").startAt(name).endAt(name);
-                query.addListenerForSingleValueEvent(new ValueEventListener() {
-                    @Override
-                    public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
-                        if (dataSnapshot.exists()) {
-                            mGroupName.setError(getString(R.string.group_exists));
-                            Toast.makeText(AddGroup.this, "Group already exists", Toast.LENGTH_LONG).show();
 
-                        } else {
-                            Group grp = new Group(name);
+                boolean cancel = false;
+                final String name = mGroupName.getText().toString().trim();
+
+                //check the fields
+                if(!AppUtils.checkGroupName(name)){
+                    mGroupName.setError(getString(R.string.error_username));
+                    mGroupName.requestFocus();
+                    cancel = true;
+                }
+
+                if(group_members.size() == 0){
+                    cancel = true;
+                    Toast.makeText(this,getString(R.string.error_add_member), Toast.LENGTH_LONG).show();
+                }
+                if (!cancel){
+
+                    Query query = mDatabaseReference.child("groups").startAt(name).endAt(name);
+                    query.addListenerForSingleValueEvent(new ValueEventListener() {
+                        @Override
+                        public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+                            if (dataSnapshot.exists()) {
+                                mGroupName.setError(getString(R.string.group_exists));
+                                Toast.makeText(AddGroup.this, "Group already exists", Toast.LENGTH_LONG).show();
+
+                            } else {
+                                Group grp = new Group(name);
 
 //                          // add all the group members to the group
-                            Iterator it = group_members.entrySet().iterator();
-                            while (it.hasNext()) {
+                                Iterator it = group_members.entrySet().iterator();
+                                while (it.hasNext()) {
 
-                                Map.Entry pair = (Map.Entry) it.next();
-                                String groupMemberName = (String) pair.getKey();
-                                String email = (String) pair.getValue();
-                                SingleBalance sb = new SingleBalance(groupMemberName);
-                                sb.setEmail(email);
-                                grp.addMember(groupMemberName, sb);
+                                    Map.Entry pair = (Map.Entry) it.next();
+                                    String groupMemberName = (String) pair.getKey();
+                                    String email = (String) pair.getValue();
+                                    SingleBalance sb = new SingleBalance(groupMemberName);
+                                    sb.setEmail(email);
+                                    grp.addMember(groupMemberName, sb);
 
-                            }
-                            //add the group creator as a member when the group is created
-                            grp.setPhotoUrl(photoUrl);
-                            grp.setOwner(userName);
-                            mDatabaseReference.child("groups/" + name).setValue(grp, new DatabaseReference.CompletionListener() {
-                                @Override
-                                public void onComplete(DatabaseError databaseError, DatabaseReference dataReference) {
-                                    final Snackbar snackBar = Snackbar.make(findViewById(android.R.id.content),
-                                            getString(R.string.group_added), Snackbar.LENGTH_LONG);
-
-                                    snackBar.setAction(getString(R.string.close), new View.OnClickListener() {
-                                        @Override
-                                        public void onClick(View v) {
-                                            // Call your action method here
-                                            snackBar.dismiss();
-                                        }
-                                    });
-                                    snackBar.show();
-                                    if (databaseError != null)
-                                        Log.i(TAG, databaseError.getDetails());
-                                    finish();
                                 }
-                            });
+                                //add the group creator as a member when the group is created
+                                grp.setPhotoUrl(photoUrl);
+                                grp.setOwner(userName);
+                                mDatabaseReference.child("groups/" + name).setValue(grp, new DatabaseReference.CompletionListener() {
+                                    @Override
+                                    public void onComplete(DatabaseError databaseError, DatabaseReference dataReference) {
+                                        final Snackbar snackBar = Snackbar.make(findViewById(android.R.id.content),
+                                                getString(R.string.group_added), Snackbar.LENGTH_LONG);
+
+                                        snackBar.setAction(getString(R.string.close), new View.OnClickListener() {
+                                            @Override
+                                            public void onClick(View v) {
+                                                // Call your action method here
+                                                snackBar.dismiss();
+                                            }
+                                        });
+                                        snackBar.show();
+                                        if (databaseError != null)
+                                            Log.i(TAG, databaseError.getDetails());
+                                        finish();
+                                    }
+                                });
+                            }
                         }
-                    }
 
 
-                    @Override
-                    public void onCancelled(@NonNull DatabaseError databaseError) {
+                        @Override
+                        public void onCancelled(@NonNull DatabaseError databaseError) {
 
-                    }
-                });
-
+                        }
+                    });
+                }
                 break;
 
             case R.id.saveGroup:

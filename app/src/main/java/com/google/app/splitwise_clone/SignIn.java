@@ -148,9 +148,8 @@ public class SignIn extends AppCompatActivity {
 
 
         //Check the userName
-        String displayName = mUsernameView.getText().toString();
-        Pattern pattern = Pattern.compile("[A-Za-z0-9_]+");
-        if (TextUtils.isEmpty(displayName) || !pattern.matcher(displayName).matches()) {
+        String displayName = mUsernameView.getText().toString().trim();
+        if(!AppUtils.checkUserName(displayName)){
             focusView = mUsernameView;
             mUsernameView.setError(getString(R.string.error_username));
             cancel = true;
@@ -168,7 +167,7 @@ public class SignIn extends AppCompatActivity {
             mEmailView.setError(getString(R.string.error_field_required));
             focusView = mEmailView;
             cancel = true;
-        } else if (!isEmailValid(email)) {
+        } else if (!AppUtils.checkEmail(email)) {
             mEmailView.setError(getString(R.string.error_invalid_email));
             focusView = mEmailView;
             cancel = true;
@@ -181,11 +180,6 @@ public class SignIn extends AppCompatActivity {
             createFirebaseUser();
 
         }
-    }
-
-    private boolean isEmailValid(String email) {
-        // You can add more checking logic here.
-        return email.contains("@");
     }
 
     private boolean isPasswordValid(String password) {

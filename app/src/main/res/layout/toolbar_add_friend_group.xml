@@ -2,10 +2,9 @@
 <FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    xmlns:app="http://schemas.android.com/apk/res-auto"
-    xmlns:tools="http://schemas.android.com/tools">
+    xmlns:app="http://schemas.android.com/apk/res-auto">
 
-
+<!--    https://developer.android.com/training/improving-layouts/reusing-layouts.html-->
     <androidx.appcompat.widget.Toolbar
         android:id="@+id/my_toolbar"
         app:layout_constraintStart_toStartOf="parent"

@@ -23,6 +23,7 @@ import java.util.Iterator;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.regex.Pattern;
 
 public class AppUtils {
 
@@ -110,7 +111,7 @@ public class AppUtils {
         return firebaseStorage;
     }
 
-    public static void signOut(Context context){
+    public static void signOut(Context context) {
 
         FirebaseAuth mAuth = FirebaseAuth.getInstance();
         mAuth.signOut();
@@ -119,7 +120,7 @@ public class AppUtils {
         prefs.edit().remove(SignIn.PASSWORD_KEY).commit();
     }
 
-    public static LinkedHashMap reverseExpense(LinkedHashMap map){
+    public static LinkedHashMap reverseExpense(LinkedHashMap map) {
 
         LinkedHashMap<String, Expense> reverseMap = new LinkedHashMap<>();
         List<String> reverseOrderedKeys = new ArrayList<String>(map.keySet());
@@ -134,7 +135,7 @@ public class AppUtils {
     /*
   https://stackoverflow.com/questions/1560788/how-to-check-internet-access-on-android-inetaddress-never-times-out
    */
-    public static  boolean isOnline(Context context) {
+    public static boolean isOnline(Context context) {
 //Complete move this to Network Utils class
         boolean status = false;
 
@@ -145,4 +146,37 @@ public class AppUtils {
 
         return status;
     }
+
+
+    public static boolean checkGroupName(String groupName) {
+
+        for(String name : groupName.split(" ")){
+
+            Pattern pattern = Pattern.compile("[A-Za-z0-9_]+");
+            if (TextUtils.isEmpty(name) || !pattern.matcher(name).matches()) {
+                return false;
+            }
+
+        }
+        return true;
+    }
+
+    public static boolean checkUserName(String name) {
+
+        Pattern pattern = Pattern.compile("[A-Za-z0-9_]+");
+        if (TextUtils.isEmpty(name) || !pattern.matcher(name).matches()) {
+            return false;
+        }
+        return true;
+    }
+
+    public static boolean checkEmail(String email) {
+        // You can add more checking logic here.
+        if(email == null || TextUtils.isEmpty(email))
+            return false;
+
+        return email.contains("@");
+    }
+
+
 }

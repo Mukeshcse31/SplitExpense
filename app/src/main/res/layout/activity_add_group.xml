@@ -14,26 +14,11 @@
 
 <androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
-    xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:background="@color/gray"
     android:layout_height="match_parent">
 
     <include layout="@layout/toolbar_add_friend_group"></include>
-<!--    -->
-<!--    <androidx.appcompat.widget.Toolbar-->
-<!--        app:layout_constraintTop_toTopOf="parent"-->
-<!--        app:layout_constraintStart_toStartOf="parent"-->
-<!--        android:id="@+id/my_toolbar"-->
-<!--        style="@style/ToolbarStyle"-->
-<!--        android:background="@color/colorPrimary"-->
-<!--        android:layout_gravity="bottom"-->
-<!--        android:layout_marginLeft="@dimen/list_toolbar_side_margin"-->
-<!--        android:layout_marginRight="@dimen/list_toolbar_side_margin"-->
-<!--        android:elevation="4dp"-->
-<!--        android:theme="@style/ThemeOverlay.AppCompat.ActionBar"-->
-<!--        app:popupTheme="@style/ThemeOverlay.AppCompat.Light"-->
-<!--        app:layout_collapseMode="pin" />-->
 
     <androidx.constraintlayout.widget.Guideline
     android:layout_width="1dp"

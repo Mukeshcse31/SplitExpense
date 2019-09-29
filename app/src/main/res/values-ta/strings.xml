@@ -52,6 +52,7 @@
 <string name="add_group_name">குழு பெயர்</string>
 <string name="group_exists">குழு ஏற்கனவே உள்ளது</string>
 <string name="group_delete_warning">இந்த குழுவை நீக்க விரும்புகிறீர்களா?</string>
+    <string name="error_add_member">Please add Group Members</string>
 <string name="group_added">குழு சேர்க்கப்பட்டது</string>
 <string name="members">உறுப்பினர்கள்</string>
 <string name="non_members">மற்றவைகள்</string>

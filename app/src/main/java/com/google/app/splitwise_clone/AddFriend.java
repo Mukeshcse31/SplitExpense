@@ -1,6 +1,7 @@
 package com.google.app.splitwise_clone;
 
 import android.os.Bundle;
+import android.text.TextUtils;
 import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
@@ -55,8 +56,33 @@ public class AddFriend extends AppCompatActivity {
         final String userName = FirebaseUtils.getUserName();
         switch (item.getItemId()) {
             case R.id.addFriend:
-                final String friendName = mFriendName.getText().toString();
+                boolean cancel = false;
+                View focusView = null;
+                final String friendName = mFriendName.getText().toString().trim();
                 final String friendEmail = mFriendEmail.getText().toString().toLowerCase();//convert email to lowercase
+
+                //check the fields
+
+                if(!AppUtils.checkUserName(friendName)){
+                    focusView = mFriendName;
+                    mFriendName.setError(getString(R.string.error_username));
+                    cancel = true;
+                }
+
+                if (TextUtils.isEmpty(friendEmail)) {
+                    mFriendEmail.setError(getString(R.string.error_field_required));
+                    focusView = mFriendEmail;
+                    cancel = true;
+                } else if (!AppUtils.checkEmail(friendEmail)) {
+                    mFriendEmail.setError(getString(R.string.error_invalid_email));
+                    focusView = mFriendEmail;
+                    cancel = true;
+                }
+
+                if (cancel) {
+                    // There was an error; don't attempt login and focus the first form field with an error.
+                    focusView.requestFocus();
+                } else {
 
 //                https://stackoverflow.com/questions/51607449/what-is-the-different-betwen-equalto-and-startat-endat-in-firebase-and-whe/51610286
                 Query query = mDatabaseReference.child("users").orderByChild("email").startAt(friendEmail).endAt(friendEmail);
@@ -103,7 +129,7 @@ public class AddFriend extends AppCompatActivity {
 
                     }
                 });
-
+        }
                 break;
 
             case R.id.cancel:
