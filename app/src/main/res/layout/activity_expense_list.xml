@@ -136,6 +136,7 @@
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintTop_toTopOf="parent"
+            android:layout_marginTop="@dimen/settleup_top"
             android:layout_width="@dimen/settleup_img_width"
             android:layout_height="@dimen/settleup_img_height"
             android:background="@drawable/settledup"

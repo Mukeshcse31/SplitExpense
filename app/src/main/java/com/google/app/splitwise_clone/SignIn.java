@@ -12,6 +12,7 @@ import android.widget.AutoCompleteTextView;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import androidx.appcompat.app.AlertDialog;
 import androidx.annotation.NonNull;
@@ -19,6 +20,7 @@ import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.AppCompatImageView;
 
 import com.google.android.gms.tasks.OnCompleteListener;
+import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.android.gms.tasks.Task;
 import com.google.android.material.snackbar.Snackbar;
 import com.google.android.material.textfield.TextInputLayout;
@@ -55,6 +57,7 @@ public class SignIn extends AppCompatActivity {
     private AppCompatImageView offline_iv;
     // Firebase instance variables
     private FirebaseAuth mAuth;
+    private String userName;
 
 //TODO when sign out, the sharedPreferences must be cleared
 
@@ -237,9 +240,6 @@ public class SignIn extends AppCompatActivity {
                                             @Override
                                             public void onComplete(DatabaseError databaseError, DatabaseReference dataReference) {
 
-                                                if (databaseError != null) {
-                                                    Log.e(TAG, databaseError.getDetails());
-                                                }
                                                 if (databaseError != null)
                                                     Log.i(TAG, databaseError.getDetails());
                                                 showSnackBar(getString(R.string.signup_success));
@@ -266,7 +266,7 @@ public class SignIn extends AppCompatActivity {
         SharedPreferences prefs = getSharedPreferences(SPLIT_PREFS, 0);
         prefs.edit().putString(USERNAME_KEY, email).apply();
         prefs.edit().putString(PASSWORD_KEY, password).apply();
-        prefs.edit().putString(DISPLAY_NAME_KEY, FirebaseUtils.getUserName()).apply();
+        prefs.edit().putString(DISPLAY_NAME_KEY, userName).apply();
     }
 
     public void showSnackBar(String message) {
@@ -359,11 +359,17 @@ public class SignIn extends AppCompatActivity {
                             showErrorDialog(getString(R.string.error_Login) + "\n" + task.getException().getMessage());
                         } else {
 
-                            String userName = FirebaseUtils.getUserName();
+                            userName = FirebaseUtils.getUserName();
                             showSnackBar(userName + " signed in");
                             saveUserCredentials(email, password);
                             gotoSummaryPage();
-                            FirebaseMessaging.getInstance().subscribeToTopic(userName);
+                            FirebaseMessaging.getInstance().subscribeToTopic(userName).addOnSuccessListener(new OnSuccessListener<Void>() {
+                                @Override
+                                public void onSuccess(Void aVoid) {
+                                    Log.i(TAG, "login success");
+//                                    Toast.makeText(getApplicationContext(),"Success",Toast.LENGTH_LONG).show();
+                                }
+                            });
                         }
                     }
                 });

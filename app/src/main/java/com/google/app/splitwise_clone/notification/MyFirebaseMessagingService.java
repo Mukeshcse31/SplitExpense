@@ -5,6 +5,7 @@ import android.app.NotificationManager;
 import android.app.PendingIntent;
 import android.content.Context;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.media.RingtoneManager;
@@ -15,9 +16,11 @@ import android.util.Log;
 
 import androidx.annotation.RequiresApi;
 import androidx.core.app.NotificationCompat;
+import androidx.core.app.NotificationManagerCompat;
 
 import com.google.app.splitwise_clone.SignIn;
 import com.google.app.splitwise_clone.R;
+import com.google.app.splitwise_clone.utils.AppUtils;
 import com.google.app.splitwise_clone.utils.FirebaseUtils;
 import com.google.firebase.messaging.FirebaseMessaging;
 import com.google.firebase.messaging.FirebaseMessagingService;
@@ -32,14 +35,17 @@ public class MyFirebaseMessagingService extends FirebaseMessagingService {
     private static final String TAG = MyFirebaseMessagingService.class.getSimpleName();
     private static String SUBSCRIBE_TO = "userABC";
     String GROUP_KEY_WORK_EMAIL = "com.android.example.EXPENSE";
+    static boolean groupPosted = false;
 
     @Override
     public void onNewToken(String token) {
 
         //whenever the user signs in, the subscribeToTopic would be updated in Sign in method
-        SUBSCRIBE_TO = FirebaseUtils.getUserName();
-        if (!TextUtils.isEmpty(SUBSCRIBE_TO))
-            FirebaseMessaging.getInstance().subscribeToTopic(SUBSCRIBE_TO);
+        SharedPreferences prefs = getSharedPreferences(SignIn.SPLIT_PREFS, 0);
+        String displayName = prefs.getString(SignIn.DISPLAY_NAME_KEY, "");
+        displayName = FirebaseUtils.getUserName();
+        if (!TextUtils.isEmpty(displayName))
+            FirebaseMessaging.getInstance().subscribeToTopic(displayName);
         Log.i(TAG, "onTokenRefresh completed with token: " + token);
     }
 
@@ -48,7 +54,7 @@ public class MyFirebaseMessagingService extends FirebaseMessagingService {
         final Intent intent = new Intent(this, SignIn.class);
         NotificationManager notificationManager = (NotificationManager) getSystemService(Context.NOTIFICATION_SERVICE);
         int notificationID = new Random().nextInt(3000);
-
+int GROUP_ID = 3;
       /*
         Apps targeting SDK 26 or above (Android O) must implement notification channels and add its notifications
         to at least one of them. Therefore, confirm if version is Oreo or higher, then setup notification channel
@@ -65,6 +71,18 @@ public class MyFirebaseMessagingService extends FirebaseMessagingService {
                 R.drawable.small_icon);
 
         Uri notificationSoundUri = RingtoneManager.getDefaultUri(RingtoneManager.TYPE_NOTIFICATION);
+
+
+        NotificationCompat.Builder groupBuilder = new NotificationCompat.Builder(this, ADMIN_CHANNEL_ID)
+                .setSmallIcon(R.drawable.small_icon)
+                .setLargeIcon(largeIcon)
+                        .setContentTitle(getString(R.string.notif_title))
+                        .setContentText(getString(R.string.notif_message))
+                        .setGroupSummary(true)
+                        .setGroup(GROUP_KEY_WORK_EMAIL)
+                        .setStyle(new NotificationCompat.BigTextStyle().bigText(getString(R.string.notif_message)))
+                        .setContentIntent(pendingIntent);
+
         NotificationCompat.Builder notificationBuilder = new NotificationCompat.Builder(this, ADMIN_CHANNEL_ID)
                 .setSmallIcon(R.drawable.small_icon)
                 .setLargeIcon(largeIcon)
@@ -80,6 +98,16 @@ public class MyFirebaseMessagingService extends FirebaseMessagingService {
             notificationBuilder.setColor(getResources().getColor(R.color.colorPrimaryDark));
         }
         notificationManager.notify(notificationID, notificationBuilder.build());
+
+
+//        NotificationManagerCompat manager = NotificationManagerCompat.from(context);
+        if(!groupPosted) {
+            notificationManager.notify(GROUP_ID, groupBuilder.build());
+groupPosted = true;
+        }
+//        notificationManager.notify(id, builder.build());
+
+
     }
 
     @RequiresApi(api = Build.VERSION_CODES.O)
@@ -98,3 +126,16 @@ public class MyFirebaseMessagingService extends FirebaseMessagingService {
         }
     }
 }
+
+//    NotificationCompat.Builder builder =
+//            new NotificationCompat.Builder(context)
+//                    .setSmallIcon(R.drawable.ic_stat_communication_invert_colors_on)
+//                    .setContentTitle(title)
+//                    .setContentText(content)
+//                    .setGroup("GROUP_1")
+//                    .setStyle(new NotificationCompat.BigTextStyle().bigText(content))
+//                    .setContentIntent(pendingIntent)
+//
+//    NotificationManagerCompat manager = NotificationManagerCompat.from(context);
+//    manager.notify(GROUP_ID, groupBuilder.build());
+//            manager.notify(id, builder.build());

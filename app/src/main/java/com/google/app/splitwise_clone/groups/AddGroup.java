@@ -49,6 +49,9 @@ import com.google.firebase.database.ValueEventListener;
 import com.google.firebase.storage.FirebaseStorage;
 import com.google.firebase.storage.StorageReference;
 import com.google.firebase.storage.UploadTask;
+
+import org.w3c.dom.Text;
+
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.Map;
@@ -62,6 +65,7 @@ public class AddGroup extends AppCompatActivity implements GroupMembersAdapter.O
     private StorageReference mPhotosStorageReference;
     private static final int RC_PHOTO_PICKER = 2;
     public static String GROUP_NAME = "group_name";
+    public static String GROUP_EDIt = "group_edit";
     public static String GROUP_ADDED = "group_added";
     public static String GROUP_EDITED = "group_edited";
     public static String GROUP_DELETED = "group_deleted";
@@ -113,29 +117,21 @@ public class AddGroup extends AppCompatActivity implements GroupMembersAdapter.O
 
             if (ActivityCompat.shouldShowRequestPermissionRationale((Activity)
                     this, Manifest.permission.CAMERA)) {
-
-
             } else {
                 ActivityCompat.requestPermissions( this,
                         new String[]{Manifest.permission.CAMERA},
                         MY_PERMISSIONS_REQUEST_CAMERA);
             }
-
         }
         else
             setphotoClickListener();
 
-//        if (Permissions.checkPermission(this))
-//            setphotoClickListener();
-//        else
-//            requestCameraPermission();
-
         Bundle bundle = getIntent().getExtras();
-        if (bundle != null && bundle.containsKey(GroupsList.GROUP_NAME)) {
-            group_name = bundle.getString(GroupsList.GROUP_NAME);
+        if (bundle != null && bundle.containsKey(GROUP_NAME)) {
+            group_name = bundle.getString(GROUP_NAME);
             getSupportActionBar().setTitle(group_name);
-            if (bundle.containsKey(GroupsList.EDIT_GROUP)) {
-                mGroup = bundle.getParcelable(GroupsList.EDIT_GROUP);
+            if (bundle.containsKey(GROUP_EDIt)) {
+                mGroup = bundle.getParcelable(GROUP_EDIt);
             }
         }
         membersViews();
@@ -165,43 +161,39 @@ public class AddGroup extends AppCompatActivity implements GroupMembersAdapter.O
 //        } else
         if (requestCode == RC_PHOTO_PICKER && resultCode == RESULT_OK) {
             selectedImageUri = data.getData();
-            final String groupName = TextUtils.isEmpty(mGroupName.getText().toString()) ? "anonymous" : mGroupName.getText().toString();
-
-            // Get a reference to store file at chat_photos/<FILENAME>
-            final StorageReference photoRef = mPhotosStorageReference.child(groupName);
-
-            // Upload file to Firebase Storage
-            photoRef.putFile(selectedImageUri)
-                    .addOnSuccessListener(this, new OnSuccessListener<UploadTask.TaskSnapshot>() {
-                        public void onSuccess(UploadTask.TaskSnapshot taskSnapshot) {
-
-                            final StorageReference group1 = mPhotosStorageReference.child(groupName);
-                            final long ONE_MEGABYTE = 1024 * 1024;
-                            group1.getBytes(ONE_MEGABYTE).addOnSuccessListener(new OnSuccessListener<byte[]>() {
-                                @Override
-                                public void onSuccess(byte[] bytes) {
-                                    //  https://stackoverflow.com/questions/46619510/how-can-i-download-image-on-firebase-storage
-                                    //  https://github.com/bumptech/glide/issues/458
-                                    Glide.with(AddGroup.this)
-                                            .load(bytes)
-                                            .asBitmap()
-                                            .into(mPhotoPickerButton);
-
-                                    // Data for "images/island.jpg" is returns, use this as needed
-                                    Log.i(TAG, "photo download " + mPhotosStorageReference.getPath());
-                                    photoUrl = mPhotosStorageReference.getPath() + "/" + groupName;
-//                                    mPhotoPickerButton.setContentDescription();
-                                }
-                            }).addOnFailureListener(new OnFailureListener() {
-                                @Override
-                                public void onFailure(@NonNull Exception exception) {
-
-                                    Log.i(TAG, exception.getMessage());
-                                    // Handle any errors
-                                }
-                            });
-                        }
-                    });
+            Glide.with(this)
+                    .load(selectedImageUri)
+                    .asBitmap()
+                    .placeholder(R.drawable.people_unselected)
+                    .into(mPhotoPickerButton);
+//
+//            final String groupName = TextUtils.isEmpty(mGroupName.getText().toString()) ? "anonymous" : mGroupName.getText().toString();
+//
+//            // Get a reference to store file at chat_photos/<FILENAME>
+//            final StorageReference photoRef = mPhotosStorageReference.child(groupName);
+//
+//            // Upload file to Firebase Storage
+//            photoRef.putFile(selectedImageUri)
+//                    .addOnSuccessListener(this, new OnSuccessListener<UploadTask.TaskSnapshot>() {
+//                        public void onSuccess(UploadTask.TaskSnapshot taskSnapshot) {
+//
+//                            final StorageReference group1 = mPhotosStorageReference.child(groupName);
+//                            final long ONE_MEGABYTE = 1024 * 1024;
+//                            group1.getBytes(ONE_MEGABYTE).addOnSuccessListener(new OnSuccessListener<byte[]>() {
+//                                @Override
+//                                public void onSuccess(byte[] bytes) {
+//                                    Log.i(TAG, "photo download " + mPhotosStorageReference.getPath());
+//                                }
+//                            }).addOnFailureListener(new OnFailureListener() {
+//                                @Override
+//                                public void onFailure(@NonNull Exception exception) {
+//
+//                                    Log.i(TAG, exception.getMessage());
+//                                    // Handle any errors
+//                                }
+//                            });
+//                        }
+//                    });
         }
     }
 
@@ -392,22 +384,13 @@ public class AddGroup extends AppCompatActivity implements GroupMembersAdapter.O
         // Inflate the menu; this adds items to the action bar if it is present.
         getMenuInflater().inflate(R.menu.mnu_add_group, menu);
 
-        MenuItem addMenu = menu.findItem(R.id.addGroup);
-        MenuItem deleteMenu = menu.findItem(R.id.deleteGroup);
-        MenuItem saveMenu = menu.findItem(R.id.saveGroup);
-
-//        deleteMenu.setVisible(false);
-//        saveMenu.setVisible(false);
         AppUtils.hideOption(menu, new int[]{R.id.deleteGroup, R.id.saveGroup});
         if (mGroup == null) {
             AppUtils.showOption(menu, new int[]{R.id.addGroup});
         } else {
             AppUtils.hideOption(menu, new int[]{R.id.addGroup});
-//            addMenu.setVisible(false);
             if (TextUtils.equals(mGroup.getOwner(), userName)) {//only the group owner should be allowed to edit
                 AppUtils.showOption(menu, new int[]{R.id.deleteGroup, R.id.saveGroup});
-//                deleteMenu.setVisible(true);
-//                saveMenu.setVisible(true);
             }
         }
         return true;
@@ -422,28 +405,40 @@ public class AddGroup extends AppCompatActivity implements GroupMembersAdapter.O
             finish();
         }
 
+        private boolean checkGroup(String name){
+
+            boolean cancel = false;
+
+            //check the fields
+            if(!AppUtils.checkGroupName(name)){
+                mGroupName.setError(getString(R.string.error_username));
+                mGroupName.requestFocus();
+                cancel = true;
+            }
+
+            if(group_members.size() == 0){
+                cancel = true;
+                Toast.makeText(this,getString(R.string.error_add_member), Toast.LENGTH_LONG).show();
+            }
+
+            //check if the owner is a member
+            if(!group_members.containsKey(userName)){
+                cancel = true;
+                Toast.makeText(this, getString(R.string.error_add_owner), Toast.LENGTH_LONG).show();
+            }
+return cancel;
+        }
+
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
+
+        final String name = mGroupName.getText().toString().trim();
 
         switch (item.getItemId()) {
 
             case R.id.addGroup:
 
-                boolean cancel = false;
-                final String name = mGroupName.getText().toString().trim();
-
-                //check the fields
-                if(!AppUtils.checkGroupName(name)){
-                    mGroupName.setError(getString(R.string.error_username));
-                    mGroupName.requestFocus();
-                    cancel = true;
-                }
-
-                if(group_members.size() == 0){
-                    cancel = true;
-                    Toast.makeText(this,getString(R.string.error_add_member), Toast.LENGTH_LONG).show();
-                }
-                if (!cancel){
+                if (!checkGroup(name)){
 
                     Query query = mDatabaseReference.child("groups").orderByKey().startAt(name).endAt(name);
                     query.addListenerForSingleValueEvent(new ValueEventListener() {
@@ -484,7 +479,7 @@ public class AddGroup extends AppCompatActivity implements GroupMembersAdapter.O
                                 }
 
                                 //add the group creator as a member when the group is created
-                                grp.setPhotoUrl(photoUrl);
+                                grp.setPhotoUrl("/images/groups/" + name);
                                 grp.setOwner(userName);
                                 mDatabaseReference.child("groups/" + name).setValue(grp, new DatabaseReference.CompletionListener() {
                                     @Override
@@ -505,52 +500,62 @@ public class AddGroup extends AppCompatActivity implements GroupMembersAdapter.O
                 break;
 
             case R.id.saveGroup:
-                Group newGroup = new Group();
-                try {
-                    newGroup = (Group) mGroup.clone();
-                } catch (CloneNotSupportedException e) {
-                    e.printStackTrace();
-                }
+                if(!checkGroup(name)) {
+                    Group newGroup = new Group();
+                    try {
+                        newGroup = (Group) mGroup.clone();
+                    } catch (CloneNotSupportedException e) {
+                        e.printStackTrace();
+                    }
 
-                final String newGroupNname = mGroupName.getText().toString().trim();
-                newGroup.setName(newGroupNname);
+                    //expenses & archived expenses are just cloned
+                    //only name, members, image can be edited and are checked below
+                    final String newGroupNname = mGroupName.getText().toString().trim();
+                    newGroup.setName(newGroupNname);
 
 
-                newGroup.setMembers(new HashMap<String, SingleBalance>());
-                newGroup.setNonMembers(new HashMap<String, SingleBalance>());
+                    newGroup.setMembers(new HashMap<String, SingleBalance>());
+                    newGroup.setNonMembers(new HashMap<String, SingleBalance>());
 
-                // add all the new group members to the groupmembers of group
-                Iterator it = group_members.entrySet().iterator();
-                while (it.hasNext()) {
-                    Map.Entry pair = (Map.Entry) it.next();
-                    String groupMemberName = (String) pair.getKey();
-                    String email = (String) pair.getValue();
-                    SingleBalance sb = new SingleBalance(groupMemberName);
-                    sb.setEmail(email);
-                    newGroup.addMember(groupMemberName, sb);
-                }
+                    // add all the new group members to the groupmembers of group
+                    Iterator it = group_members.entrySet().iterator();
+                    while (it.hasNext()) {
+                        Map.Entry pair = (Map.Entry) it.next();
+                        String groupMemberName = (String) pair.getKey();
+                        String email = (String) pair.getValue();
+                        SingleBalance sb = new SingleBalance(groupMemberName);
+                        sb.setEmail(email);
+                        newGroup.addMember(groupMemberName, sb);
+                    }
 
-                // add all the new group members to the non-groupmembers of group
-                it = nongroup_members.entrySet().iterator();
-                while (it.hasNext()) {
-                    Map.Entry pair = (Map.Entry) it.next();
-                    String nonGroupMemberName = (String) pair.getKey();
-                    String email = (String) pair.getValue();
-                    SingleBalance sb = new SingleBalance(nonGroupMemberName);
-                    sb.setEmail(email);
-                    newGroup.getNonMembers().put(nonGroupMemberName, sb);
-                }
+                    // add all the new group members to the non-groupmembers of group
+                    it = nongroup_members.entrySet().iterator();
+                    while (it.hasNext()) {
+                        Map.Entry pair = (Map.Entry) it.next();
+                        String nonGroupMemberName = (String) pair.getKey();
+                        String email = (String) pair.getValue();
+                        SingleBalance sb = new SingleBalance(nonGroupMemberName);
+                        sb.setEmail(email);
+                        newGroup.getNonMembers().put(nonGroupMemberName, sb);
+                    }
 
-                //update the image if the image name is updated after changing the image
-                String prev_imageName = "";
-                photoUrl = TextUtils.isEmpty(photoUrl) ? newGroup.getPhotoUrl() : photoUrl; //if the image is not changed and group name changed
-                if (!TextUtils.isEmpty(photoUrl)) {
-                    String[] imageName = photoUrl.split("/");
-                    prev_imageName = imageName[imageName.length - 1];
-                    if (!TextUtils.equals(prev_imageName, newGroupNname)) {
-                        imageName[imageName.length - 1] = newGroupNname;
-//                        final StorageReference photoRef = mPhotosStorageReference.child(String.join("/", imageName));
+                    final String prev_imageName = mGroup.getName();
+                    if(!(selectedImageUri == null)){
+//image changed
+                        newGroup.setPhotoUrl("/images/groups/" + newGroupNname);
+                        // Get a reference to store file at chat_photos/<FILENAME>
+                        final StorageReference photoRef = mPhotosStorageReference.child(newGroupNname);
 
+                        // Upload file to Firebase Storage
+                        photoRef.putFile(selectedImageUri)
+                                .addOnSuccessListener(this, new OnSuccessListener<UploadTask.TaskSnapshot>() {
+                                    public void onSuccess(UploadTask.TaskSnapshot taskSnapshot) {
+                                        if(!TextUtils.equals(prev_imageName, newGroupNname))
+                                            mPhotosStorageReference.child(prev_imageName).delete();
+                                    }
+                                });
+                    }
+                    else {//image not changed
                         final StorageReference imageRef = mPhotosStorageReference.child(prev_imageName);
                         final long ONE_MEGABYTE = 1024 * 1024;
                         imageRef.getBytes(ONE_MEGABYTE).addOnSuccessListener(new OnSuccessListener<byte[]>() {
@@ -562,6 +567,7 @@ public class AddGroup extends AppCompatActivity implements GroupMembersAdapter.O
                                 photoRef.putBytes(bytes)
                                         .addOnSuccessListener(AddGroup.this, new OnSuccessListener<UploadTask.TaskSnapshot>() {
                                             public void onSuccess(UploadTask.TaskSnapshot taskSnapshot) {
+                                                mPhotosStorageReference.child(prev_imageName).delete();
                                                 Log.i(TAG, "new Image uploaded");
                                             }
                                         });
@@ -575,56 +581,56 @@ public class AddGroup extends AppCompatActivity implements GroupMembersAdapter.O
                             }
                         });
 
-                        newGroup.setPhotoUrl(String.join("/", imageName));
-                    } else {//No need to change anything
                     }
-                }
 
-                //Add the clone of the old group with the updated values
-                mDatabaseReference.child("groups/" + newGroupNname).setValue(newGroup, new DatabaseReference.CompletionListener() {
-                    @Override
-                    public void onComplete(DatabaseError databaseError, DatabaseReference dataReference) {
-                        gotoSummaryActivity(GROUP_EDITED, String.format("%s %s", getString(R.string.saved_group), newGroupNname));
-                        if (databaseError != null)
-                            Log.i(TAG, databaseError.getDetails());
-                        finish();
+                    //Add the clone of the old group with the updated values
+                    mDatabaseReference.child("groups/" + newGroupNname).setValue(newGroup, new DatabaseReference.CompletionListener() {
+                        @Override
+                        public void onComplete(DatabaseError databaseError, DatabaseReference dataReference) {
+                            gotoSummaryActivity(GROUP_EDITED, String.format("%s %s", getString(R.string.saved_group), newGroupNname));
+                            if (databaseError != null)
+                                Log.i(TAG, databaseError.getDetails());
+                            finish();
+                        }
+                    });
+
+                    //delete the old photo storage
+
+                    if (!TextUtils.isEmpty(prev_imageName) && !TextUtils.equals(prev_imageName, newGroupNname)) {
+//                        mPhotosStorageReference.child(prev_imageName).delete();
+
+                        //Delete the old group
+                        mDatabaseReference.child("groups/" + prev_imageName).removeValue();
                     }
-                });
-
-                //delete the old photo storage
-                if (!TextUtils.isEmpty(prev_imageName) && !TextUtils.equals(prev_imageName, newGroupNname)) {
-                    mPhotosStorageReference.child(prev_imageName).delete();
-
-                    //Delete the old group
-                    mDatabaseReference.child("groups/" + group_name).removeValue();
+                    finish();
                 }
-                finish();
-                break;
+                    break;
 
-            case R.id.deleteGroup:
+                    case R.id.deleteGroup:
 
-                //code to delete the group
-                //https://www.tutorialspoint.com/android/android_alert_dialoges.htm
-                AlertDialog.Builder alertDialogBuilder = new AlertDialog.Builder(this);
-                alertDialogBuilder.setMessage(getString(R.string.group_delete_warning));
-                alertDialogBuilder.setPositiveButton(getString(R.string.yes),
-                        new DialogInterface.OnClickListener() {
-                            @Override
-                            public void onClick(DialogInterface arg0, int arg1) {
-                                mDatabaseReference.child("groups/" + group_name).removeValue(new DatabaseReference.CompletionListener() {
+                        //code to delete the group
+                        //https://www.tutorialspoint.com/android/android_alert_dialoges.htm
+                        AlertDialog.Builder alertDialogBuilder = new AlertDialog.Builder(this);
+                        alertDialogBuilder.setMessage(getString(R.string.group_delete_warning));
+                        alertDialogBuilder.setPositiveButton(getString(R.string.yes),
+                                new DialogInterface.OnClickListener() {
                                     @Override
-                                    public void onComplete(@Nullable DatabaseError databaseError, @NonNull DatabaseReference databaseReference) {
-                                        gotoSummaryActivity(GROUP_DELETED, String.format("%s %s", getString(R.string.group_deleted), group_name));
+                                    public void onClick(DialogInterface arg0, int arg1) {
+                                        mDatabaseReference.child("groups/" + group_name).removeValue(new DatabaseReference.CompletionListener() {
+                                            @Override
+                                            public void onComplete(@Nullable DatabaseError databaseError, @NonNull DatabaseReference databaseReference) {
+                                                gotoSummaryActivity(GROUP_DELETED, String.format("%s %s", getString(R.string.group_deleted), group_name));
+                                            }
+                                        });
+
                                     }
                                 });
 
-                            }
-                        });
+                        alertDialogBuilder.setNegativeButton(getString(R.string.no), null);
 
-                alertDialogBuilder.setNegativeButton(getString(R.string.no), null);
+                        AlertDialog alertDialog = alertDialogBuilder.create();
+                        alertDialog.show();
 
-                AlertDialog alertDialog = alertDialogBuilder.create();
-                alertDialog.show();
                 break;
 
             case R.id.gotoGroupList:

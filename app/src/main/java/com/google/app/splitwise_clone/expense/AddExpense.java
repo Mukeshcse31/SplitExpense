@@ -73,6 +73,7 @@ public static String EXPENSE_DELETED = "EXPENSE_DELETED";
     private Map<String, SingleBalance> members;
     Map<String, Expense> expenses;
     private Group group;
+    List<String> notificationRecipients;
     float totalGroupExpense = 0.0f;
 
     @Override
@@ -227,6 +228,10 @@ public static String EXPENSE_DELETED = "EXPENSE_DELETED";
     public boolean onOptionsItemSelected(MenuItem item) {
 
         final List<String> participants = getExpenseParticipants();
+        notificationRecipients = new ArrayList<>(participants);
+        if(notificationRecipients.contains(userName))
+            notificationRecipients.remove(userName);
+
         final String description = mDescription.getText().toString();
         switch (item.getItemId()) {
 
@@ -279,7 +284,7 @@ public static String EXPENSE_DELETED = "EXPENSE_DELETED";
                             updateGroup(group_name);
                             String action = getString(R.string.expense_edited);
                             String notificationMessage = String.format("%s %s for %s to %.2f in the group %s", userName, action, description, amountNot, group_name);
-                            sendNotification(action, notificationMessage, participants);
+                            sendNotification(action, notificationMessage, notificationRecipients);
                             gotoExpenseList(EXPENSE_EDITED, String.format("%s %s", action, description));
                         }
                     });
@@ -291,7 +296,7 @@ public static String EXPENSE_DELETED = "EXPENSE_DELETED";
                             updateGroup(group_name);
                             String action = getString(R.string.expense_added);
                             String notificationMessage = String.format("%s added %.2f for %s in the group %s", userName, amountNot, description, group_name);
-                            sendNotification(action, notificationMessage, participants);
+                            sendNotification(action, notificationMessage, notificationRecipients);
                             gotoExpenseList(EXPENSE_ADDED, String.format("%s %s", action, description));
                         }
                     });
@@ -314,7 +319,7 @@ public static String EXPENSE_DELETED = "EXPENSE_DELETED";
                                 //Send Notification
                                 String action = getString(R.string.expense_deleted);
                                 String notificationMessage = String.format("%s %s for %s %f", userName, action, mExpense.getDescription(), mExpense.getTotal());
-                                sendNotification(action, notificationMessage, participants);
+                                sendNotification(action, notificationMessage, notificationRecipients);
                                 gotoExpenseList(EXPENSE_DELETED, String.format("%s %s", getString(R.string.expense_deleted), description));
                             }
                         });

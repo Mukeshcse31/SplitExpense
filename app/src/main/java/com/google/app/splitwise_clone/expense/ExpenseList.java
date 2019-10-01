@@ -27,6 +27,8 @@ import com.google.android.material.floatingactionbutton.FloatingActionButton;
 import com.google.android.material.snackbar.Snackbar;
 import com.google.app.splitwise_clone.SignIn;
 import com.google.app.splitwise_clone.R;
+import com.google.app.splitwise_clone.SummaryActivity;
+import com.google.app.splitwise_clone.groups.AddGroup;
 import com.google.app.splitwise_clone.model.Expense;
 import com.google.app.splitwise_clone.model.SingleBalance;
 import com.google.app.splitwise_clone.utils.AppUtils;
@@ -259,6 +261,8 @@ public class ExpenseList extends AppCompatActivity implements ExpenseAdapter.OnC
                 }
                 //TODO display either no expense or settled up
                 if (expenseSnapshotMap.size() == 0) {
+                    expenses_rv.setVisibility(View.GONE);
+                    
                     //check if there is any archived expense
                     Query query = mDatabaseReference.child("groups/" + group_name + "/archivedExpenses").limitToFirst(1);
                     query.addListenerForSingleValueEvent(new ValueEventListener() {
@@ -268,7 +272,7 @@ public class ExpenseList extends AppCompatActivity implements ExpenseAdapter.OnC
 
                                 settleup_tv.setVisibility(View.VISIBLE);
                                 settleup_image.setVisibility(View.VISIBLE);
-                                expenses_rv.setVisibility(View.GONE);
+
                             } else
                                 noExpenses_tv.setVisibility(View.VISIBLE);
 
@@ -540,7 +544,6 @@ public class ExpenseList extends AppCompatActivity implements ExpenseAdapter.OnC
             //Sign Out
             case R.id.signout:
                 FirebaseUtils.signOut(this);
-
                 intent = new Intent(ExpenseList.this, SignIn.class);
                 startActivity(intent);
                 finish();
@@ -553,6 +556,8 @@ public class ExpenseList extends AppCompatActivity implements ExpenseAdapter.OnC
     //TODO when started by notification, how back should work ?
     @Override
     public void onBackPressed() {
+        Intent intent = new Intent(ExpenseList.this, SummaryActivity.class);
+        startActivity(intent);
         finish();
     }
 

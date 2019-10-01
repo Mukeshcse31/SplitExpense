@@ -62,7 +62,6 @@ public class GroupsList extends AppCompatActivity implements GroupsAdapter.OnCli
         setSupportActionBar(myToolbar);
 
         userName = FirebaseUtils.getUserName();
-//        groupImage = findViewById(R.id.group_image);
         getSupportActionBar().setTitle(getString(R.string.group_list));
         mDatabaseReference = AppUtils.getDBReference();
 

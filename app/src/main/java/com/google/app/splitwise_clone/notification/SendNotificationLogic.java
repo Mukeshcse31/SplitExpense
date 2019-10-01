@@ -82,4 +82,5 @@ public class SendNotificationLogic {
         };
         MySingleton.getInstance(mContext).addToRequestQueue(jsonObjectRequest);
     }
+
 }

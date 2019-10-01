@@ -23,13 +23,11 @@
         <activity android:name=".SummaryActivity"
             ></activity>
 <!--        android:parentActivityName=".SignIn"-->
-        <activity android:name=".FriendsList"></activity>
         <activity android:name=".AddFriend"
             android:parentActivityName=".SummaryActivity"></activity>
 
-        <activity android:name=".groups.GroupsList"></activity>
         <activity android:name=".expense.ExpenseList"
-    android:parentActivityName=".groups.GroupsList"></activity>
+    android:parentActivityName=".SummaryActivity"></activity>
 
         <activity android:name=".expense.AddExpense"></activity>
 

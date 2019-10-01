@@ -25,6 +25,7 @@ import com.google.android.material.appbar.CollapsingToolbarLayout;
 import com.google.android.material.tabs.TabLayout;
 import com.google.app.splitwise_clone.expense.ExpenseList;
 import com.google.app.splitwise_clone.groups.AddGroup;
+import com.google.app.splitwise_clone.groups.GroupsList;
 import com.google.app.splitwise_clone.model.Group;
 import com.google.app.splitwise_clone.utils.AppUtils;
 import com.google.app.splitwise_clone.utils.FirebaseUtils;
@@ -37,7 +38,6 @@ import com.google.firebase.storage.FirebaseStorage;
 import com.google.firebase.storage.StorageReference;
 import com.google.firebase.storage.UploadTask;
 import java.util.List;
-import static com.google.app.splitwise_clone.groups.GroupsList.EDIT_GROUP;
 
 public class SummaryActivity extends AppCompatActivity implements GroupsFragment.onGroupClickListener, FriendsFragment.onFriendClickListener{
 
@@ -63,14 +63,15 @@ public class SummaryActivity extends AppCompatActivity implements GroupsFragment
 //        https://android.jlelse.eu/tablayout-and-viewpager-in-your-android-app-738b8840c38a
         // Set the content of the activity to use the  activity_main.xml layout file
         setContentView(R.layout.activity_summary);
-
+        userName = FirebaseUtils.getUserName();
         toolbar_container = findViewById(R.id.toolbar_container);
         Toolbar myToolbar = (Toolbar) findViewById(R.id.my_toolbar);
         setSupportActionBar(myToolbar);
-        getSupportActionBar().setTitle(getString(R.string.group_list));
+        getSupportActionBar().setTitle(userName);
+
         mFirebaseStorage = AppUtils.getDBStorage();
         mDatabaseReference = AppUtils.getDBReference();
-        userName = FirebaseUtils.getUserName();
+
         profilePicture = findViewById(R.id.profilePicture);
         balance_summary_tv = findViewById(R.id.balance_summary_tv);
 
@@ -112,7 +113,7 @@ public class SummaryActivity extends AppCompatActivity implements GroupsFragment
         Intent intent = new Intent(this, AddGroup.class);
         Group group = dataSnapshotGroupList.get(index).getValue(Group.class);
         intent.putExtra(AddGroup.GROUP_NAME, groupName);
-        intent.putExtra(EDIT_GROUP, group);
+        intent.putExtra(AddGroup.GROUP_EDIt, group);
         startActivity(intent);
     }
 

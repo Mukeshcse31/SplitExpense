@@ -53,6 +53,7 @@
 <string name="group_exists">குழு ஏற்கனவே உள்ளது</string>
 <string name="group_delete_warning">இந்த குழுவை நீக்க விரும்புகிறீர்களா?</string>
     <string name="error_add_member">Please add Group Members</string>
+    <string name="error_add_owner">Group owner should be a member</string>
     <string name="group_deleted">Group Deleted</string>
 <string name="group_added">குழு சேர்க்கப்பட்டது</string>
 <string name="members">உறுப்பினர்கள்</string>
@@ -121,7 +122,8 @@
 
 <!--    Notification-->
 <string name="server_key">AAAAs3JWc5U:APA91bE4JBDCWMBfb-oHZuBnmixezzdcP5MkOG3LVkjlwOpjZFVGEHOS7POx_oHxaC_D6GwKBzhbGWYBEDH_nIk6iCMAXUw_J4cow_YkJ2IapVp4XUuJ5ugdUw-wxs5jKE4vEzArvpqG</string>
-<string name="expense_added">செலவு சேர்க்கப்பட்டது</string>
+    <string name="unsbuscribe_url">https://iid.googleapis.com/v1/web/iid/</string>
+    <string name="expense_added">செலவு சேர்க்கப்பட்டது</string>
 <string name="expense_edited">செலவு திருத்தப்பட்டது</string>
 <string name="expense_deleted">செலவு நீக்கப்பட்டது</string>
 <string name="notif_title">title</string>

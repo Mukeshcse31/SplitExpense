@@ -100,6 +100,6 @@
 <!--    Others-->
     <dimen name="guildeline_grp_horizon">4dp</dimen>
     <dimen name="bottom_app_bar_height">52dp</dimen>
-
+<dimen name="settleup_top">48dp</dimen>
 </resources>
 
