@@ -9,7 +9,7 @@ import java.util.Map;
 public class Group implements Parcelable, Cloneable {
 
     private String name;
-    private String photoUrl;
+    private String photoUrl = "";
     private String owner;
     private Float totalAmount;
     private Map<String, SingleBalance> members = new HashMap<>();

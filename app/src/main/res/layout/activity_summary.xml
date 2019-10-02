@@ -48,11 +48,13 @@
                 <ImageView
                     android:id="@+id/profilePicture"
                     android:layout_width="match_parent"
-                    android:layout_height="200dp"
+                    android:layout_height="@dimen/tool_image_height"
                     android:contentDescription="@string/app_name"
                     android:scaleType="fitXY"
                     android:src="@drawable/person"
                     app:layout_collapseMode="parallax"
+                    android:foregroundTint="@color/common_google_signin_btn_text_dark_disabled"
+                    android:tint="@color/common_google_signin_btn_text_dark_disabled"
                     app:layout_constraintBottom_toBottomOf="parent"
                     app:layout_constraintEnd_toEndOf="parent"
                     app:layout_constraintStart_toStartOf="parent"
@@ -63,11 +65,14 @@
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:text="@string/you_are_owed"
-                    android:textSize="22sp"
+                    android:textSize="@dimen/dateSpent_tv"
+                    android:gravity="center"
+                    android:alpha="0.97"
+                    android:textColor="@color/white"
                     app:layout_constraintBottom_toBottomOf="parent"
                     app:layout_constraintEnd_toEndOf="parent"
                     app:layout_constraintStart_toStartOf="parent"
-                    app:layout_constraintTop_toBottomOf="@id/profilePicture"/>
+                    app:layout_constraintTop_toBottomOf="parent"/>
 
             </androidx.constraintlayout.widget.ConstraintLayout>
         </com.google.android.material.appbar.CollapsingToolbarLayout>

@@ -34,6 +34,7 @@ import com.google.app.splitwise_clone.model.SingleBalance;
 import com.google.app.splitwise_clone.utils.AppUtils;
 import com.google.app.splitwise_clone.utils.ExpenseAdapter;
 import com.google.app.splitwise_clone.utils.FirebaseUtils;
+import com.google.firebase.database.ChildEventListener;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
@@ -73,8 +74,16 @@ public class ExpenseList extends AppCompatActivity implements ExpenseAdapter.OnC
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_expense_list);
 
+        collapsingToolbarLayout = (CollapsingToolbarLayout) findViewById(R.id.collap_toolbar_exp);
+        collapsingToolbarLayout.setTitleEnabled(false);
+
+
         my_toolbar = (Toolbar) findViewById(R.id.my_toolbar);
+        my_toolbar.setTitle("");//don't know why, setting the title here only works to update later
         setSupportActionBar(my_toolbar);
+//        getSupportActionBar().setDisplayShowTitleEnabled(true);
+
+
         //this line shows back button
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
 
@@ -97,12 +106,12 @@ public class ExpenseList extends AppCompatActivity implements ExpenseAdapter.OnC
         mFirebaseStorage = AppUtils.getDBStorage();
         userName = FirebaseUtils.getUserName();
 
-        collapsingToolbarLayout = (CollapsingToolbarLayout) findViewById(R.id.collap_toolbar_exp);
 
         Intent intent = getIntent();
         if (intent.hasExtra(GROUP_NAME)) {
             group_name = intent.getStringExtra(GROUP_NAME);
-            collapsingToolbarLayout.setTitle(group_name);
+//            collapsingToolbarLayout.setTitle(group_name);
+            my_toolbar.setTitle(group_name);
         }
 
         if(intent.hasExtra(AddExpense.EXPENSE_EDITED)){
@@ -148,6 +157,35 @@ public class ExpenseList extends AppCompatActivity implements ExpenseAdapter.OnC
             }
         });
 
+        mDatabaseReference.child("groups/" + group_name + "/expenses").addChildEventListener(new ChildEventListener() {
+            @Override
+            public void onChildAdded(@NonNull DataSnapshot dataSnapshot, @Nullable String s) {
+//                Log.i(TAG, "child added");
+                populateExpenseList();
+            }
+
+            @Override
+            public void onChildChanged(@NonNull DataSnapshot dataSnapshot, @Nullable String s) {
+//                Log.i(TAG, "child Changed");
+                populateExpenseList();
+            }
+
+            @Override
+            public void onChildRemoved(@NonNull DataSnapshot dataSnapshot) {
+//                Log.i(TAG, "child removed");
+                populateExpenseList();
+            }
+
+            @Override
+            public void onChildMoved(@NonNull DataSnapshot dataSnapshot, @Nullable String s) {
+
+            }
+
+            @Override
+            public void onCancelled(@NonNull DatabaseError databaseError) {
+
+            }
+        });
         showSnackBar(snackBarMsg);
     }
 
@@ -172,8 +210,8 @@ public class ExpenseList extends AppCompatActivity implements ExpenseAdapter.OnC
         mExpenseAdapter = new ExpenseAdapter(archivedExpenseSnapshotMap, ExpenseList.this, false);
         expenses_rv.setAdapter(mExpenseAdapter);
 
-        AppUtils.hideOption(mMenu,new int[]{R.id.orderbyCategory, R.id.settle_up, R.id.export, R.id.archivedExp});
-        AppUtils.showOption(mMenu, new int[]{R.id.orderbyDate});
+        AppUtils.hideOption(mMenu,new int[]{R.id.orderbyCategory, R.id.orderbyDate, R.id.settle_up, R.id.export, R.id.archivedExp});
+//        AppUtils.showOption(mMenu, new int[]{R.id.orderbyDate});
     }
 
     public void settleUpExpenses() {
@@ -248,6 +286,8 @@ public class ExpenseList extends AppCompatActivity implements ExpenseAdapter.OnC
     }
 
     private void populateExpenseList() {
+
+        //sparseArray is not used as it doesn't keep the order of insertion
         Query query = mDatabaseReference.child("groups/" + group_name + "/expenses").orderByChild("dateSpent");
 //.orderByChild("active").equalTo("Yes") is not required as settle up is implemented
         query.addListenerForSingleValueEvent(new ValueEventListener() {
@@ -295,7 +335,7 @@ public class ExpenseList extends AppCompatActivity implements ExpenseAdapter.OnC
                     mExpenseAdapter = new ExpenseAdapter(expenseSnapshotMap, ExpenseList.this, true);
                     expenses_rv.setAdapter(mExpenseAdapter);
                     AppUtils.showOption(mMenu, new int[]{R.id.orderbyCategory, R.id.settle_up, R.id.export, R.id.archivedExp});
-
+AppUtils.hideOption(mMenu, new int[]{R.id.orderbyDate});
                 }
             }
 
@@ -445,9 +485,9 @@ public class ExpenseList extends AppCompatActivity implements ExpenseAdapter.OnC
                         Map.Entry pair = (Map.Entry) it.next();
                         String friendName = (String) pair.getKey();
                         if (!TextUtils.equals(userName, friendName)) {
-                            String status = "spent";
+                            String status = getString(R.string.spent_you);
                             float amount = Float.parseFloat(String.valueOf(pair.getValue()));
-                            if (amount > 0) status = "owes you";
+                            if (amount > 0) status = getString(R.string.owes_you);
                             summary += String.format("%s %s $%.2f \n", friendName, status, Math.abs(amount));
                         }
                     }
@@ -468,7 +508,9 @@ public class ExpenseList extends AppCompatActivity implements ExpenseAdapter.OnC
             public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
                 if (dataSnapshot.exists()) {
                     float balanceAmount = Float.parseFloat(String.valueOf(dataSnapshot.getValue()));
-                    user_balance.setText(String.format("Amount %s spent $%.2f ", balanceAmount > 0 ? "you" : "others", balanceAmount));
+                    String label = getString(R.string.amount_others_spent);
+                    if( balanceAmount > 0) label = getString(R.string.amount_you_spent);
+                    user_balance.setText(String.format("%s $%.2f ", label, Math.abs(balanceAmount)));
                 }
             }
 

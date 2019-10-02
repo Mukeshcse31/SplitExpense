@@ -4,6 +4,8 @@ import android.content.Context;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.LayoutInflater;
+import android.view.Menu;
+import android.view.MenuInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
@@ -72,6 +74,7 @@ private onFriendClickListener mOnFriendClickListener;
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         View rootView = inflater.inflate(R.layout.fragment_friends, container, false);
 
+        setHasOptionsMenu(true);
 
         friends_rv = rootView.findViewById(R.id.friends_rv);
 
@@ -144,13 +147,14 @@ private onFriendClickListener mOnFriendClickListener;
                                 amountGroup.put(expenseParticipant, eachGroup);
 
                         }
-                        amountSpentByUser += amountSpentForGroup; //TODO put it in the APP BAR
+                        amountSpentByUser += amountSpentForGroup;
                     }
                     balance.setAmount(amountSpentByUser);
                     amountGroup.remove(userName);
                     balance.setGroups(amountGroup);
 
-                    balanceSummaryTxt = String.format("%s $%.2f\n%s %.2f", "total amount spent by you", amountSpentByUser, "others owe", balanceAmount);
+                    balanceSummaryTxt = String.format("%s $%.2f\n%s $%.2f",
+                            getString(R.string.amount_spent_by_you), Math.abs(amountSpentByUser), getString(R.string.others_owe), Math.abs(balanceAmount));
 mOnFriendClickListener.updateUserSummary(balanceSummaryTxt);
                     mFriendsAdapter = new FriendsAdapter(amountGroup, FriendsFragment.this);
                     friends_rv.setAdapter(mFriendsAdapter);
@@ -176,6 +180,15 @@ mOnFriendClickListener.updateUserSummary(balanceSummaryTxt);
     @Override
     public void gotoGroup() {
         mOnFriendClickListener.gotoGroupsList();
+    }
+
+    @Override
+    public void onCreateOptionsMenu(Menu menu, MenuInflater inflater) {
+        super.onCreateOptionsMenu(menu, inflater);
+        // put getActivity in onCreateOptionsMenu will not return null
+        if (getActivity() != null) {
+            getActivity().setTitle("Name");
+        }
     }
 
     @Override

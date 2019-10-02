@@ -38,6 +38,10 @@ public class GroupsFragment extends Fragment implements GroupsAdapter.OnClickLis
     onGroupClickListener mGroupListener;
     private GroupsAdapter mGroupsAdapter;
 
+    private String transitionName;
+
+    private final String transitionNameKey = "transitionName";
+
     public GroupsFragment() {
         // Required empty public constructor
         mDatabaseReference = AppUtils.getDBReference();

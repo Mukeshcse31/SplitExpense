@@ -27,6 +27,9 @@
     <string name="error_field_required">This field is required</string>
 <string name="error_username">username is not valid</string>
 
+    <string name="amount_spent_by_you">Total amount spent by you</string>
+    <string name="others_owe">Others owe</string>
+
     <!--Add User-->
     <string name="sample_message">Hello!</string>
     <string name="add">Add</string>
@@ -93,6 +96,7 @@
     <string name="amount">Amount</string>
     <string name="status">Status</string>
     <string name="add_expense">Add Expense</string>
+    <string name="edit_expense_title">Edit Expense</string>
     <string name="you_are_owed">you are owed</string>
     <string name="default_amount">$0</string>
     <string name="opted_out">opted out</string>
@@ -101,6 +105,10 @@
     <string name="you_lent">you lent</string>
     <string name="you_borrowed">you borrowed</string>
     <string name="paid">paid</string>
+<string name="owes_you">owes you</string>
+    <string name="spent_you">spent you</string>
+    <string name="amount_you_spent">Amount you spent</string>
+    <string name="amount_others_spent">Amount others spent</string>
 
 <!--    Expense Menu-->
     <string name="mnu_resetorder">Reset</string>

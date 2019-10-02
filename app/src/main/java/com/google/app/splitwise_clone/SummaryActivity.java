@@ -1,5 +1,6 @@
 package com.google.app.splitwise_clone;
 
+import android.app.SharedElementCallback;
 import android.content.Intent;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
@@ -8,6 +9,7 @@ import android.graphics.drawable.Drawable;
 import android.net.Uri;
 import android.os.Bundle;
 import android.text.TextUtils;
+import android.transition.TransitionInflater;
 import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
@@ -17,6 +19,7 @@ import android.widget.TextView;
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.Toolbar;
+import androidx.recyclerview.widget.RecyclerView;
 import androidx.viewpager.widget.ViewPager;
 import com.bumptech.glide.Glide;
 import com.google.android.gms.tasks.OnFailureListener;
@@ -38,6 +41,7 @@ import com.google.firebase.storage.FirebaseStorage;
 import com.google.firebase.storage.StorageReference;
 import com.google.firebase.storage.UploadTask;
 import java.util.List;
+import java.util.Map;
 
 public class SummaryActivity extends AppCompatActivity implements GroupsFragment.onGroupClickListener, FriendsFragment.onFriendClickListener{
 
@@ -65,9 +69,13 @@ public class SummaryActivity extends AppCompatActivity implements GroupsFragment
         setContentView(R.layout.activity_summary);
         userName = FirebaseUtils.getUserName();
         toolbar_container = findViewById(R.id.toolbar_container);
+        toolbar_container.setTitleEnabled(false);
         Toolbar myToolbar = (Toolbar) findViewById(R.id.my_toolbar);
+        myToolbar.setTitle(userName);
         setSupportActionBar(myToolbar);
-        getSupportActionBar().setTitle(userName);
+
+//        getSupportActionBar().setDisplayShowTitleEnabled(true);
+//        getSupportActionBar().setTitle(userName);
 
         mFirebaseStorage = AppUtils.getDBStorage();
         mDatabaseReference = AppUtils.getDBReference();
@@ -99,6 +107,25 @@ public class SummaryActivity extends AppCompatActivity implements GroupsFragment
             }
         });
         loadUserImage();
+
+        setTransition();
+        postponeEnterTransition();
+
+    }
+
+    private void setTransition() {
+//        /* Set the ExitTransition, as well as the ExitSharedElementCallback */
+//        getWindow().setExitTransition(TransitionInflater.from(this).inflateTransition(R.transition.transition_grid_exit));
+//        setExitSharedElementCallback(new SharedElementCallback() {
+//            @Override
+//            public void onMapSharedElements(List<String> names, Map<String, View> sharedElements) {
+//                RecyclerView.ViewHolder viewHolder = mRecyclerView.findViewHolderForAdapterPosition(id);
+//                if (viewHolder == null) {
+//                    return;
+//                }
+//                sharedElements.put(names.get(0), viewHolder.itemView.findViewById(R.id.groupImage));
+//            }
+//        });
     }
 
     @Override

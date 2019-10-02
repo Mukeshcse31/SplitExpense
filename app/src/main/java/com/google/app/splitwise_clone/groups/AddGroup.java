@@ -464,8 +464,7 @@ return cancel;
 
                                 }
 
-
-//                          // add all the non group members to the group
+                          // add all the non group members to the group
                                 it = nongroup_members.entrySet().iterator();
                                 while (it.hasNext()) {
 
@@ -477,9 +476,15 @@ return cancel;
                                     grp.addNonMember(groupMemberName, sb);
 
                                 }
+                                if(!(selectedImageUri == null)) {
+                                    //add the group creator as a member when the group is created
+                                    grp.setPhotoUrl("/images/groups/" + name);
+                                    // Get a reference to store file at chat_photos/<FILENAME>
+                                    final StorageReference photoRef = mPhotosStorageReference.child(name);
 
-                                //add the group creator as a member when the group is created
-                                grp.setPhotoUrl("/images/groups/" + name);
+                                    // Upload file to Firebase Storage
+                                    photoRef.putFile(selectedImageUri);
+                                }
                                 grp.setOwner(userName);
                                 mDatabaseReference.child("groups/" + name).setValue(grp, new DatabaseReference.CompletionListener() {
                                     @Override
@@ -541,7 +546,7 @@ return cancel;
 
                     final String prev_imageName = mGroup.getName();
                     if(!(selectedImageUri == null)){
-//image changed
+                        //image changed
                         newGroup.setPhotoUrl("/images/groups/" + newGroupNname);
                         // Get a reference to store file at chat_photos/<FILENAME>
                         final StorageReference photoRef = mPhotosStorageReference.child(newGroupNname);
@@ -556,31 +561,32 @@ return cancel;
                                 });
                     }
                     else {//image not changed
-                        final StorageReference imageRef = mPhotosStorageReference.child(prev_imageName);
-                        final long ONE_MEGABYTE = 1024 * 1024;
-                        imageRef.getBytes(ONE_MEGABYTE).addOnSuccessListener(new OnSuccessListener<byte[]>() {
-                            @Override
-                            public void onSuccess(byte[] bytes) {
-                                final StorageReference photoRef = mPhotosStorageReference.child(newGroupNname);
+                        if(!TextUtils.equals(prev_imageName, newGroupNname)) {//only for a new name
+                            final StorageReference imageRef = mPhotosStorageReference.child(prev_imageName);
+                            final long ONE_MEGABYTE = 1024 * 1024;
+                            imageRef.getBytes(ONE_MEGABYTE).addOnSuccessListener(new OnSuccessListener<byte[]>() {
+                                @Override
+                                public void onSuccess(byte[] bytes) {
+                                    final StorageReference photoRef = mPhotosStorageReference.child(newGroupNname);
 
-                                // Upload file to Firebase Storage
-                                photoRef.putBytes(bytes)
-                                        .addOnSuccessListener(AddGroup.this, new OnSuccessListener<UploadTask.TaskSnapshot>() {
-                                            public void onSuccess(UploadTask.TaskSnapshot taskSnapshot) {
-                                                mPhotosStorageReference.child(prev_imageName).delete();
-                                                Log.i(TAG, "new Image uploaded");
-                                            }
-                                        });
-                            }
-                        }).addOnFailureListener(new OnFailureListener() {
-                            @Override
-                            public void onFailure(@NonNull Exception exception) {
+                                    // Upload file to Firebase Storage
+                                    photoRef.putBytes(bytes)
+                                            .addOnSuccessListener(AddGroup.this, new OnSuccessListener<UploadTask.TaskSnapshot>() {
+                                                public void onSuccess(UploadTask.TaskSnapshot taskSnapshot) {
+                                                    mPhotosStorageReference.child(prev_imageName).delete();
+                                                    Log.i(TAG, "new Image uploaded");
+                                                }
+                                            });
+                                }
+                            }).addOnFailureListener(new OnFailureListener() {
+                                @Override
+                                public void onFailure(@NonNull Exception exception) {
 
-                                Log.i(TAG, exception.getMessage());
-                                // Handle any errors
-                            }
-                        });
-
+                                    Log.i(TAG, exception.getMessage());
+                                    // Handle any errors
+                                }
+                            });
+                        }
                     }
 
                     //Add the clone of the old group with the updated values

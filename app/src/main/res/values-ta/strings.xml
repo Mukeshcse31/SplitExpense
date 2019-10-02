@@ -28,7 +28,10 @@
 <string name="error_field_required">இந்த புலம் தேவை</string>
 <string name="error_username">பயனர் பெயர் செல்லுபடியாகாது</string>
 
-<!--Add User-->
+    <string name="amount_spent_by_you">Total amount spent by you</string>
+    <string name="others_owe">Others owe</string>
+
+    <!--Add User-->
 <string name="sample_message">வணக்கம்!</string>
 <string name="add">கூட்டு</string>
 <string name="cancel">ரத்து</string>
@@ -94,6 +97,7 @@
 <string name="amount">தொகை</string>
 <string name="status">நிலைமை</string>
 <string name="add_expense">செலவு சேர்க்கவும்</string>
+    <string name="edit_expense_title">Edit Expense</string>
 <string name="you_are_owed">நீங்கள் கடன்பட்டிருக்கிறீர்கள்</string>
 <string name="default_amount">$0</string>
 <string name="opted_out">விலகியது</string>
@@ -102,8 +106,13 @@
 <string name="you_lent">நீங்கள் கொடுத்தீர்கள்</string>
 <string name="you_borrowed">you borrowed</string>
 <string name="paid">செலுத்தப்படுகிறது</string>
+    <string name="owes_you">owes you</string>
+    <string name="spent_you">spent you</string>
 
-<!--    Expense Menu-->
+    <string name="amount_you_spent">Amount you spent</string>
+    <string name="amount_others_spent">Amount others spent</string>
+
+    <!--    Expense Menu-->
 <string name="mnu_resetorder">ஆர்டரை மீட்டமை</string>
 <string name="mnu_orderbycategory">வகை வாரியாக ஆர்டர்</string>
 <string name="mnu_export">ஏற்றுமதி</string>

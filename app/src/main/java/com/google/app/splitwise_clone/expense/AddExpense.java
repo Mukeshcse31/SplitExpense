@@ -103,7 +103,7 @@ public static String EXPENSE_DELETED = "EXPENSE_DELETED";
 
             group_name = bundle.getString(ExpenseList.GROUP_NAME);
             if (bundle.containsKey(ExpenseList.EDIT_EXPENSEID)) {
-
+                getSupportActionBar().setTitle(getString(R.string.edit_expense_title));
                 expenseId = bundle.getString(ExpenseList.EDIT_EXPENSEID);
                 mExpense = bundle.getParcelable(ExpenseList.EDIT_EXPENSE);
 

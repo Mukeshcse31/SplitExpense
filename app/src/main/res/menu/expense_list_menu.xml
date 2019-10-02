@@ -7,12 +7,12 @@
         android:id="@+id/orderbyCategory"
         android:title="@string/mnu_orderbycategory"
         app:showAsAction="ifRoom"
-
         android:orderInCategory="0"/>
 
     <item
         android:id="@+id/orderbyDate"
         android:title="@string/mnu_resetorder"
+        app:showAsAction="ifRoom"
         android:orderInCategory="1"/>
 
     <item
