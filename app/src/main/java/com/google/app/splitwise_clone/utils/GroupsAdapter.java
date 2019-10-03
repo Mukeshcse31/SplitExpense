@@ -61,7 +61,7 @@ public class GroupsAdapter extends RecyclerView.Adapter<GroupsAdapter.ReviewView
     }
 
     public interface OnClickListener {
-        void gotoSharedGroup(int index, String name);
+        void gotoSharedGroup(int index, String name, View view);
 
         void gotoEditGroup(int index, String name);
     }
@@ -161,8 +161,12 @@ public class GroupsAdapter extends RecyclerView.Adapter<GroupsAdapter.ReviewView
                 String friendName = (String) pair.getKey();
                 float amount = Float.parseFloat(String.valueOf(pair.getValue()));
                 balanceAmount += amount;
+                String status = mContext.getString(R.string.lent_you);
+                if(amount > 0)
+                    status = mContext.getString(R.string.owes_you);
+
                 if (!TextUtils.equals(userName, friendName))
-                    member_status += String.format("%s %s you $%.2f\n", friendName, amount > 0 ? "owes" : "lent", amount);
+                    member_status += String.format("%s %s $%.2f\n", friendName, status, Math.abs(amount));
 
             }
             if(!TextUtils.isEmpty(member_status)) tv_member_status.setText(member_status);
@@ -179,7 +183,6 @@ public class GroupsAdapter extends RecyclerView.Adapter<GroupsAdapter.ReviewView
                     tv_amount.setTextColor(mContext.getColor(R.color.orange));
                     aggr_status = mContext.getString(R.string.you_borrowed);
                 }
-//                tv_status.setText(String.format("%s %s", aggr_status, mContext.getString(R.string.group_debt_separator)));
                 tv_status.setText(aggr_status);
                 tv_amount.setText(String.format("$%.2f",Math.abs(balanceAmount)));
             }
@@ -194,19 +197,19 @@ public class GroupsAdapter extends RecyclerView.Adapter<GroupsAdapter.ReviewView
             tv_member_status.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
-                    mOnClickListener.gotoSharedGroup(listIndex, group_name);
+                    mOnClickListener.gotoSharedGroup(listIndex, group_name, group_image);
                 }
             });
             tv_group_name.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
-                    mOnClickListener.gotoSharedGroup(listIndex, group_name);
+                    mOnClickListener.gotoSharedGroup(listIndex, group_name, group_image);
                 }
             });
             tv_status.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
-                    mOnClickListener.gotoSharedGroup(listIndex, group_name);
+                    mOnClickListener.gotoSharedGroup(listIndex, group_name, group_image);
                 }
             });
         }

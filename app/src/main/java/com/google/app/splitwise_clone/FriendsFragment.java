@@ -184,9 +184,9 @@ mOnFriendClickListener.updateUserSummary(balanceSummaryTxt);
     public void onCreateOptionsMenu(Menu menu, MenuInflater inflater) {
         super.onCreateOptionsMenu(menu, inflater);
         // put getActivity in onCreateOptionsMenu will not return null
-        if (getActivity() != null) {
-            getActivity().setTitle("Name");
-        }
+//        if (getActivity() != null) {
+//            getActivity().setTitle("Name");
+//        }
     }
 
     @Override

@@ -7,14 +7,13 @@ import android.text.TextUtils;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-
 import androidx.annotation.NonNull;
+import androidx.core.app.SharedElementCallback;
 import androidx.fragment.app.Fragment;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
-
+import androidx.transition.TransitionInflater;
 import com.google.android.material.snackbar.Snackbar;
-import com.google.app.splitwise_clone.expense.AddExpense;
 import com.google.app.splitwise_clone.groups.AddGroup;
 import com.google.app.splitwise_clone.utils.AppUtils;
 import com.google.app.splitwise_clone.utils.FirebaseUtils;
@@ -24,9 +23,9 @@ import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.Query;
 import com.google.firebase.database.ValueEventListener;
-
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
 
 public class GroupsFragment extends Fragment implements GroupsAdapter.OnClickListener {
 
@@ -37,10 +36,6 @@ public class GroupsFragment extends Fragment implements GroupsAdapter.OnClickLis
     private String userName = "", snackBarMsg;
     onGroupClickListener mGroupListener;
     private GroupsAdapter mGroupsAdapter;
-
-    private String transitionName;
-
-    private final String transitionNameKey = "transitionName";
 
     public GroupsFragment() {
         // Required empty public constructor
@@ -56,6 +51,7 @@ public class GroupsFragment extends Fragment implements GroupsAdapter.OnClickLis
         groups_rv = rootView.findViewById(R.id.groups_rv);
         LinearLayoutManager layoutManager = new LinearLayoutManager(getContext());
         groups_rv.setLayoutManager(layoutManager);
+        postponeEnterTransition();
 
         return rootView;
     }
@@ -75,7 +71,7 @@ public class GroupsFragment extends Fragment implements GroupsAdapter.OnClickLis
     }
 
     public interface onGroupClickListener{
-        void gotoClickedGroup(int index, String name);
+        void gotoClickedGroup(int index, String name, View view);
         void gotoEditGroup(int index, String groupName, List<DataSnapshot> data );
     }
 
@@ -117,8 +113,8 @@ private void showSnackBar(){
     }
 
     @Override
-    public void gotoSharedGroup(int index, String name) {
-        mGroupListener.gotoClickedGroup(index, name);
+    public void gotoSharedGroup(int index, String name, View imageView) {
+        mGroupListener.gotoClickedGroup(index, name, imageView);
     }
 
     @Override

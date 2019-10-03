@@ -518,30 +518,47 @@ return cancel;
                     final String newGroupNname = mGroupName.getText().toString().trim();
                     newGroup.setName(newGroupNname);
 
-
-                    newGroup.setMembers(new HashMap<String, SingleBalance>());
-                    newGroup.setNonMembers(new HashMap<String, SingleBalance>());
-
                     // add all the new group members to the groupmembers of group
                     Iterator it = group_members.entrySet().iterator();
                     while (it.hasNext()) {
                         Map.Entry pair = (Map.Entry) it.next();
                         String groupMemberName = (String) pair.getKey();
                         String email = (String) pair.getValue();
-                        SingleBalance sb = new SingleBalance(groupMemberName);
-                        sb.setEmail(email);
-                        newGroup.addMember(groupMemberName, sb);
+
+                        //if the member is not found in the prev groupmembers, then get it from non-group members
+                        if(!mGroup.getMembers().containsKey(groupMemberName)){
+
+                            if(mGroup.getNonMembers().containsKey(groupMemberName)){
+                                newGroup.addMember(groupMemberName, mGroup.getNonMembers().get(groupMemberName));
+                            }
+                            else{ //this won't happen
+                                SingleBalance sb = new SingleBalance(groupMemberName);
+                                sb.setEmail(email);
+                                newGroup.addMember(groupMemberName, sb);
+                            }
+                        }
+
+
                     }
 
-                    // add all the new group members to the non-groupmembers of group
+                    // add all the non group members to the non-groupmembers of group
                     it = nongroup_members.entrySet().iterator();
                     while (it.hasNext()) {
                         Map.Entry pair = (Map.Entry) it.next();
                         String nonGroupMemberName = (String) pair.getKey();
                         String email = (String) pair.getValue();
-                        SingleBalance sb = new SingleBalance(nonGroupMemberName);
-                        sb.setEmail(email);
-                        newGroup.getNonMembers().put(nonGroupMemberName, sb);
+
+                        if(!mGroup.getNonMembers().containsKey(nonGroupMemberName)){
+
+                            if(mGroup.getMembers().containsKey(nonGroupMemberName)){
+                                newGroup.addNonMember(nonGroupMemberName, mGroup.getMembers().get(nonGroupMemberName));
+                            }
+                            else{
+                                SingleBalance sb = new SingleBalance(nonGroupMemberName);
+                                sb.setEmail(email);
+                                newGroup.getNonMembers().put(nonGroupMemberName, sb);
+                            }
+                        }
                     }
 
                     final String prev_imageName = mGroup.getName();
@@ -641,7 +658,6 @@ return cancel;
 
             case R.id.gotoGroupList:
                 gotoSummaryActivity(ACTION_CANCEL, getString(R.string.cancel));
-//                finish();
                 break;
         }
         return super.onOptionsItemSelected(item);
