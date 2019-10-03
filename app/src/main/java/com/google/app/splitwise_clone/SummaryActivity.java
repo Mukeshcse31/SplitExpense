@@ -1,15 +1,11 @@
 package com.google.app.splitwise_clone;
 
-import android.app.SharedElementCallback;
 import android.content.Intent;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
-import android.graphics.drawable.BitmapDrawable;
-import android.graphics.drawable.Drawable;
 import android.net.Uri;
 import android.os.Bundle;
 import android.text.TextUtils;
-import android.transition.TransitionInflater;
 import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
@@ -19,7 +15,7 @@ import android.widget.TextView;
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.Toolbar;
-import androidx.recyclerview.widget.RecyclerView;
+import androidx.core.app.ActivityOptionsCompat;
 import androidx.viewpager.widget.ViewPager;
 import com.bumptech.glide.Glide;
 import com.google.android.gms.tasks.OnFailureListener;
@@ -28,7 +24,6 @@ import com.google.android.material.appbar.CollapsingToolbarLayout;
 import com.google.android.material.tabs.TabLayout;
 import com.google.app.splitwise_clone.expense.ExpenseList;
 import com.google.app.splitwise_clone.groups.AddGroup;
-import com.google.app.splitwise_clone.groups.GroupsList;
 import com.google.app.splitwise_clone.model.Group;
 import com.google.app.splitwise_clone.utils.AppUtils;
 import com.google.app.splitwise_clone.utils.FirebaseUtils;
@@ -41,7 +36,6 @@ import com.google.firebase.storage.FirebaseStorage;
 import com.google.firebase.storage.StorageReference;
 import com.google.firebase.storage.UploadTask;
 import java.util.List;
-import java.util.Map;
 
 public class SummaryActivity extends AppCompatActivity implements GroupsFragment.onGroupClickListener, FriendsFragment.onFriendClickListener{
 
@@ -108,12 +102,10 @@ public class SummaryActivity extends AppCompatActivity implements GroupsFragment
         });
         loadUserImage();
 
-        setTransition();
-        postponeEnterTransition();
 
     }
 
-    private void setTransition() {
+//    private void setTransition() {
 //        /* Set the ExitTransition, as well as the ExitSharedElementCallback */
 //        getWindow().setExitTransition(TransitionInflater.from(this).inflateTransition(R.transition.transition_grid_exit));
 //        setExitSharedElementCallback(new SharedElementCallback() {
@@ -126,13 +118,21 @@ public class SummaryActivity extends AppCompatActivity implements GroupsFragment
 //                sharedElements.put(names.get(0), viewHolder.itemView.findViewById(R.id.groupImage));
 //            }
 //        });
-    }
+//    }
 
     @Override
-    public void gotoClickedGroup(int index, String name) {
+    public void gotoClickedGroup(int index, String name, View ivProfile) {
         Intent intent = new Intent(this, ExpenseList.class);
         intent.putExtra(AddGroup.GROUP_NAME, name);
-        startActivity(intent);
+
+//        Intent intent = new Intent(/this, DetailsActivity.class);
+// Pass data object in the bundle and populate details activity.
+//        intent.putExtra(DetailsActivity.EXTRA_CONTACT, contact);
+        ActivityOptionsCompat options = ActivityOptionsCompat.
+                makeSceneTransitionAnimation(this, (View)ivProfile, "profile");
+        startActivity(intent, options.toBundle());
+
+//        startActivity(intent);
     }
 
     @Override

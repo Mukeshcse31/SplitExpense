@@ -15,7 +15,7 @@
 
     <dimen name="detail_toolbar_elevation">2dp</dimen>
     <dimen name="collap_layout_height">200dp</dimen>
-    <dimen name="tool_image_height">200dp</dimen>
+    <dimen name="tool_image_height">300dp</dimen>
 
     <!--    Group-->
     <dimen name="tv_group_name">24sp</dimen>
@@ -46,7 +46,7 @@
     <dimen name="layout_margin">40dp</dimen>
 
     <!--    Expense List-->
-    <dimen name="exp_toolbar_height">200dp</dimen>
+    <dimen name="exp_toolbar_height">300dp</dimen>
     <dimen name="groupname_exp">40sp</dimen>
     <dimen name="userbalance_exp">28sp</dimen>
     <dimen name="exp_image_width">52dp</dimen>

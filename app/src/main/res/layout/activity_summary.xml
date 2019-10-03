@@ -60,6 +60,9 @@
                     app:layout_constraintStart_toStartOf="parent"
                     app:layout_constraintTop_toTopOf="parent" />
 
+<!--                <com.google.app.splitwise_clone.utils.MaxWidthLinearLayout-->
+<!--                    android:layout_width="wrap_content"-->
+<!--                    android:layout_height="wrap_content">-->
                 <TextView
                     android:id="@+id/balance_summary_tv"
                     android:layout_width="wrap_content"
@@ -69,10 +72,12 @@
                     android:gravity="center"
                     android:alpha="0.97"
                     android:textColor="@color/white"
+
                     app:layout_constraintBottom_toBottomOf="parent"
                     app:layout_constraintEnd_toEndOf="parent"
                     app:layout_constraintStart_toStartOf="parent"
                     app:layout_constraintTop_toBottomOf="parent"/>
+<!--                </com.google.app.splitwise_clone.utils.MaxWidthLinearLayout>-->
 
             </androidx.constraintlayout.widget.ConstraintLayout>
         </com.google.android.material.appbar.CollapsingToolbarLayout>

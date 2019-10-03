@@ -169,8 +169,6 @@ mOnFriendClickListener.updateUserSummary(balanceSummaryTxt);
         });
     }
 
-
-
     public interface onFriendClickListener{
         void gotoGroupsList();
         void updateUserSummary(String summary);

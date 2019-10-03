@@ -15,9 +15,9 @@ import android.util.Log;
 import android.widget.RemoteViews;
 import androidx.annotation.NonNull;
 
-import com.google.app.splitwise_clone.FriendsList;
 import com.google.app.splitwise_clone.SignIn;
 import com.google.app.splitwise_clone.R;
+import com.google.app.splitwise_clone.SummaryActivity;
 import com.google.app.splitwise_clone.model.Balance;
 import com.google.app.splitwise_clone.model.Group;
 import com.google.app.splitwise_clone.model.SingleBalance;
@@ -106,7 +106,7 @@ public class BalanceWidgetProvider extends AppWidgetProvider {
 
 //        views.setImageViewResource(R.id.widget_ingredient_name, R.drawable.launcher_icon);
         // Construct an Intent object includes web adresss.
-        Intent intent = new Intent(context, FriendsList.class);//TODO show the correct recipe's step activity
+        Intent intent = new Intent(context, SummaryActivity.class);//TODO show the correct recipe's step activity
 
 //        intent.putExtra(SignIn.RECIPE_SELECTED, mRecipe);
 

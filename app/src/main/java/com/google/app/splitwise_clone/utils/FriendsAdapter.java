@@ -94,22 +94,22 @@ public class FriendsAdapter extends RecyclerView.Adapter<FriendsAdapter.FriendsV
         holder.bind(position);
 
     // call Animation function
-    setAnimation(holder.itemView, position);
+//    setAnimation(holder.itemView, position);
 }
 
 
     private int lastPosition = -1;
-
-    private void setAnimation(View viewToAnimate, int position) {
-        // If the bound view wasn't previously displayed on screen, it's animated
-        if (position > lastPosition) {
-            ScaleAnimation anim = new ScaleAnimation(0.0f, 1.0f, 0.0f, 1.0f, Animation.RELATIVE_TO_SELF, 0.5f, Animation.RELATIVE_TO_SELF, 0.5f);
-//            anim.setDuration(new Random().nextInt(501));//to make duration random number between [0,501)
-            anim.setDuration(1000);
-            viewToAnimate.startAnimation(anim);
-            lastPosition = position;
-        }
-    }
+//
+//    private void setAnimation(View viewToAnimate, int position) {
+//        // If the bound view wasn't previously displayed on screen, it's animated
+//        if (position > lastPosition) {
+//            ScaleAnimation anim = new ScaleAnimation(0.0f, 1.0f, 0.0f, 1.0f, Animation.RELATIVE_TO_SELF, 0.5f, Animation.RELATIVE_TO_SELF, 0.5f);
+////            anim.setDuration(new Random().nextInt(501));//to make duration random number between [0,501)
+//            anim.setDuration(1000);
+//            viewToAnimate.startAnimation(anim);
+//            lastPosition = position;
+//        }
+//    }
 
     @Override
     public int getItemCount() {

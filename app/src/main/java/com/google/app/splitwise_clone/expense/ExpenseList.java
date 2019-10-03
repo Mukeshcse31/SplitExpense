@@ -2,6 +2,7 @@ package com.google.app.splitwise_clone.expense;
 
 import android.content.DialogInterface;
 import android.content.Intent;
+import android.media.Image;
 import android.os.Bundle;
 import android.text.TextUtils;
 import android.util.Log;
@@ -17,6 +18,8 @@ import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.Toolbar;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
+
+import com.android.volley.toolbox.NetworkImageView;
 import com.bumptech.glide.Glide;
 import com.google.android.gms.tasks.OnFailureListener;
 import com.google.android.gms.tasks.OnSuccessListener;
@@ -62,7 +65,8 @@ public class ExpenseList extends AppCompatActivity implements ExpenseAdapter.OnC
     private CollapsingToolbarLayout collap_toolbar_exp;
     private String group_name;
     private static Menu mMenu;
-    private ImageView groupImage, settleup_image;
+    private ImageView settleup_image;
+    private ImageView groupImage;
     private String userName = "", snackBarMsg = "";
     private TextView user_balance, user_summary, noExpenses_tv, settleup_tv;
     public static String GROUP_NAME = "group_name";

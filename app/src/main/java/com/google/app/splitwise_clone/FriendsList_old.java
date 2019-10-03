@@ -25,7 +25,6 @@ import com.bumptech.glide.Glide;
 import com.google.android.gms.tasks.OnFailureListener;
 import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.android.material.appbar.CollapsingToolbarLayout;
-import com.google.app.splitwise_clone.groups.GroupsList;
 import com.google.app.splitwise_clone.model.Balance;
 import com.google.app.splitwise_clone.model.Group;
 import com.google.app.splitwise_clone.model.SingleBalance;
@@ -214,10 +213,10 @@ public class FriendsList_old extends AppCompatActivity implements FriendsAdapter
 
     private void gotoGroupsList() {
 
-        Intent intent = new Intent(FriendsList_old.this, GroupsList.class);
-        if(userImageByte != null) intent.putExtra(USER_IMAGE, userImageByte);
-        intent.putExtra(BALANCE_SUMMARY, balanceSummaryTxt);
-        startActivity(intent);
+//        Intent intent = new Intent(FriendsList_old.this, GroupsList.class);
+//        if(userImageByte != null) intent.putExtra(USER_IMAGE, userImageByte);
+//        intent.putExtra(BALANCE_SUMMARY, balanceSummaryTxt);
+//        startActivity(intent);
     }
 
     @Override

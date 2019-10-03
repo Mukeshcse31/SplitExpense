@@ -107,6 +107,7 @@
 <string name="you_borrowed">you borrowed</string>
 <string name="paid">செலுத்தப்படுகிறது</string>
     <string name="owes_you">owes you</string>
+    <string name="lent_you">lent you</string>
     <string name="spent_you">spent you</string>
 
     <string name="amount_you_spent">Amount you spent</string>
@@ -183,4 +184,8 @@
 </string-array>
 
 <string name="food">food</string>
+
+    <!--    Other-->
+    <string name="transitioname">profile</string>
+
 </resources>
