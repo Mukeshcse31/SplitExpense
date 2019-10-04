@@ -146,5 +146,7 @@
         <item name="android:layout_marginTop">@dimen/margin_4</item>
         <item name="android:src">@drawable/greater</item>
         <item name="layout_constraintTop_toTopOf">parent</item>
+        <item name="layout_constraintBottom_toBottomOf">parent</item>
+
 </style>
 </resources>

@@ -54,6 +54,11 @@
                 app:layout_collapseMode="pin"
                 />
 
+<!--            <com.google.app.splitwise_clone.utils.DynamicHeightNetworkImageView-->
+<!--                style="@style/NetworkImageViewStyle"-->
+<!--                android:id="@+id/groupImage"-->
+<!--                android:background="@color/photo_placeholder" />-->
+
             <ImageView
                 android:id="@+id/groupImage"
                 android:layout_width="match_parent"

@@ -69,7 +69,7 @@ public class SendNotificationLogic {
                     @Override
                     public void onErrorResponse(VolleyError error) {
 //                        Toast.makeText(SignIn.this, "Request error", Toast.LENGTH_LONG).show();
-                        Log.i(TAG, "onErrorResponse: Didn't work");
+                        Log.i(TAG, "onErrorResponse: Didn't work " + error.getMessage());
                     }
                 }) {
             @Override

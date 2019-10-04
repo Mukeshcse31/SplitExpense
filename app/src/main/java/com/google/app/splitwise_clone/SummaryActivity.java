@@ -21,7 +21,9 @@ import com.bumptech.glide.Glide;
 import com.google.android.gms.tasks.OnFailureListener;
 import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.android.material.appbar.CollapsingToolbarLayout;
+import com.google.android.material.snackbar.Snackbar;
 import com.google.android.material.tabs.TabLayout;
+import com.google.app.splitwise_clone.expense.AddExpense;
 import com.google.app.splitwise_clone.expense.ExpenseList;
 import com.google.app.splitwise_clone.groups.AddGroup;
 import com.google.app.splitwise_clone.model.Group;
@@ -46,7 +48,7 @@ public class SummaryActivity extends AppCompatActivity implements GroupsFragment
     private ImageView profilePicture;
     private CollapsingToolbarLayout toolbar_container;
     private static final int RC_PHOTO_PICKER = 2;
-    private String balanceSummaryTxt, userName = "anonymous";
+    private String balanceSummaryTxt, userName = "anonymous", snackBarMsg;
     private TextView balance_summary_tv;
     private byte[] userImageByte;
     ViewPager viewPager;
@@ -71,9 +73,6 @@ public class SummaryActivity extends AppCompatActivity implements GroupsFragment
 //        getSupportActionBar().setDisplayShowTitleEnabled(true);
 //        getSupportActionBar().setTitle(userName);
 
-        mFirebaseStorage = AppUtils.getDBStorage();
-        mDatabaseReference = AppUtils.getDBReference();
-
         profilePicture = findViewById(R.id.profilePicture);
         balance_summary_tv = findViewById(R.id.balance_summary_tv);
 
@@ -90,6 +89,11 @@ public class SummaryActivity extends AppCompatActivity implements GroupsFragment
         tabLayout = (TabLayout) findViewById(R.id.sliding_tabs);
         tabLayout.setupWithViewPager(viewPager);
 
+        Intent intent = getIntent();
+        if (intent.hasExtra(AddFriend.FRIEND_ADDED)) {
+            snackBarMsg = intent.getStringExtra(AddFriend.FRIEND_ADDED);
+        }
+
         profilePicture.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -97,28 +101,11 @@ public class SummaryActivity extends AppCompatActivity implements GroupsFragment
                 Intent intent = new Intent(Intent.ACTION_GET_CONTENT);
                 intent.setType("image/jpeg");
                 intent.putExtra(Intent.EXTRA_LOCAL_ONLY, true);
-                startActivityForResult(Intent.createChooser(intent, "Complete action using"), RC_PHOTO_PICKER);
+                startActivityForResult(Intent.createChooser(intent, getString(R.string.intent_image_title)), RC_PHOTO_PICKER);
             }
         });
-        loadUserImage();
-
-
+        AppUtils.showSnackBar(this, findViewById(android.R.id.content), snackBarMsg);
     }
-
-//    private void setTransition() {
-//        /* Set the ExitTransition, as well as the ExitSharedElementCallback */
-//        getWindow().setExitTransition(TransitionInflater.from(this).inflateTransition(R.transition.transition_grid_exit));
-//        setExitSharedElementCallback(new SharedElementCallback() {
-//            @Override
-//            public void onMapSharedElements(List<String> names, Map<String, View> sharedElements) {
-//                RecyclerView.ViewHolder viewHolder = mRecyclerView.findViewHolderForAdapterPosition(id);
-//                if (viewHolder == null) {
-//                    return;
-//                }
-//                sharedElements.put(names.get(0), viewHolder.itemView.findViewById(R.id.groupImage));
-//            }
-//        });
-//    }
 
     @Override
     public void gotoClickedGroup(int index, String name, View ivProfile) {
@@ -323,10 +310,19 @@ public class SummaryActivity extends AppCompatActivity implements GroupsFragment
     @Override
     public void onResume(){
         super.onResume();
-
+        mFirebaseStorage = AppUtils.getDBStorage();
+        mDatabaseReference = AppUtils.getDBReference();
+        loadUserImage();
         Log.i(TAG, "Activity on start");
 
     }
+
+    @Override
+    public void onPause(){
+        super.onPause();
+        AppUtils.closeDBReference();
+    }
+
 
     @Override
     public void onBackPressed(){

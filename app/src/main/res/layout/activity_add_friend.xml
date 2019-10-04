@@ -27,6 +27,7 @@
         android:layout_marginTop="?android:actionBarSize"
         android:id="@+id/add_friend_Name"
         android:textColorHint="@color/white"
+        android:nextFocusDown="@id/add_friend_email"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent"
         tools:layout_editor_absoluteX="10dp">
@@ -52,6 +53,7 @@
         android:layout_height="wrap_content"
         android:id="@+id/add_friend_email"
         android:layout_marginTop="@dimen/layout_marginTop_10"
+
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/add_friend_Name"
         android:textColorHint="@color/white"

@@ -18,8 +18,6 @@ import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.Toolbar;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
-
-import com.android.volley.toolbox.NetworkImageView;
 import com.bumptech.glide.Glide;
 import com.google.android.gms.tasks.OnFailureListener;
 import com.google.android.gms.tasks.OnSuccessListener;
@@ -31,7 +29,6 @@ import com.google.android.material.snackbar.Snackbar;
 import com.google.app.splitwise_clone.SignIn;
 import com.google.app.splitwise_clone.R;
 import com.google.app.splitwise_clone.SummaryActivity;
-import com.google.app.splitwise_clone.groups.AddGroup;
 import com.google.app.splitwise_clone.model.Expense;
 import com.google.app.splitwise_clone.model.SingleBalance;
 import com.google.app.splitwise_clone.utils.AppUtils;
@@ -81,12 +78,10 @@ public class ExpenseList extends AppCompatActivity implements ExpenseAdapter.OnC
         collapsingToolbarLayout = (CollapsingToolbarLayout) findViewById(R.id.collap_toolbar_exp);
         collapsingToolbarLayout.setTitleEnabled(false);
 
-
+invalidateOptionsMenu();
         my_toolbar = (Toolbar) findViewById(R.id.my_toolbar);
         my_toolbar.setTitle("");//don't know why, setting the title here only works to update later
         setSupportActionBar(my_toolbar);
-//        getSupportActionBar().setDisplayShowTitleEnabled(true);
-
 
         //this line shows back button
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
@@ -94,7 +89,6 @@ public class ExpenseList extends AppCompatActivity implements ExpenseAdapter.OnC
         app_bar_layout_exp = findViewById(R.id.app_bar_layout_exp);
         collap_toolbar_exp = findViewById(R.id.collap_toolbar_exp);
 
-        mDatabaseReference = AppUtils.getDBReference();
         settleup_tv = findViewById(R.id.settleup_tv);
         noExpenses_tv = findViewById(R.id.noExpenses_tv);
         settleup_image = findViewById(R.id.settleup_image);
@@ -140,65 +134,7 @@ public class ExpenseList extends AppCompatActivity implements ExpenseAdapter.OnC
         });
         loadGroupImage(group_name);
 
-        AppBarLayout mAppBarLayout = (AppBarLayout) findViewById(R.id.app_bar_layout_exp);
-        mAppBarLayout.addOnOffsetChangedListener(new AppBarLayout.OnOffsetChangedListener() {
-            boolean isShow = false;
-            int scrollRange = -1;
-
-            //            https://www.journaldev.com/13927/android-collapsingtoolbarlayout-example
-            @Override
-            public void onOffsetChanged(AppBarLayout appBarLayout, int verticalOffset) {
-                if (scrollRange == -1) {
-                    scrollRange = appBarLayout.getTotalScrollRange();
-                }
-                if (scrollRange + verticalOffset == 0) {
-                    isShow = true;
-                    Log.i(TAG, "collapsed");
-                } else if (isShow) {
-                    isShow = false;
-                    Log.i(TAG, "expanded");
-                }
-            }
-        });
-
-        mDatabaseReference.child("groups/" + group_name + "/expenses").addChildEventListener(new ChildEventListener() {
-            @Override
-            public void onChildAdded(@NonNull DataSnapshot dataSnapshot, @Nullable String s) {
-//                Log.i(TAG, "child added");
-                populateExpenseList();
-            }
-
-            @Override
-            public void onChildChanged(@NonNull DataSnapshot dataSnapshot, @Nullable String s) {
-//                Log.i(TAG, "child Changed");
-                populateExpenseList();
-            }
-
-            @Override
-            public void onChildRemoved(@NonNull DataSnapshot dataSnapshot) {
-//                Log.i(TAG, "child removed");
-                populateExpenseList();
-            }
-
-            @Override
-            public void onChildMoved(@NonNull DataSnapshot dataSnapshot, @Nullable String s) {
-
-            }
-
-            @Override
-            public void onCancelled(@NonNull DatabaseError databaseError) {
-
-            }
-        });
-        showSnackBar(snackBarMsg);
-    }
-
-
-    public void showSnackBar(String message) {
-//        https://www.techotopia.com/index.php/Working_with_the_Floating_Action_Button_and_Snackbar
-        if(!TextUtils.isEmpty(message))
-        Snackbar.make(mFloatingActionButton, message, Snackbar.LENGTH_LONG)
-            .setAction(getString(R.string.close), null).show();
+    AppUtils.showSnackBar(this, mFloatingActionButton, snackBarMsg);
     }
 
     //populate all the archived expenses
@@ -303,6 +239,7 @@ public class ExpenseList extends AppCompatActivity implements ExpenseAdapter.OnC
                         expenseSnapshotMap.put(i.getKey(), i.getValue(Expense.class));
                     }
                 }
+
                 //TODO display either no expense or settled up
                 if (expenseSnapshotMap.size() == 0) {
                     expenses_rv.setVisibility(View.GONE);
@@ -313,7 +250,7 @@ public class ExpenseList extends AppCompatActivity implements ExpenseAdapter.OnC
                         @Override
                         public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
                             if (dataSnapshot.exists()) {
-
+                                expenses_rv.setVisibility(View.INVISIBLE);
                                 settleup_tv.setVisibility(View.VISIBLE);
                                 settleup_image.setVisibility(View.VISIBLE);
 
@@ -339,7 +276,7 @@ public class ExpenseList extends AppCompatActivity implements ExpenseAdapter.OnC
                     mExpenseAdapter = new ExpenseAdapter(expenseSnapshotMap, ExpenseList.this, true);
                     expenses_rv.setAdapter(mExpenseAdapter);
                     AppUtils.showOption(mMenu, new int[]{R.id.orderbyCategory, R.id.settle_up, R.id.export, R.id.archivedExp});
-AppUtils.hideOption(mMenu, new int[]{R.id.orderbyDate});
+                    AppUtils.hideOption(mMenu, new int[]{R.id.orderbyDate});
                 }
             }
 
@@ -469,8 +406,17 @@ AppUtils.hideOption(mMenu, new int[]{R.id.orderbyDate});
     @Override
     public void onResume() {
         super.onResume();
-        populateAppBar();
+
+        mDatabaseReference = AppUtils.getDBReference();
         populateExpenseList();
+        populateAppBar();
+        startListener();
+    }
+
+    @Override
+    public void onPause(){
+        super.onPause();
+        AppUtils.closeDBReference();
     }
 
     private void populateAppBar() {
@@ -618,5 +564,38 @@ AppUtils.hideOption(mMenu, new int[]{R.id.orderbyDate});
             }
         });
         builder.show();
+    }
+
+    private void startListener(){
+
+        mDatabaseReference.child("groups/" + group_name + "/expenses").addChildEventListener(new ChildEventListener() {
+            @Override
+            public void onChildAdded(@NonNull DataSnapshot dataSnapshot, @Nullable String s) {
+//                Log.i(TAG, "child added");
+                populateExpenseList();
+            }
+
+            @Override
+            public void onChildChanged(@NonNull DataSnapshot dataSnapshot, @Nullable String s) {
+//                Log.i(TAG, "child Changed");
+                populateExpenseList();
+            }
+
+            @Override
+            public void onChildRemoved(@NonNull DataSnapshot dataSnapshot) {
+//                Log.i(TAG, "child removed");
+                populateExpenseList();
+            }
+
+            @Override
+            public void onChildMoved(@NonNull DataSnapshot dataSnapshot, @Nullable String s) {
+
+            }
+
+            @Override
+            public void onCancelled(@NonNull DatabaseError databaseError) {
+
+            }
+        });
     }
 }

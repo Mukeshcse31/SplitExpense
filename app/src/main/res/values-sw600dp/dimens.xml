@@ -21,7 +21,7 @@
     <dimen name="tv_group_name">24sp</dimen>
     <dimen name="tv_member_status">20sp</dimen>
     <dimen name="layout_margin_grp">8dp</dimen>
-    <dimen name="group_member_label">24dp</dimen>
+    <dimen name="group_member_label">24sp</dimen>
     <dimen name="group_image_width">72dp</dimen>
     <dimen name="group_image_height">52dp</dimen>
     <dimen name="grpname_marginStart">160dp</dimen>
@@ -31,6 +31,7 @@
     <dimen name="groupmbr_image_width">52dp</dimen>
     <dimen name="groupmbr_image_height">52dp</dimen>
     <dimen name="groupname_margin_start">240dp</dimen>
+    <dimen name="tv_members_padding_top">16dp</dimen>
 
     <!--    Add Expense-->
     <dimen name="label_exp">32sp</dimen>

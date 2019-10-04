@@ -8,7 +8,9 @@ import android.net.NetworkInfo;
 import android.text.TextUtils;
 import android.view.Menu;
 import android.view.MenuItem;
+import android.view.View;
 
+import com.google.android.material.snackbar.Snackbar;
 import com.google.app.splitwise_clone.SignIn;
 import com.google.app.splitwise_clone.R;
 import com.google.app.splitwise_clone.model.Expense;
@@ -107,6 +109,11 @@ public class AppUtils {
         return mDatabaseReference;
     }
 
+    public static void closeDBReference() {
+
+        mDatabaseReference = null;
+    }
+
     public static FirebaseStorage getDBStorage() {
 
         if (firebaseStorage == null)
@@ -177,6 +184,7 @@ public class AppUtils {
 
     public static void showOption(Menu mMenu, int[] ids) {
 
+        if (mMenu == null) return;
         for (int id : ids) {
             MenuItem item = mMenu.findItem(id);
             item.setVisible(true);
@@ -185,9 +193,36 @@ public class AppUtils {
 
 
     public static void hideOption(Menu mMenu, int[] ids) {
+
+        if (mMenu == null) return;
         for (int id : ids) {
             MenuItem item = mMenu.findItem(id);
             item.setVisible(false);
         }
     }
+
+    public static void showSnackBar(Context context, View view, String message){
+        //https://stackoverflow.com/questions/30729312/how-to-dismiss-a-snackbar-using-its-own-action-button
+
+        if(message == null || TextUtils.isEmpty(message)) return;
+
+        final Snackbar snackBar = Snackbar.make(view,
+                message, Snackbar.LENGTH_LONG);
+
+        snackBar.setAction(context.getString(R.string.close), new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                // Call your action method here
+                snackBar.dismiss();
+            }
+        });
+        snackBar.show();
+    }
+
+    //        https://stackoverflow.com/questions/6094315/single-textview-with-multiple-colored-text
+    public static String getColoredSpanned(String text, String color) {
+        String input = "<font color=" + color + ">" + text + "</font>";
+        return input;
+    }
+
 }

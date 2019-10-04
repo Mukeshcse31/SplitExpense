@@ -16,6 +16,7 @@
 package com.google.app.splitwise_clone.utils;
 
 import android.content.Context;
+import android.graphics.Movie;
 import android.text.Html;
 import android.util.Log;
 import android.view.LayoutInflater;
@@ -39,6 +40,7 @@ import com.google.firebase.storage.StorageReference;
 
 import java.util.HashMap;
 import java.util.Iterator;
+import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
@@ -62,6 +64,7 @@ public class FriendsAdapter extends RecyclerView.Adapter<FriendsAdapter.FriendsV
         mFirebaseStorage = AppUtils.getDBStorage();
         mPhotosStorageReference = mFirebaseStorage.getReference();
         viewHolderCount = 0;
+
     }
 
 
@@ -89,27 +92,8 @@ public class FriendsAdapter extends RecyclerView.Adapter<FriendsAdapter.FriendsV
     @Override
     public void onBindViewHolder(FriendsViewHolder holder, int position) {
         Log.d(TAG, "#" + position);
-
-//        holder.setIsRecyclable(false);
         holder.bind(position);
-
-    // call Animation function
-//    setAnimation(holder.itemView, position);
 }
-
-
-    private int lastPosition = -1;
-//
-//    private void setAnimation(View viewToAnimate, int position) {
-//        // If the bound view wasn't previously displayed on screen, it's animated
-//        if (position > lastPosition) {
-//            ScaleAnimation anim = new ScaleAnimation(0.0f, 1.0f, 0.0f, 1.0f, Animation.RELATIVE_TO_SELF, 0.5f, Animation.RELATIVE_TO_SELF, 0.5f);
-////            anim.setDuration(new Random().nextInt(501));//to make duration random number between [0,501)
-//            anim.setDuration(1000);
-//            viewToAnimate.startAnimation(anim);
-//            lastPosition = position;
-//        }
-//    }
 
     @Override
     public int getItemCount() {
@@ -160,10 +144,12 @@ public class FriendsAdapter extends RecyclerView.Adapter<FriendsAdapter.FriendsV
                 Map.Entry pair2 = (Map.Entry) it2.next();
                 String groupName = (String) pair2.getKey();
                 Float amount = (float) pair2.getValue();
-                String stat1 = getColoredSpanned("you owe $" + Math.abs(amount), "#ff7400");
-                if (amount > 0)
-                    stat1 = getColoredSpanned("owes you $" + amount, "#27AE60");
-//                String name = getColoredSpanned("Hiren", "#800000");
+                String status = String.format("%s $%.2f", mContext.getString(R.string.you_owe), Math.abs(amount));
+                String stat1 = AppUtils.getColoredSpanned(status, mContext.getString(R.string.orange));
+                if (amount > 0){
+                    status = String.format("%s $%.2f", mContext.getString(R.string.owes_you), Math.abs(amount));
+                    stat1 = AppUtils.getColoredSpanned(status, mContext.getString(R.string.green));
+                }
                 stat += stat1 + " from group " + groupName + "<br>";
 
             }
@@ -171,12 +157,6 @@ public class FriendsAdapter extends RecyclerView.Adapter<FriendsAdapter.FriendsV
             tv_friend_name.setText(friendName);
             tv_status.setText(HtmlCompat.fromHtml(stat, HtmlCompat.FROM_HTML_MODE_LEGACY), TextView.BufferType.SPANNABLE);
 
-        }
-
-        //        https://stackoverflow.com/questions/6094315/single-textview-with-multiple-colored-text
-        private String getColoredSpanned(String text, String color) {
-            String input = "<font color=" + color + ">" + text + "</font>";
-            return input;
         }
 
         private void loadImage(String friendName) {
@@ -200,5 +180,12 @@ public class FriendsAdapter extends RecyclerView.Adapter<FriendsAdapter.FriendsV
                 }
             });
         }
+    }
+
+
+    public void setFriendsData(Map<String, Map<String, Float>> mBalance) {
+        expenseMatrix = null;
+        this.expenseMatrix = mBalance;
+        this.notifyDataSetChanged();
     }
 }

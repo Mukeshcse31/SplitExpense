@@ -39,6 +39,7 @@
     <string name="add_friend_name">NAME</string>
     <string name="add_friend_email">EMAIL</string>
     <string name="email_exists">Email Already Exists</string>
+    <string name="friendname_exists">There is already a member with this name</string>
     <string name="friend_added">friend added</string>
     <string name="close">CLOSE</string>
     <string name="friend_image">image of friend</string>
@@ -108,6 +109,7 @@
 <string name="owes_you">owes you</string>
     <string name="lent_you">lent you</string>
     <string name="spent_you">spent you</string>
+    <string name="you_owe">you owe</string>
     <string name="amount_you_spent">Amount you spent</string>
     <string name="amount_others_spent">Amount others spent</string>
 
@@ -185,7 +187,7 @@
 
 <!--    Other-->
 <string name="transitioname">profile</string>
-
-
-
+<string name="intent_image_title">Select a File to Upload</string>
+<string name="orange">#ff7400</string>
+<string name="green">#27AE60</string>
 </resources>

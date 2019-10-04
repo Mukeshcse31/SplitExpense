@@ -26,6 +26,7 @@ import android.view.animation.ScaleAnimation;
 import android.widget.ImageView;
 import android.widget.TextView;
 import androidx.annotation.NonNull;
+import androidx.core.text.HtmlCompat;
 import androidx.recyclerview.widget.RecyclerView;
 import com.bumptech.glide.Glide;
 import com.google.android.gms.tasks.OnFailureListener;
@@ -161,15 +162,20 @@ public class GroupsAdapter extends RecyclerView.Adapter<GroupsAdapter.ReviewView
                 String friendName = (String) pair.getKey();
                 float amount = Float.parseFloat(String.valueOf(pair.getValue()));
                 balanceAmount += amount;
-                String status = mContext.getString(R.string.lent_you);
-                if(amount > 0)
-                    status = mContext.getString(R.string.owes_you);
+                String status = String.format("%s %s $%.2f%s", friendName, mContext.getString(R.string.lent_you), Math.abs(amount),"<br>");
+                String stat1 = AppUtils.getColoredSpanned(status, mContext.getString(R.string.orange));
+                if (amount > 0){
+                    status = String.format("%s %s $%.2f%s", friendName, mContext.getString(R.string.owes_you), Math.abs(amount), "<br>");
+                    stat1 = AppUtils.getColoredSpanned(status, mContext.getString(R.string.green));
+
+                }
 
                 if (!TextUtils.equals(userName, friendName))
-                    member_status += String.format("%s %s $%.2f\n", friendName, status, Math.abs(amount));
+                    member_status += stat1;
 
             }
-            if(!TextUtils.isEmpty(member_status)) tv_member_status.setText(member_status);
+            if(!TextUtils.isEmpty(member_status))
+                tv_member_status.setText(HtmlCompat.fromHtml(member_status, HtmlCompat.FROM_HTML_MODE_LEGACY), TextView.BufferType.SPANNABLE);
 
             //aggregate status
             if (balanceAmount == 0) {

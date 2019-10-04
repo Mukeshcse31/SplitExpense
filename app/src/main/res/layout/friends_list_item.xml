@@ -25,7 +25,6 @@
         android:layout_width="@dimen/group_image_width"
         android:layout_height="@dimen/group_image_height"
         android:layout_gravity="center_vertical|center_horizontal"
-        android:layout_marginTop="@dimen/margin_4"
         android:contentDescription="@string/goto_details"
         android:src="@drawable/person"
         app:layout_constraintBottom_toBottomOf="parent"
@@ -63,7 +62,6 @@
         app:layout_constraintEnd_toStartOf="@+id/guideline_3"
         app:layout_constraintStart_toEndOf="@+id/guideline_2"
         app:layout_constraintTop_toTopOf="parent" />
-
 
     <View
         style="@style/horizontal_line_style"

@@ -18,65 +18,67 @@
     android:background="@color/gray"
     android:layout_height="match_parent">
 
-    <include layout="@layout/toolbar_add_friend_group"></include>
+    <include layout="@layout/toolbar_add_friend_group"/>
 
     <androidx.constraintlayout.widget.Guideline
-    android:layout_width="1dp"
-    android:layout_height="match_parent"
-    android:orientation="vertical"
-    android:id="@+id/guildeline_1"
-    app:layout_constraintGuide_percent="0.10"/>
+        android:layout_width="1dp"
+        android:layout_height="match_parent"
+        android:orientation="vertical"
+        android:id="@+id/guildeline_1"
+        app:layout_constraintGuide_percent="0.10"/>
 
-    <ImageView
-        android:id="@+id/photoPickerButton"
-        app:layout_constraintStart_toEndOf="@+id/guildeline_1"
-        app:layout_constraintTop_toTopOf="parent"
-        android:layout_marginTop="?android:actionBarSize"
-        android:layout_width="@dimen/camera_image_width"
-        android:layout_height="80dp"
-        app:srcCompat="@drawable/camera"
-        android:contentDescription="@string/add_group_image" />
+        <ImageView
+            android:id="@+id/photoPickerButton"
+            app:layout_constraintStart_toEndOf="@+id/guildeline_1"
+            app:layout_constraintTop_toTopOf="parent"
+            android:layout_marginTop="?android:actionBarSize"
+            android:paddingTop="8dp"
+            android:layout_width="@dimen/camera_image_width"
+            android:layout_height="80dp"
+            app:srcCompat="@drawable/camera"
+            android:contentDescription="@string/add_group_image" />
 
-    <com.google.android.material.textfield.TextInputLayout
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_marginStart="120dp"
-        android:layout_marginTop="?android:actionBarSize"
-        android:layout_marginEnd="8dp"
-        android:textColorHint="@color/white"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toEndOf="@+id/photoPickerButton"
-        app:layout_constraintTop_toTopOf="parent">
-
-        <AutoCompleteTextView
-            android:id="@+id/group_name"
-            android:layout_width="match_parent"
+        <com.google.android.material.textfield.TextInputLayout
+            android:layout_width="400dp"
             android:layout_height="wrap_content"
-            android:hint="@string/add_group_name"
-            android:imeOptions="actionNext"
-            android:inputType="textNoSuggestions"
-            android:maxLines="@integer/signUp_lines"
-            android:textColor="@color/white"
+            android:layout_marginTop="?android:actionBarSize"
+            android:layout_marginEnd="8dp"
             android:textColorHint="@color/white"
-            android:textIsSelectable="false"
-            android:textSize="@dimen/signUp_textSize"
-            android:textStyle="bold" />
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toEndOf="@+id/photoPickerButton"
+            app:layout_constraintTop_toTopOf="parent">
 
-    </com.google.android.material.textfield.TextInputLayout>
+            <AutoCompleteTextView
+                android:id="@+id/group_name"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:hint="@string/add_group_name"
+                android:imeOptions="actionNext"
+                android:inputType="textNoSuggestions"
+                android:maxLines="@integer/signUp_lines"
+                android:textColor="@color/white"
+                android:textColorHint="@color/white"
+                android:tooltipText="@string/group_name"
+                android:textIsSelectable="false"
+                android:textSize="@dimen/signUp_textSize"
+                android:textStyle="bold" />
+
+        </com.google.android.material.textfield.TextInputLayout>
 
     <TextView
         android:id="@+id/tv_members"
-        android:layout_width="411dp"
+        android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:paddingStart="@dimen/padding_small"
-        android:paddingTop="@dimen/padding_small"
+        android:paddingTop="@dimen/tv_members_padding_top"
         android:paddingEnd="@dimen/padding_small"
         android:text="@string/members"
         android:textSize="@dimen/group_member_label"
         android:textStyle="bold"
-        app:layout_constraintBottom_toTopOf="@+id/members_rv"
         app:layout_constraintStart_toEndOf="@+id/guildeline_1"
+        app:layout_constraintBottom_toTopOf="@+id/members_rv"
         app:layout_constraintTop_toBottomOf="@id/photoPickerButton" />
+
 
     <androidx.recyclerview.widget.RecyclerView
         android:id="@+id/members_rv"
@@ -95,8 +97,8 @@
         android:text="@string/non_members"
         android:textSize="@dimen/group_member_label"
         android:textStyle="bold"
-        app:layout_constraintBottom_toTopOf="@+id/nonmembers_rv"
         app:layout_constraintStart_toEndOf="@+id/guildeline_1"
+        app:layout_constraintBottom_toTopOf="@+id/nonmembers_rv"
         app:layout_constraintTop_toBottomOf="@id/members_rv" />
 
     <androidx.recyclerview.widget.RecyclerView
@@ -109,3 +111,4 @@
         app:layout_constraintTop_toBottomOf="@id/tv_nonmembers" />
 
 </androidx.constraintlayout.widget.ConstraintLayout>
+

@@ -12,6 +12,7 @@ import android.widget.ImageView;
 import android.widget.TextView;
 
 import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
@@ -23,6 +24,7 @@ import com.google.app.splitwise_clone.model.SingleBalance;
 import com.google.app.splitwise_clone.utils.AppUtils;
 import com.google.app.splitwise_clone.utils.FirebaseUtils;
 import com.google.app.splitwise_clone.utils.FriendsAdapter;
+import com.google.firebase.database.ChildEventListener;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
@@ -180,6 +182,38 @@ mOnFriendClickListener.updateUserSummary(balanceSummaryTxt);
         mOnFriendClickListener.gotoGroupsList();
     }
 
+    private void startFriendsListener(){
+
+        mDatabaseReference.child("users/" + userName + "/balances/groups").addChildEventListener(new ChildEventListener() {
+            @Override
+            public void onChildAdded(@NonNull DataSnapshot dataSnapshot, @Nullable String s) {
+//                Log.i(TAG, "child added");
+                updateUsersAmount();
+            }
+
+            @Override
+            public void onChildChanged(@NonNull DataSnapshot dataSnapshot, @Nullable String s) {
+//                Log.i(TAG, "child Changed");
+                updateUsersAmount();
+            }
+
+            @Override
+            public void onChildRemoved(@NonNull DataSnapshot dataSnapshot) {
+//                Log.i(TAG, "child removed");
+                updateUsersAmount();
+            }
+
+            @Override
+            public void onChildMoved(@NonNull DataSnapshot dataSnapshot, @Nullable String s) {
+
+            }
+
+            @Override
+            public void onCancelled(@NonNull DatabaseError databaseError) {
+
+            }
+        });
+    }
     @Override
     public void onCreateOptionsMenu(Menu menu, MenuInflater inflater) {
         super.onCreateOptionsMenu(menu, inflater);
@@ -198,5 +232,14 @@ mOnFriendClickListener.updateUserSummary(balanceSummaryTxt);
     @Override
     public void onResume(){
         super.onResume();
+
+        startFriendsListener();
+    }
+
+    @Override
+    public void onPause(){
+        super.onPause();
+
+AppUtils.closeDBReference();
     }
 }
