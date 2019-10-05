@@ -17,14 +17,12 @@ import android.widget.Button;
 import android.widget.ListView;
 import android.widget.Spinner;
 import android.widget.Toast;
-
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.Toolbar;
 import androidx.fragment.app.DialogFragment;
-
 import com.google.app.splitwise_clone.R;
 import com.google.app.splitwise_clone.model.Expense;
 import com.google.app.splitwise_clone.model.Group;
@@ -39,8 +37,6 @@ import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.Query;
 import com.google.firebase.database.ValueEventListener;
-
-import java.security.PublicKey;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.HashMap;
@@ -281,7 +277,7 @@ public static String EXPENSE_DELETED = "EXPENSE_DELETED";
                     mDatabaseReference.child("groups/" + group_name + "/expenses/" + expenseId).setValue(expense, new DatabaseReference.CompletionListener() {
                         @Override
                         public void onComplete(@Nullable DatabaseError databaseError, @NonNull DatabaseReference databaseReference) {
-                            updateGroup(group_name);
+                            updateGroup(group_name, participants);
                             String action = getString(R.string.expense_edited);
                             String notificationMessage = String.format("%s %s for %s to %.2f in the group %s", userName, action, description, amountNot, group_name);
                             sendNotification(action, notificationMessage, notificationRecipients);
@@ -293,7 +289,7 @@ public static String EXPENSE_DELETED = "EXPENSE_DELETED";
                     mDatabaseReference.child("groups/" + group_name + "/expenses").push().setValue(expense, new DatabaseReference.CompletionListener() {
                         @Override
                         public void onComplete(DatabaseError databaseError, DatabaseReference dataReference) {
-                            updateGroup(group_name);
+                            updateGroup(group_name, participants);
                             String action = getString(R.string.expense_added);
                             String notificationMessage = String.format("%s added %.2f for %s in the group %s", userName, amountNot, description, group_name);
                             sendNotification(action, notificationMessage, notificationRecipients);
@@ -314,7 +310,9 @@ public static String EXPENSE_DELETED = "EXPENSE_DELETED";
                             @Override
                             public void onClick(DialogInterface arg0, int arg1) {
                                 mDatabaseReference.child("groups/" + group_name + "/expenses/" + expenseId).removeValue();
-                                updateGroup(group_name);
+                                updateGroup(group_name, participants);// TODO send all the group members as list
+                                //get the participants from the previous activity
+                                // so that only those users will be updated
 
                                 //Send Notification
                                 String action = getString(R.string.expense_deleted);
@@ -369,7 +367,7 @@ public static String EXPENSE_DELETED = "EXPENSE_DELETED";
     }
 
     //update a single specified group
-    public void updateGroup(final String groupName) {
+    public void updateGroup(final String groupName, final List<String> participants ) {
 
         amountSpentByMember = new HashMap<>();
         amountDueByMember = new HashMap<>();
@@ -462,10 +460,17 @@ public static String EXPENSE_DELETED = "EXPENSE_DELETED";
                     mDatabaseReference.child("groups/" + groupName + "/members/").setValue(members, new DatabaseReference.CompletionListener() {
                         @Override
                         public void onComplete(@Nullable DatabaseError databaseError, @NonNull DatabaseReference databaseReference) {
+                            mDatabaseReference.child("groups/" + groupName + "/totalAmount/").setValue(totalGroupExpense, new DatabaseReference.CompletionListener() {
+                                @Override
+                                public void onComplete(@Nullable DatabaseError databaseError, @NonNull DatabaseReference databaseReference) {
+                                    for(String participant : participants)
+                                    FirebaseUtils.updateUsersAmount(participant);
+                                }
+                            });
 //                            finish();
                         }
                     });
-                    mDatabaseReference.child("groups/" + groupName + "/totalAmount/").setValue(totalGroupExpense);
+
                 }
             }
 

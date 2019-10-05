@@ -4,18 +4,12 @@ import android.content.Context;
 import android.content.SharedPreferences;
 import android.text.TextUtils;
 import android.util.Log;
-import android.widget.Toast;
-
 import androidx.annotation.NonNull;
-
 import com.android.volley.AuthFailureError;
 import com.android.volley.Request;
 import com.android.volley.Response;
 import com.android.volley.VolleyError;
-import com.android.volley.toolbox.JsonObjectRequest;
 import com.android.volley.toolbox.StringRequest;
-import com.google.android.gms.tasks.OnCompleteListener;
-import com.google.android.gms.tasks.Task;
 import com.google.app.splitwise_clone.R;
 import com.google.app.splitwise_clone.SignIn;
 import com.google.app.splitwise_clone.model.Balance;
@@ -27,27 +21,19 @@ import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
-import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.Query;
 import com.google.firebase.database.ValueEventListener;
 import com.google.firebase.iid.FirebaseInstanceId;
-import com.google.firebase.iid.InstanceIdResult;
 import com.google.firebase.messaging.FirebaseMessaging;
-
-import org.json.JSONObject;
-import org.w3c.dom.Text;
-
 import java.io.IOException;
-import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Iterator;
-import java.util.List;
 import java.util.Map;
 
 public class FirebaseUtils {
 
     private static String userName;
-    private static String TAG = "utils";
+    private final static String TAG = "utils";
 
     public static String getUserName() {
 
@@ -64,27 +50,11 @@ public class FirebaseUtils {
 
         //unsubscribe from notification
             FirebaseMessaging.getInstance().unsubscribeFromTopic(userName);
-            FirebaseInstanceId.getInstance().getInstanceId()
-                    .addOnCompleteListener(new OnCompleteListener<InstanceIdResult>() {
-                        @Override
-                        public void onComplete(@NonNull Task<InstanceIdResult> task) {
-                            if (!task.isSuccessful()) {
-                                Log.w(TAG, "getInstanceId failed", task.getException());
-                                return;
-                            }
-
-                            // Get new Instance ID token
-                            String token = task.getResult().getToken();
-                            try {
-                                FirebaseInstanceId.getInstance().deleteInstanceId();
-                            } catch (IOException e) {
-                                e.printStackTrace();
-                            }
-
-//                            unSubscribe(context, token);
-                            Log.d("token", token);
-                        }
-                    });
+        try {
+            FirebaseInstanceId.getInstance().deleteInstanceId();
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
 
         //sign out
         FirebaseAuth mAuth = FirebaseAuth.getInstance();
@@ -129,4 +99,65 @@ public class FirebaseUtils {
 
         MySingleton.getInstance(mContext).addToRequestQueue(dr);
 }
+
+
+    public static void updateUsersAmount(final String member) {
+
+        //update the participant's total amount
+        final DatabaseReference mDatabaseReference = AppUtils.getDBReference();
+        Query query = mDatabaseReference.child("groups/").orderByChild("members/" + member + "/name").equalTo(member);
+
+        query.addListenerForSingleValueEvent(new ValueEventListener() {
+            @Override
+            public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+
+                if (dataSnapshot.exists()) {
+                    float balanceAmount = 0f;
+                    float amountSpentByUser = 0.0f;
+                    Balance balance = new Balance();
+                    Map<String, Map<String, Float>> amountGroup = new HashMap<>();
+
+                    //loop through the groups
+                    for (DataSnapshot i : dataSnapshot.getChildren()) {
+                        Group group = i.getValue(Group.class);
+                        String groupName = i.getKey();
+                        Map<String, SingleBalance> sb = group.getMembers();
+                        SingleBalance sb1 = sb.get(member);
+                        Float amountSpentForGroup = sb1.getAmount();
+                        Map<String, Float> dues = sb1.getSplitDues();
+
+                        Iterator it = dues.entrySet().iterator();
+                        while (it.hasNext()) {
+                            Map.Entry pair = (Map.Entry) it.next();
+                            String expenseParticipant = (String) pair.getKey();
+                            Float amount = (Float) pair.getValue();
+
+                            //update user Balance
+                            balanceAmount += amount;
+
+                            //group-wise balance
+                            Map<String, Float> eachGroup = new HashMap<>();
+                            eachGroup.put(groupName, amount);
+                            if (amountGroup.containsKey(expenseParticipant)) {
+                                amountGroup.get(expenseParticipant).put(groupName, amount);
+                            } else
+                                amountGroup.put(expenseParticipant, eachGroup);
+
+                        }
+                        amountSpentByUser += amountSpentForGroup;
+                    }
+                    balance.setAmount(amountSpentByUser);
+                    amountGroup.remove(member);
+                    balance.setGroups(amountGroup);
+                    mDatabaseReference.child("users/" + member + "/balances/").setValue(balance);
+                    Log.i(TAG, "total calculation");
+                }
+            }
+
+            @Override
+            public void onCancelled(@NonNull DatabaseError databaseError) {
+            }
+        });
+    }
+
 }

@@ -50,6 +50,7 @@ public class ExpenseList extends AppCompatActivity implements ExpenseAdapter.OnC
 
     private DatabaseReference mDatabaseReference;
     private FirebaseStorage mFirebaseStorage;
+    ChildEventListener firebaseListener;
     private StorageReference mPhotosStorageReference;
     private String TAG = ExpenseList.class.getSimpleName();
     LinkedHashMap<String, Expense> expenseSnapshotMap, categorizedExpenseMap, archivedExpenseSnapshotMap;
@@ -416,7 +417,8 @@ invalidateOptionsMenu();
     @Override
     public void onPause(){
         super.onPause();
-        AppUtils.closeDBReference();
+        removeListener();
+        AppUtils.closeDBReference(mDatabaseReference);
     }
 
     private void populateAppBar() {
@@ -568,7 +570,7 @@ invalidateOptionsMenu();
 
     private void startListener(){
 
-        mDatabaseReference.child("groups/" + group_name + "/expenses").addChildEventListener(new ChildEventListener() {
+        firebaseListener = new ChildEventListener() {
             @Override
             public void onChildAdded(@NonNull DataSnapshot dataSnapshot, @Nullable String s) {
 //                Log.i(TAG, "child added");
@@ -596,6 +598,12 @@ invalidateOptionsMenu();
             public void onCancelled(@NonNull DatabaseError databaseError) {
 
             }
-        });
+        };
+        mDatabaseReference.child("groups/" + group_name + "/expenses").addChildEventListener(firebaseListener);
     }
+
+    private void removeListener() {
+        mDatabaseReference.child("groups/" + group_name + "/expenses").removeEventListener(firebaseListener);
+    }
+
 }

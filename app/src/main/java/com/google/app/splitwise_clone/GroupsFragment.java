@@ -39,8 +39,6 @@ public class GroupsFragment extends Fragment implements GroupsAdapter.OnClickLis
 
     public GroupsFragment() {
         // Required empty public constructor
-        mDatabaseReference = AppUtils.getDBReference();
-        userName = FirebaseUtils.getUserName();
     }
 
     @Override
@@ -95,17 +93,19 @@ private void showSnackBar(){
         snackBarMsg = intent.getStringExtra(AddGroup.ACTION_CANCEL);
     }
 
-    if(!TextUtils.isEmpty(snackBarMsg)) {
-        final Snackbar snackBar = Snackbar.make(getActivity().findViewById(android.R.id.content),snackBarMsg, Snackbar.LENGTH_LONG);
-        snackBar.setAction(getString(R.string.close), new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                // Call your action method here
-                snackBar.dismiss();
-            }
-        });
-        snackBar.show();
-    }
+    AppUtils.showSnackBar(getContext(), getActivity().findViewById(android.R.id.content),snackBarMsg);
+
+//    if(!TextUtils.isEmpty(snackBarMsg)) {
+//        final Snackbar snackBar = Snackbar.make(getActivity().findViewById(android.R.id.content),snackBarMsg, Snackbar.LENGTH_LONG);
+//        snackBar.setAction(getString(R.string.close), new View.OnClickListener() {
+//            @Override
+//            public void onClick(View v) {
+//                // Call your action method here
+//                snackBar.dismiss();
+//            }
+//        });
+//        snackBar.show();
+//    }
 }
     @Override
     public void onDestroyView() {
@@ -169,7 +169,16 @@ private void showSnackBar(){
     @Override
     public void onResume(){
         super.onResume();
+
+        mDatabaseReference = AppUtils.getDBReference();
+        userName = FirebaseUtils.getUserName();
         showSnackBar();
         populateGroupList();
+    }
+
+    @Override
+    public void onPause(){
+        super.onPause();
+        AppUtils.closeDBReference(mDatabaseReference);
     }
 }

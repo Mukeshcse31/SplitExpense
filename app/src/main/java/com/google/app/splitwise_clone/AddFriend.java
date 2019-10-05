@@ -43,7 +43,6 @@ public class AddFriend extends AppCompatActivity {
 
         mFriendName = findViewById(R.id.friend_name);
         mFriendEmail = findViewById(R.id.friend_email);
-        mDatabaseReference = AppUtils.getDBReference();
     }
 
     @Override
@@ -150,4 +149,16 @@ public class AddFriend extends AppCompatActivity {
     }
 
 
+    @Override
+    public void onResume(){
+        super.onResume();
+        mDatabaseReference = AppUtils.getDBReference();
+    }
+
+    @Override
+    public void onPause(){
+        super.onPause();
+        AppUtils.closeDBReference(mDatabaseReference);
+        Log.i(TAG, "listener cleared");
+    }
 }

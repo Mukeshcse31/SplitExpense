@@ -76,7 +76,7 @@ public class AddGroup extends AppCompatActivity implements GroupMembersAdapter.O
     private RecyclerView nonmembers_rv;
     private ImageView mPhotoPickerButton;
     private String group_name, userName;
-    private Group mGroup;
+    private Group mGroup, grp;
     float friendsCount;
     int friendsCounter;
     private String photoUrl = "";
@@ -95,12 +95,9 @@ public class AddGroup extends AppCompatActivity implements GroupMembersAdapter.O
         setSupportActionBar(myToolbar);
         getSupportActionBar().setTitle(getString(R.string.new_group));
 
-//        setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_UNSPECIFIED);
-//        Settings.System.putInt( getContentResolver(), Settings.System.ACCELEROMETER_ROTATION, 1);
-
         mFirebaseStorage = AppUtils.getDBStorage();
-        mDatabaseReference = AppUtils.getDBReference();
         mPhotosStorageReference = mFirebaseStorage.getReference().child("images/groups");
+        mDatabaseReference = AppUtils.getDBReference();
         mGroupName = findViewById(R.id.group_name);
         members_rv = findViewById(R.id.members_rv);
         nonmembers_rv = findViewById(R.id.nonmembers_rv);
@@ -149,16 +146,7 @@ public class AddGroup extends AppCompatActivity implements GroupMembersAdapter.O
     @Override
     public void onActivityResult(int requestCode, int resultCode, Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
-//        if (requestCode == RC_SIGN_IN) {
-//            if (resultCode == RESULT_OK) {
-//                // Sign-in succeeded, set up the UI
-//                Toast.makeText(this, "Signed in!", Toast.LENGTH_SHORT).show();
-//            } else if (resultCode == RESULT_CANCELED) {
-//                // Sign in was canceled by the user, finish the activity
-//                Toast.makeText(this, "Sign in canceled", Toast.LENGTH_SHORT).show();
-//                finish();
-//            }
-//        } else
+
         if (requestCode == RC_PHOTO_PICKER && resultCode == RESULT_OK) {
             selectedImageUri = data.getData();
             Glide.with(this)
@@ -166,34 +154,6 @@ public class AddGroup extends AppCompatActivity implements GroupMembersAdapter.O
                     .asBitmap()
                     .placeholder(R.drawable.people_unselected)
                     .into(mPhotoPickerButton);
-//
-//            final String groupName = TextUtils.isEmpty(mGroupName.getText().toString()) ? "anonymous" : mGroupName.getText().toString();
-//
-//            // Get a reference to store file at chat_photos/<FILENAME>
-//            final StorageReference photoRef = mPhotosStorageReference.child(groupName);
-//
-//            // Upload file to Firebase Storage
-//            photoRef.putFile(selectedImageUri)
-//                    .addOnSuccessListener(this, new OnSuccessListener<UploadTask.TaskSnapshot>() {
-//                        public void onSuccess(UploadTask.TaskSnapshot taskSnapshot) {
-//
-//                            final StorageReference group1 = mPhotosStorageReference.child(groupName);
-//                            final long ONE_MEGABYTE = 1024 * 1024;
-//                            group1.getBytes(ONE_MEGABYTE).addOnSuccessListener(new OnSuccessListener<byte[]>() {
-//                                @Override
-//                                public void onSuccess(byte[] bytes) {
-//                                    Log.i(TAG, "photo download " + mPhotosStorageReference.getPath());
-//                                }
-//                            }).addOnFailureListener(new OnFailureListener() {
-//                                @Override
-//                                public void onFailure(@NonNull Exception exception) {
-//
-//                                    Log.i(TAG, exception.getMessage());
-//                                    // Handle any errors
-//                                }
-//                            });
-//                        }
-//                    });
         }
     }
 
@@ -449,7 +409,7 @@ return cancel;
                                 Toast.makeText(AddGroup.this, "Group already exists", Toast.LENGTH_LONG).show();
 
                             } else {
-                                Group grp = new Group(name);
+                                grp = new Group(name);
 
 //                          // add all the group members to the group
                                 Iterator it = group_members.entrySet().iterator();
@@ -476,19 +436,31 @@ return cancel;
                                     grp.addNonMember(groupMemberName, sb);
 
                                 }
-                                if(!(selectedImageUri == null)) {
-                                    //add the group creator as a member when the group is created
-                                    grp.setPhotoUrl("/images/groups/" + name);
-                                    // Get a reference to store file at chat_photos/<FILENAME>
-                                    final StorageReference photoRef = mPhotosStorageReference.child(name);
 
-                                    // Upload file to Firebase Storage
-                                    photoRef.putFile(selectedImageUri);
-                                }
                                 grp.setOwner(userName);
                                 mDatabaseReference.child("groups/" + name).setValue(grp, new DatabaseReference.CompletionListener() {
                                     @Override
                                     public void onComplete(DatabaseError databaseError, DatabaseReference dataReference) {
+
+                                        //store image in the Storage
+                                        if(!(selectedImageUri == null)) {
+                                            //add the group creator as a member when the group is created
+                                            grp.setPhotoUrl("/images/groups/" + name);
+                                            // Get a reference to store file at chat_photos/<FILENAME>
+                                            final StorageReference photoRef = mPhotosStorageReference.child(name);
+
+                                            // Upload file to Firebase Storage
+                                            photoRef.putFile(selectedImageUri)
+                                                    .addOnSuccessListener(AddGroup.this, new OnSuccessListener<UploadTask.TaskSnapshot>() {
+                                                        public void onSuccess(UploadTask.TaskSnapshot taskSnapshot) {
+
+                                                            gotoSummaryActivity(GROUP_ADDED, String.format("%s %s", getString(R.string.group_added), name));
+
+                                                            Log.i(TAG, "image uploaded");
+                                                        }
+                                                    });
+                                        }
+                                        else
                                         gotoSummaryActivity(GROUP_ADDED, String.format("%s %s", getString(R.string.group_added), name));
                                     }
                                 });
@@ -528,8 +500,10 @@ return cancel;
                         //if the member is not found in the prev groupmembers, then get it from non-group members
                         if(!mGroup.getMembers().containsKey(groupMemberName)){
 
+                            newGroup.getNonMembers().remove(groupMemberName);
                             if(mGroup.getNonMembers().containsKey(groupMemberName)){
                                 newGroup.addMember(groupMemberName, mGroup.getNonMembers().get(groupMemberName));
+
                             }
                             else{ //this won't happen
                                 SingleBalance sb = new SingleBalance(groupMemberName);
@@ -537,11 +511,9 @@ return cancel;
                                 newGroup.addMember(groupMemberName, sb);
                             }
                         }
-
-
                     }
 
-                    // add all the non group members to the non-groupmembers of group
+                    // add all the non group members to the non-groupmembers of group and remove from groupmembers
                     it = nongroup_members.entrySet().iterator();
                     while (it.hasNext()) {
                         Map.Entry pair = (Map.Entry) it.next();
@@ -549,7 +521,7 @@ return cancel;
                         String email = (String) pair.getValue();
 
                         if(!mGroup.getNonMembers().containsKey(nonGroupMemberName)){
-
+                            newGroup.getMembers().remove(nonGroupMemberName);
                             if(mGroup.getMembers().containsKey(nonGroupMemberName)){
                                 newGroup.addNonMember(nonGroupMemberName, mGroup.getMembers().get(nonGroupMemberName));
                             }
@@ -562,6 +534,19 @@ return cancel;
                     }
 
                     final String prev_imageName = mGroup.getName();
+
+                    //Add the clone of the old group with the updated values
+                    mDatabaseReference.child("groups/" + newGroupNname).setValue(newGroup, new DatabaseReference.CompletionListener() {
+                        @Override
+                        public void onComplete(DatabaseError databaseError, DatabaseReference dataReference) {
+                            }
+                    });
+
+                    //delete the old group object
+                    if (!TextUtils.isEmpty(prev_imageName) && !TextUtils.equals(prev_imageName, newGroupNname)) {
+                        mDatabaseReference.child("groups/" + prev_imageName).removeValue();
+                    }
+
                     if(!(selectedImageUri == null)){
                         //image changed
                         newGroup.setPhotoUrl("/images/groups/" + newGroupNname);
@@ -574,6 +559,8 @@ return cancel;
                                     public void onSuccess(UploadTask.TaskSnapshot taskSnapshot) {
                                         if(!TextUtils.equals(prev_imageName, newGroupNname))
                                             mPhotosStorageReference.child(prev_imageName).delete();
+                                        gotoSummaryActivity(GROUP_EDITED, String.format("%s %s", getString(R.string.saved_group), newGroupNname));
+                                        //TODO exit here
                                     }
                                 });
                     }
@@ -591,6 +578,7 @@ return cancel;
                                             .addOnSuccessListener(AddGroup.this, new OnSuccessListener<UploadTask.TaskSnapshot>() {
                                                 public void onSuccess(UploadTask.TaskSnapshot taskSnapshot) {
                                                     mPhotosStorageReference.child(prev_imageName).delete();
+                                                    gotoSummaryActivity(GROUP_EDITED, String.format("%s %s", getString(R.string.saved_group), newGroupNname));
                                                     Log.i(TAG, "new Image uploaded");
                                                 }
                                             });
@@ -604,30 +592,15 @@ return cancel;
                                 }
                             });
                         }
-                    }
-
-                    //Add the clone of the old group with the updated values
-                    mDatabaseReference.child("groups/" + newGroupNname).setValue(newGroup, new DatabaseReference.CompletionListener() {
-                        @Override
-                        public void onComplete(DatabaseError databaseError, DatabaseReference dataReference) {
+                        else
                             gotoSummaryActivity(GROUP_EDITED, String.format("%s %s", getString(R.string.saved_group), newGroupNname));
-                            if (databaseError != null)
-                                Log.i(TAG, databaseError.getDetails());
-                            finish();
-                        }
-                    });
-
-                    //delete the old photo storage
-
-                    if (!TextUtils.isEmpty(prev_imageName) && !TextUtils.equals(prev_imageName, newGroupNname)) {
-//                        mPhotosStorageReference.child(prev_imageName).delete();
-
-                        //Delete the old group
-                        mDatabaseReference.child("groups/" + prev_imageName).removeValue();
                     }
-                    finish();
+
+
+//                    finish();
                 }
                     break;
+
 
                     case R.id.deleteGroup:
 
@@ -670,4 +643,20 @@ return cancel;
         super.onSaveInstanceState(bundle);
     }
 
+    @Override
+    public void onResume(){
+        super.onResume();
+    }
+
+    @Override
+    public void onPause(){
+        super.onPause();
+        Log.i(TAG, "listener cleared");
+    }
+
+    @Override
+    public void onStop(){
+        super.onStop();
+        AppUtils.closeDBReference(mDatabaseReference);
+    }
 }

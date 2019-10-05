@@ -109,9 +109,9 @@ public class AppUtils {
         return mDatabaseReference;
     }
 
-    public static void closeDBReference() {
+    public static void closeDBReference(DatabaseReference reference ) {
 
-        mDatabaseReference = null;
+        reference = null;
     }
 
     public static FirebaseStorage getDBStorage() {

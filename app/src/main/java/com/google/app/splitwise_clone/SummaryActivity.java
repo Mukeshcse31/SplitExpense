@@ -320,7 +320,7 @@ public class SummaryActivity extends AppCompatActivity implements GroupsFragment
     @Override
     public void onPause(){
         super.onPause();
-        AppUtils.closeDBReference();
+        AppUtils.closeDBReference(mDatabaseReference);
     }
 
 

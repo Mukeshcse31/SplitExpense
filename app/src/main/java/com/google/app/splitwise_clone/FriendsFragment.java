@@ -8,16 +8,11 @@ import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.ImageView;
-import android.widget.TextView;
-
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
-
-import com.google.android.material.appbar.CollapsingToolbarLayout;
 import com.google.app.splitwise_clone.model.Balance;
 import com.google.app.splitwise_clone.model.Group;
 import com.google.app.splitwise_clone.model.SingleBalance;
@@ -30,31 +25,19 @@ import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.Query;
 import com.google.firebase.database.ValueEventListener;
-import com.google.firebase.storage.FirebaseStorage;
-import com.google.firebase.storage.StorageReference;
-
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 
-public class FriendsFragment extends Fragment implements FriendsAdapter.OnClickListener{
+public class FriendsFragment extends Fragment implements FriendsAdapter.OnClickListener {
 
-    private FirebaseStorage mFirebaseStorage;
     private DatabaseReference mDatabaseReference;
-    private StorageReference mPhotosStorageReference;
     private String userName = "anonymous";
-    public static String USER_IMAGE = "user_image";
-    public static String BALANCE_SUMMARY = "balance_summary";
-
-    private byte[] userImageByte;
+    ChildEventListener firebaseListener;
     private String balanceSummaryTxt;
-private onFriendClickListener mOnFriendClickListener;
-    private ImageView profilePicture;
-    private CollapsingToolbarLayout toolbar_container;
-    private static final int RC_PHOTO_PICKER = 2;
-    private TextView balance_summary_tv;
+    private onFriendClickListener mOnFriendClickListener;
     Map<String, Float> amountSpentByMember = null;
     Map<String, Float> amountDueByMember = null;
     Map<String, Map<String, Float>> expenseMatrix = null;
@@ -68,7 +51,6 @@ private onFriendClickListener mOnFriendClickListener;
         // Required empty public constructor
         Log.i(TAG, "fragment con");
 
-        mDatabaseReference = AppUtils.getDBReference();
         userName = FirebaseUtils.getUserName();
     }
 
@@ -82,8 +64,6 @@ private onFriendClickListener mOnFriendClickListener;
 
         LinearLayoutManager layoutManager = new LinearLayoutManager(getActivity());
         friends_rv.setLayoutManager(layoutManager);
-
-        updateUsersAmount();
         return rootView;
     }
 
@@ -157,7 +137,7 @@ private onFriendClickListener mOnFriendClickListener;
 
                     balanceSummaryTxt = String.format("%s $%.2f\n%s $%.2f",
                             getString(R.string.amount_spent_by_you), Math.abs(amountSpentByUser), getString(R.string.others_owe), Math.abs(balanceAmount));
-mOnFriendClickListener.updateUserSummary(balanceSummaryTxt);
+                    mOnFriendClickListener.updateUserSummary(balanceSummaryTxt);
                     mFriendsAdapter = new FriendsAdapter(amountGroup, FriendsFragment.this);
                     friends_rv.setAdapter(mFriendsAdapter);
                     mDatabaseReference.child("users/" + userName + "/balances/").setValue(balance);
@@ -171,8 +151,9 @@ mOnFriendClickListener.updateUserSummary(balanceSummaryTxt);
         });
     }
 
-    public interface onFriendClickListener{
+    public interface onFriendClickListener {
         void gotoGroupsList();
+
         void updateUserSummary(String summary);
     }
 
@@ -182,9 +163,9 @@ mOnFriendClickListener.updateUserSummary(balanceSummaryTxt);
         mOnFriendClickListener.gotoGroupsList();
     }
 
-    private void startFriendsListener(){
+    private void startFriendsListener() {
 
-        mDatabaseReference.child("users/" + userName + "/balances/groups").addChildEventListener(new ChildEventListener() {
+        firebaseListener = new ChildEventListener() {
             @Override
             public void onChildAdded(@NonNull DataSnapshot dataSnapshot, @Nullable String s) {
 //                Log.i(TAG, "child added");
@@ -212,15 +193,13 @@ mOnFriendClickListener.updateUserSummary(balanceSummaryTxt);
             public void onCancelled(@NonNull DatabaseError databaseError) {
 
             }
-        });
+        };
+        mDatabaseReference.child("users/" + userName + "/balances/groups").addChildEventListener(firebaseListener);
     }
+
     @Override
     public void onCreateOptionsMenu(Menu menu, MenuInflater inflater) {
         super.onCreateOptionsMenu(menu, inflater);
-        // put getActivity in onCreateOptionsMenu will not return null
-//        if (getActivity() != null) {
-//            getActivity().setTitle("Name");
-//        }
     }
 
     @Override
@@ -230,16 +209,21 @@ mOnFriendClickListener.updateUserSummary(balanceSummaryTxt);
 
 
     @Override
-    public void onResume(){
+    public void onResume() {
         super.onResume();
-
+        mDatabaseReference = AppUtils.getDBReference();
         startFriendsListener();
     }
 
-    @Override
-    public void onPause(){
-        super.onPause();
+    private void removeListener() {
+        mDatabaseReference.child("users/" + userName + "/balances/groups").removeEventListener(firebaseListener);
+    }
 
-AppUtils.closeDBReference();
+    @Override
+    public void onPause() {
+        super.onPause();
+        removeListener();
+        AppUtils.closeDBReference(mDatabaseReference);
+        Log.i(TAG, "listener cleared");
     }
 }
