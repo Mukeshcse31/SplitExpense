@@ -15,6 +15,10 @@ import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.Toolbar;
 
 import com.google.android.material.snackbar.Snackbar;
+import com.google.app.splitwise_clone.groups.AddGroup;
+import com.google.app.splitwise_clone.model.Balance;
+import com.google.app.splitwise_clone.model.Group;
+import com.google.app.splitwise_clone.model.SingleBalance;
 import com.google.app.splitwise_clone.model.User;
 import com.google.app.splitwise_clone.utils.AppUtils;
 import com.google.app.splitwise_clone.utils.FirebaseUtils;
@@ -24,6 +28,9 @@ import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.Query;
 import com.google.firebase.database.ValueEventListener;
 
+import java.util.HashMap;
+import java.util.Map;
+
 public class AddFriend extends AppCompatActivity {
 
     private AutoCompleteTextView mFriendEmail;
@@ -31,6 +38,7 @@ public class AddFriend extends AppCompatActivity {
     private DatabaseReference mDatabaseReference;
     private String TAG = "ADDAFriend";
     public static final String FRIEND_ADDED = "friend_added";
+    String userName;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -40,7 +48,7 @@ public class AddFriend extends AppCompatActivity {
         Toolbar myToolbar = (Toolbar) findViewById(R.id.my_toolbar);
         setSupportActionBar(myToolbar);
         getSupportActionBar().setTitle(getString(R.string.add_friend));
-
+        userName = FirebaseUtils.getUserName();
         mFriendName = findViewById(R.id.friend_name);
         mFriendEmail = findViewById(R.id.friend_email);
     }
@@ -54,7 +62,7 @@ public class AddFriend extends AppCompatActivity {
 
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
-        final String userName = FirebaseUtils.getUserName();
+
         switch (item.getItemId()) {
             case R.id.addFriend:
                 boolean cancel = false;
@@ -86,17 +94,48 @@ public class AddFriend extends AppCompatActivity {
                 } else {
 //Check for existing email id
 //                https://stackoverflow.com/questions/51607449/what-is-the-different-betwen-equalto-and-startat-endat-in-firebase-and-whe/51610286
-                Query query = mDatabaseReference.child("users").orderByChild("email").startAt(friendEmail).endAt(friendEmail);
-                query.addListenerForSingleValueEvent(new ValueEventListener() {
-                    @Override
-                    public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
-                        if (dataSnapshot.exists()) {
-                            mFriendEmail.setError(getString(R.string.email_exists));
-//                            Toast.makeText(AddFriend.this, "Email already exists", Toast.LENGTH_LONG).show();
+                    Query query = mDatabaseReference.child("users/" + userName + "/friends/" + friendName);
+                    query.addListenerForSingleValueEvent(new ValueEventListener() {
+                        @Override
+                        public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+                            if (dataSnapshot.exists()) {
+AppUtils.showSnackBar(AddFriend.this, findViewById(android.R.id.content), " is already a friend");
+                            }
+                            else{
 
-                        } else {
+                                Query query = mDatabaseReference.child("users/").orderByChild("email").startAt(friendEmail).endAt(friendEmail);
+                                query.addListenerForSingleValueEvent(new ValueEventListener() {
+                                    @Override
+                                    public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+                                        if (dataSnapshot.exists()) {
+                                            for (DataSnapshot i : dataSnapshot.getChildren()) {
+                                                User user = i.getValue(User.class);
+                                                String name = user.getName();
+                                                if (friendName.compareToIgnoreCase(name) == 0) {
+                                                    mDatabaseReference.child("users/" + userName + "/friends/" + friendName).setValue(true);
+                                                    mDatabaseReference.child("users/" + friendName + "/friends/" + userName).setValue(true);
+                                                    addFriendsToGroups(friendName, friendEmail);
+                                                } else {
+                                                    mFriendName.setError(getString(R.string.username_exists));
+                                                }
+                                            }
+                                        } else {
+                                            mFriendEmail.setError(getString(R.string.email_exists));
+                                        }
+                                    }
+                                    @Override
+                                    public void onCancelled(@NonNull DatabaseError databaseError) {
 
-                            //check for existing name
+                                    }
+                                });
+                            }
+                        }
+                        @Override
+                        public void onCancelled(@NonNull DatabaseError databaseError) {
+
+                        }
+                    });
+                           /* //check for existing name
                             Query query = mDatabaseReference.child("users").orderByChild("name").startAt(friendName).endAt(friendName);
                             query.addListenerForSingleValueEvent(new ValueEventListener() {
                                 @Override
@@ -131,13 +170,8 @@ public class AddFriend extends AppCompatActivity {
 
                                     }
                                 });
-                        }
-                    }
-                    @Override
-                    public void onCancelled(@NonNull DatabaseError databaseError) {
+                        }*/
 
-                    }
-                });
         }
                 break;
 
@@ -148,6 +182,40 @@ public class AddFriend extends AppCompatActivity {
         return super.onOptionsItemSelected(item);
     }
 
+private void addFriendsToGroups(final String friend_name, final String email){
+
+
+        Query query = mDatabaseReference.child("groups/").orderByChild("members/" + userName + "/name").equalTo(userName);
+
+    query.addListenerForSingleValueEvent(new ValueEventListener() {
+        @Override
+        public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+
+            if (dataSnapshot.exists()) {
+                SingleBalance sb1 = new SingleBalance(friend_name);
+                sb1.setEmail(email);
+                //loop through the groups
+                for (DataSnapshot i : dataSnapshot.getChildren()) {
+                    String group_name = i.getKey();
+                    mDatabaseReference.child("groups/" + group_name + "/nonMembers/" + friend_name).setValue(sb1);
+                }
+            }
+
+            gotoSummaryActivity(friend_name);
+        }
+        @Override
+        public void onCancelled(@NonNull DatabaseError databaseError) {
+
+        }
+    });
+}
+    private void gotoSummaryActivity(String friendname){
+
+        final Intent intent = new Intent(AddFriend.this, SummaryActivity.class);
+        intent.putExtra(FRIEND_ADDED, friendname + " added");
+        startActivity(intent);
+        finish();
+    }
 
     @Override
     public void onResume(){

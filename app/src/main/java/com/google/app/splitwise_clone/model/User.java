@@ -2,10 +2,13 @@ package com.google.app.splitwise_clone.model;
 
 //Getter and Setter are very important for fire base writing
 
+import android.os.Parcel;
+import android.os.Parcelable;
+
 import java.util.HashMap;
 import java.util.Map;
 
-public class User {
+public class User implements Parcelable {
 
 //    private int id;
     private String name;
@@ -22,6 +25,31 @@ private Balance balances;
         this.name = name;
         this.email = email;
     }
+
+    protected User(Parcel in) {
+        name = in.readString();
+        email = in.readString();
+        if (in.readByte() == 0) {
+            amount = null;
+        } else {
+            amount = in.readFloat();
+        }
+        imageUrl = in.readString();
+        friends = new HashMap<String, Boolean>();
+        in.readMap(friends, HashMap.class.getClassLoader());
+    }
+
+    public static final Creator<User> CREATOR = new Creator<User>() {
+        @Override
+        public User createFromParcel(Parcel in) {
+            return new User(in);
+        }
+
+        @Override
+        public User[] newArray(int size) {
+            return new User[size];
+        }
+    };
 
     public String getEmail() {
         return email;
@@ -79,4 +107,21 @@ private Balance balances;
         this.balances = balances;
     }
 
+    @Override
+    public int describeContents() {
+        return 0;
+    }
+
+    @Override
+    public void writeToParcel(Parcel dest, int flags) {
+        dest.writeString(name);
+        dest.writeString(email);
+        if (amount == null) {
+            dest.writeByte((byte) 0);
+        } else {
+            dest.writeByte((byte) 1);
+            dest.writeFloat(amount);
+        }
+        dest.writeString(imageUrl);
+    }
 }

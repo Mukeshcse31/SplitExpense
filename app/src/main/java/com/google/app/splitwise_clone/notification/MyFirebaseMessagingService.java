@@ -100,14 +100,10 @@ int GROUP_ID = 3;
         notificationManager.notify(notificationID, notificationBuilder.build());
 
 
-//        NotificationManagerCompat manager = NotificationManagerCompat.from(context);
         if(!groupPosted) {
             notificationManager.notify(GROUP_ID, groupBuilder.build());
 groupPosted = true;
         }
-//        notificationManager.notify(id, builder.build());
-
-
     }
 
     @RequiresApi(api = Build.VERSION_CODES.O)
@@ -126,16 +122,3 @@ groupPosted = true;
         }
     }
 }
-
-//    NotificationCompat.Builder builder =
-//            new NotificationCompat.Builder(context)
-//                    .setSmallIcon(R.drawable.ic_stat_communication_invert_colors_on)
-//                    .setContentTitle(title)
-//                    .setContentText(content)
-//                    .setGroup("GROUP_1")
-//                    .setStyle(new NotificationCompat.BigTextStyle().bigText(content))
-//                    .setContentIntent(pendingIntent)
-//
-//    NotificationManagerCompat manager = NotificationManagerCompat.from(context);
-//    manager.notify(GROUP_ID, groupBuilder.build());
-//            manager.notify(id, builder.build());

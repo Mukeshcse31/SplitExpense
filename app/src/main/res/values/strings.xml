@@ -38,7 +38,8 @@
     <string name="add_friend">Add Friend</string>
     <string name="add_friend_name">NAME</string>
     <string name="add_friend_email">EMAIL</string>
-    <string name="email_exists">Email Already Exists</string>
+    <string name="email_exists">Email does not Exists</string>
+    <string name="username_exists">UserName does not Exists</string>
     <string name="friendname_exists">There is already a member with this name</string>
     <string name="friend_added">friend added</string>
     <string name="close">CLOSE</string>

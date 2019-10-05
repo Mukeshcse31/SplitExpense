@@ -39,7 +39,8 @@
 <string name="add_friend">நண்பரை சேர்க்கவும்</string>
 <string name="add_friend_name">பெயர்</string>
 <string name="add_friend_email">மின்னஞ்சல்</string>
-<string name="email_exists">மின்னஞ்சல் முன்பே பதிவில் இருக்கிறது</string>
+<string name="email_exists">மின்னஞ்சல் இல்லை</string>
+    <string name="username_exists">UserName does not Exists</string>
     <string name="friendname_exists">There is already a member with this name</string>
 <string name="friend_added">நண்பர் சேர்க்கப்பட்டார்</string>
 <string name="close">மூடப்பட்டது</string>
