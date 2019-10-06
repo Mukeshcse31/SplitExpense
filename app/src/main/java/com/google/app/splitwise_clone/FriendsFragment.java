@@ -8,6 +8,8 @@ import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.TextView;
+
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
@@ -44,8 +46,11 @@ public class FriendsFragment extends Fragment implements FriendsAdapter.OnClickL
     List<String> friends = new ArrayList<>();
     private String TAG = "Friendslist_Page";
     private RecyclerView friends_rv;
+    private TextView noExpense_tv;
     private FriendsAdapter mFriendsAdapter;
     float amountSpentByUser = 0.0f, balanceAmount = 0.0f;
+    String db_users, db_balances, db_groups, db_archivedExpenses, db_expenses, db_members, db_nonMembers,
+            db_totalAmount, db_dateSpent, db_splitDues, db_images, db_category, db_owner, db_photoUrl, db_amount, db_status, db_friends, db_email, db_name, db_imageUrl;
 
     public FriendsFragment() {
         // Required empty public constructor
@@ -60,6 +65,7 @@ public class FriendsFragment extends Fragment implements FriendsAdapter.OnClickL
 
         setHasOptionsMenu(true);
 
+        noExpense_tv = rootView.findViewById(R.id.noExpense_tv);
         friends_rv = rootView.findViewById(R.id.friends_rv);
 
         LinearLayoutManager layoutManager = new LinearLayoutManager(getActivity());
@@ -75,6 +81,7 @@ public class FriendsFragment extends Fragment implements FriendsAdapter.OnClickL
         // If not, it throws an exception
         try {
             mOnFriendClickListener = (onFriendClickListener) context;
+            initDBValues(context);
         } catch (ClassCastException e) {
             throw new ClassCastException(context.toString()
                     + " must implement OnImageClickListener");
@@ -84,13 +91,15 @@ public class FriendsFragment extends Fragment implements FriendsAdapter.OnClickL
 
     public void updateUsersAmount() {
 
+        noExpense_tv.setVisibility(View.GONE);
+
         amountSpentByMember = new HashMap<>();
         amountDueByMember = new HashMap<>();
         expenseMatrix = new HashMap<>();
         friends = new ArrayList<>();
 
         //update the participant's total amount
-        Query query = mDatabaseReference.child("groups/").orderByChild("members/" + userName + "/name").equalTo(userName);
+        Query query = mDatabaseReference.child(db_groups).orderByChild(db_members + "/" + userName + "/" + db_name).equalTo(userName);
 
         query.addListenerForSingleValueEvent(new ValueEventListener() {
             @Override
@@ -140,7 +149,7 @@ public class FriendsFragment extends Fragment implements FriendsAdapter.OnClickL
                     mOnFriendClickListener.updateUserSummary(balanceSummaryTxt);
                     mFriendsAdapter = new FriendsAdapter(amountGroup, FriendsFragment.this);
                     friends_rv.setAdapter(mFriendsAdapter);
-                    mDatabaseReference.child("users/" + userName + "/balances/").setValue(balance);
+                    mDatabaseReference.child(db_users + "/" + userName + "/" + db_balances).setValue(balance);
                     Log.i(TAG, "total calculation");
                 }
             }
@@ -163,7 +172,7 @@ public class FriendsFragment extends Fragment implements FriendsAdapter.OnClickL
         mOnFriendClickListener.gotoGroupsList();
     }
 
-    private void startFriendsListener() {
+     private void startFriendsListener() {
 
         firebaseListener = new ChildEventListener() {
             @Override
@@ -194,7 +203,7 @@ public class FriendsFragment extends Fragment implements FriendsAdapter.OnClickL
 
             }
         };
-        mDatabaseReference.child("users/" + userName + "/balances/groups").addChildEventListener(firebaseListener);
+        mDatabaseReference.child(db_users + "/" + userName + "/" + db_balances + "/" +  db_groups).addChildEventListener(firebaseListener);
     }
 
     @Override
@@ -216,7 +225,7 @@ public class FriendsFragment extends Fragment implements FriendsAdapter.OnClickL
     }
 
     private void removeListener() {
-        mDatabaseReference.child("users/" + userName + "/balances/groups").removeEventListener(firebaseListener);
+        mDatabaseReference.child(db_users + "/" + userName + "/" + db_balances + "/" + db_groups).removeEventListener(firebaseListener);
     }
 
     @Override
@@ -225,5 +234,29 @@ public class FriendsFragment extends Fragment implements FriendsAdapter.OnClickL
         removeListener();
         AppUtils.closeDBReference(mDatabaseReference);
         Log.i(TAG, "listener cleared");
+    }
+
+    private void initDBValues(Context context){
+        db_users = context.getString(R.string.db_users);
+        db_balances = context.getString(R.string.db_balances);
+        db_groups = context.getString(R.string.db_groups);
+        db_archivedExpenses = context.getString(R.string.db_archivedExpenses);
+        db_expenses = context.getString(R.string.db_expenses);
+        db_members = context.getString(R.string.db_members);
+        db_nonMembers = context.getString(R.string.db_nonMembers);
+        db_owner = context.getString(R.string.db_owner);
+        db_photoUrl = context.getString(R.string.db_photoUrl);
+        db_amount = context.getString(R.string.db_amount);
+        db_status = context.getString(R.string.db_status);
+        db_friends = context.getString(R.string.db_friends);
+        db_email = context.getString(R.string.db_email);
+        db_name = context.getString(R.string.db_name);
+        db_imageUrl = context.getString(R.string.db_imageUrl);
+        db_totalAmount = context.getString(R.string.db_totalAmount);
+        db_dateSpent = context.getString(R.string.db_dateSpent);
+        db_category = context.getString(R.string.db_category);
+        db_splitDues = context.getString(R.string.db_splitDues);
+        db_images = context.getString(R.string.db_images);
+
     }
 }

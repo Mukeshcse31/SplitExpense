@@ -4,6 +4,17 @@
     android:layout_height="match_parent"
     xmlns:app="http://schemas.android.com/apk/res-auto">
 
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:id="@+id/noExpense_tv"
+        android:textSize="@dimen/expense_description"
+        app:layout_constraintTop_toTopOf="@id/friends_rv"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        android:text="@string/no_expense">
+
+    </TextView>
     <androidx.recyclerview.widget.RecyclerView
         android:id="@+id/friends_rv"
         app:layout_constraintTop_toTopOf="parent"

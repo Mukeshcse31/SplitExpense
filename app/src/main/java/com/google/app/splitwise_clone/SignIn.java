@@ -12,7 +12,6 @@ import android.widget.AutoCompleteTextView;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.TextView;
-import android.widget.Toast;
 
 import androidx.appcompat.app.AlertDialog;
 import androidx.annotation.NonNull;
@@ -45,6 +44,9 @@ public class SignIn extends AppCompatActivity {
     public static final String DISPLAY_NAME_KEY = "displayName";
     public static final String USERNAME_KEY = "username";
     public static final String PASSWORD_KEY = "password";
+    public static final String LOGIN = "login";
+    public static final String SIGNUP = "signup";
+
     private DatabaseReference mDatabaseReference;
     static final String TAG = "Registration";
     private AutoCompleteTextView mEmailView;
@@ -53,7 +55,7 @@ public class SignIn extends AppCompatActivity {
     private TextInputLayout mlabel_confirm_password;
     private EditText mPasswordView;
     private EditText mConfirmPasswordView;
-    private Button mloginbutton, msignUp, mgetLogin, mgetSignUp;
+    private Button mloginbutton, msignUp, mLogin_bn, mSignUp_bn;
     private AppCompatImageView offline_iv;
     // Firebase instance variables
     private FirebaseAuth mAuth;
@@ -82,8 +84,8 @@ public class SignIn extends AppCompatActivity {
         mUsernameView = findViewById(R.id.register_username);
         mloginbutton = findViewById(R.id.login_bn);
         msignUp = findViewById(R.id.register_sign_up_button);
-        mgetLogin = findViewById(R.id.getLogin);
-        mgetSignUp = findViewById(R.id.getSignUp);
+        mLogin_bn = findViewById(R.id.getLogin);
+        mSignUp_bn = findViewById(R.id.getSignUp);
 
         mUserNameLayout = findViewById(R.id.label_userName);
         mlabel_confirm_password = findViewById(R.id.label_confirm_password);
@@ -96,8 +98,8 @@ public class SignIn extends AppCompatActivity {
             mUsernameView.setVisibility(View.GONE);
             mloginbutton.setVisibility(View.GONE);
             msignUp.setVisibility(View.GONE);
-            mgetLogin.setVisibility(View.GONE);
-            mgetSignUp.setVisibility(View.GONE);
+            mLogin_bn.setVisibility(View.GONE);
+            mSignUp_bn.setVisibility(View.GONE);
             mUserNameLayout.setVisibility(View.GONE);
             mlabel_confirm_password.setVisibility(View.GONE);
             return;
@@ -128,6 +130,8 @@ public class SignIn extends AppCompatActivity {
 
     // Executed when Sign Up button is pressed.
     public void signUp(View v) {
+
+        AppUtils.preventTwoClick(v);
         attemptRegistration();
     }
 
@@ -211,7 +215,6 @@ public class SignIn extends AppCompatActivity {
 
                             UserProfileChangeRequest profileUpdates = new UserProfileChangeRequest.Builder()
                                     .setDisplayName(displayName)
-//                                    .setPhotoUri(Uri.parse("https://example.com/jane-q-user/profile.jpg"))
                                     .build();
 
                             user.updateProfile(profileUpdates)
@@ -220,14 +223,12 @@ public class SignIn extends AppCompatActivity {
                                         public void onComplete(@NonNull Task<Void> task) {
                                             if (task.isSuccessful()) {
                                                 saveUserCredentials(email, password);
-                                                gotoSummaryPage();
                                                 Log.d(TAG, "User profile updated.");
                                             }
                                         }
                                     });
 
-                            //TODO check if the user is already added by other user.
-                            //if already added, don't add new user record so as to save the friend's link
+                            // add new user record in the realtime database
                             Query query = mDatabaseReference.child("users/" + displayName);
                             query.addListenerForSingleValueEvent(new ValueEventListener() {
                                 @Override
@@ -242,8 +243,9 @@ public class SignIn extends AppCompatActivity {
 
                                                 if (databaseError != null)
                                                     Log.i(TAG, databaseError.getDetails());
-                                                showSnackBar(getString(R.string.signup_success));
-                                                finish();
+                                                gotoSummaryActivity(SIGNUP , getString(R.string.signup_success));
+//                                                showSnackBar(getString(R.string.signup_success));
+//                                                finish();
                                             }
                                         });
                                     }
@@ -300,10 +302,10 @@ public class SignIn extends AppCompatActivity {
         mUserNameLayout.setVisibility(View.INVISIBLE);
         mlabel_confirm_password.setVisibility(View.INVISIBLE);
         msignUp.setVisibility(View.INVISIBLE);
-        mgetLogin.setVisibility(View.INVISIBLE);
+        mLogin_bn.setVisibility(View.INVISIBLE);
 
         mloginbutton.setVisibility(View.VISIBLE);
-        mgetSignUp.setVisibility(View.VISIBLE);
+        mSignUp_bn.setVisibility(View.VISIBLE);
 
     }
 
@@ -313,23 +315,16 @@ public class SignIn extends AppCompatActivity {
         mUserNameLayout.setVisibility(View.VISIBLE);
         mlabel_confirm_password.setVisibility(View.VISIBLE);
         msignUp.setVisibility(View.VISIBLE);
-        mgetLogin.setVisibility(View.VISIBLE);
+        mLogin_bn.setVisibility(View.VISIBLE);
 
         mloginbutton.setVisibility(View.INVISIBLE);
-        mgetSignUp.setVisibility(View.INVISIBLE);
+        mSignUp_bn.setVisibility(View.INVISIBLE);
 
-    }
-
-    private void gotoSummaryPage() {
-//        Intent intent = new Intent(SignIn.this, FriendsList.class);
-        Intent intent = new Intent(SignIn.this, SummaryActivity.class);
-
-        finish();
-        startActivity(intent);
     }
 
     public void login(View v) {
 
+        AppUtils.preventTwoClick(v);
         final String email = mEmailView.getText().toString();
         final String password = mPasswordView.getText().toString();
 
@@ -347,6 +342,7 @@ public class SignIn extends AppCompatActivity {
     //TODO Login and setTitle
 
     private void signInWithCredentials(final String email, final String password) {
+
         mAuth.signInWithEmailAndPassword(email, password).addOnCompleteListener(this,
                 new OnCompleteListener<AuthResult>() {
 
@@ -360,16 +356,15 @@ public class SignIn extends AppCompatActivity {
                         } else {
 
                             userName = FirebaseUtils.getUserName();
-                            showSnackBar(userName + " signed in");
                             saveUserCredentials(email, password);
-                            gotoSummaryPage();
                             FirebaseMessaging.getInstance().subscribeToTopic(userName).addOnSuccessListener(new OnSuccessListener<Void>() {
                                 @Override
                                 public void onSuccess(Void aVoid) {
                                     Log.i(TAG, "login success");
-//                                    Toast.makeText(getApplicationContext(),"Success",Toast.LENGTH_LONG).show();
                                 }
                             });
+
+                            gotoSummaryActivity(LOGIN, userName + " signed in");
                         }
                     }
                 });
@@ -380,4 +375,13 @@ public class SignIn extends AppCompatActivity {
         super.onResume();
         Log.i(TAG, "on resume");
     }
+
+    private void gotoSummaryActivity(String name, String value){
+
+        final Intent intent = new Intent(SignIn.this, SummaryActivity.class);
+        intent.putExtra(name, value);
+        startActivity(intent);
+        finish();
+    }
+
 }

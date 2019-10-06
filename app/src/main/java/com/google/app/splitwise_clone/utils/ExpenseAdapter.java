@@ -58,6 +58,7 @@ public class ExpenseAdapter extends RecyclerView.Adapter<ExpenseAdapter.ExpenseV
         mOnClickListener = listener;
         userName = FirebaseUtils.getUserName();
         this.enabled = enabled;
+        expensePayload = "";
     }
 
     public interface OnClickListener {

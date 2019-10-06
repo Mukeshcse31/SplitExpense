@@ -85,6 +85,8 @@ public class AddGroup extends AppCompatActivity implements GroupMembersAdapter.O
     private Map<String, String> nongroup_members = new HashMap<>();
     private static final int PERMISSION_REQUEST_CODE = 200;
     private static final int MY_PERMISSIONS_REQUEST_CAMERA = 201;
+    String db_users, db_balances, db_groups, db_archivedExpenses, db_expenses, db_members, db_nonMembers,
+            db_totalAmount, db_dateSpent, db_splitDues, db_images, db_category, db_owner, db_photoUrl, db_amount, db_status, db_friends, db_email, db_name, db_imageUrl;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -95,8 +97,9 @@ public class AddGroup extends AppCompatActivity implements GroupMembersAdapter.O
         setSupportActionBar(myToolbar);
         getSupportActionBar().setTitle(getString(R.string.new_group));
 
+        initDBValues();
         mFirebaseStorage = AppUtils.getDBStorage();
-        mPhotosStorageReference = mFirebaseStorage.getReference().child("images/groups");
+        mPhotosStorageReference = mFirebaseStorage.getReference().child(db_images + "/" + db_groups);
         mDatabaseReference = AppUtils.getDBReference();
         mGroupName = findViewById(R.id.group_name);
         members_rv = findViewById(R.id.members_rv);
@@ -107,7 +110,6 @@ public class AddGroup extends AppCompatActivity implements GroupMembersAdapter.O
         members_rv.setLayoutManager(layoutManager);
         LinearLayoutManager layoutManager1 = new LinearLayoutManager(this);
         nonmembers_rv.setLayoutManager(layoutManager1);
-
 
         if (ContextCompat.checkSelfPermission(this,
                 Manifest.permission.CAMERA) != PackageManager.PERMISSION_GRANTED) {
@@ -182,7 +184,7 @@ public class AddGroup extends AppCompatActivity implements GroupMembersAdapter.O
         switch (requestCode) {
             case MY_PERMISSIONS_REQUEST_CAMERA:
                 if (grantResults.length > 0 && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
-                    Toast.makeText(getApplicationContext(), "Permission Granted", Toast.LENGTH_SHORT).show();
+//                    Toast.makeText(getApplicationContext(), "Permission Granted", Toast.LENGTH_SHORT).show();
                     setphotoClickListener();
                     // main logic
                 } else {
@@ -201,7 +203,7 @@ public class AddGroup extends AppCompatActivity implements GroupMembersAdapter.O
         final String path1 = getString(R.string.db_users);
 
         //get all the friends of the user
-        Query query = mDatabaseReference.child(path1 + "/" + userName + "/friends");
+        Query query = mDatabaseReference.child(path1 + "/" + userName + "/" + db_friends);
         query.addListenerForSingleValueEvent(new ValueEventListener() {
             @Override
             public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
@@ -220,7 +222,7 @@ public class AddGroup extends AppCompatActivity implements GroupMembersAdapter.O
                         Map.Entry pair = (Map.Entry) it.next();
                         final String friend = (String) pair.getKey();
                         //Get the friends' email id
-                        Query query = mDatabaseReference.child(path1 + "/" + friend + "/email");
+                        Query query = mDatabaseReference.child(path1 + "/" + friend + "/"+db_email);
                         query.addListenerForSingleValueEvent(new ValueEventListener() {
                             @Override
                             public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
@@ -400,13 +402,13 @@ return cancel;
 
                 if (!checkGroup(name)){
 
-                    Query query = mDatabaseReference.child("groups").orderByKey().startAt(name).endAt(name);
+                    Query query = mDatabaseReference.child(db_groups).orderByKey().startAt(name).endAt(name);
                     query.addListenerForSingleValueEvent(new ValueEventListener() {
                         @Override
                         public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
                             if (dataSnapshot.exists()) {
                                 mGroupName.setError(getString(R.string.group_exists));
-                                Toast.makeText(AddGroup.this, "Group already exists", Toast.LENGTH_LONG).show();
+                                Toast.makeText(AddGroup.this, getString(R.string.group_exists), Toast.LENGTH_LONG).show();
 
                             } else {
                                 grp = new Group(name);
@@ -438,14 +440,14 @@ return cancel;
                                 }
 
                                 grp.setOwner(userName);
-                                mDatabaseReference.child("groups/" + name).setValue(grp, new DatabaseReference.CompletionListener() {
+                                mDatabaseReference.child(db_groups + "/" + name).setValue(grp, new DatabaseReference.CompletionListener() {
                                     @Override
                                     public void onComplete(DatabaseError databaseError, DatabaseReference dataReference) {
 
                                         //store image in the Storage
                                         if(!(selectedImageUri == null)) {
                                             //add the group creator as a member when the group is created
-                                            grp.setPhotoUrl("/images/groups/" + name);
+                                            grp.setPhotoUrl("/" + db_images + "/" + db_groups + "/" + name);
                                             // Get a reference to store file at chat_photos/<FILENAME>
                                             final StorageReference photoRef = mPhotosStorageReference.child(name);
 
@@ -536,7 +538,7 @@ return cancel;
                     final String prev_imageName = mGroup.getName();
 
                     //Add the clone of the old group with the updated values
-                    mDatabaseReference.child("groups/" + newGroupNname).setValue(newGroup, new DatabaseReference.CompletionListener() {
+                    mDatabaseReference.child(db_groups + "/" + newGroupNname).setValue(newGroup, new DatabaseReference.CompletionListener() {
                         @Override
                         public void onComplete(DatabaseError databaseError, DatabaseReference dataReference) {
                             }
@@ -544,12 +546,12 @@ return cancel;
 
                     //delete the old group object
                     if (!TextUtils.isEmpty(prev_imageName) && !TextUtils.equals(prev_imageName, newGroupNname)) {
-                        mDatabaseReference.child("groups/" + prev_imageName).removeValue();
+                        mDatabaseReference.child(db_groups + "/" + prev_imageName).removeValue();
                     }
 
                     if(!(selectedImageUri == null)){
                         //image changed
-                        newGroup.setPhotoUrl("/images/groups/" + newGroupNname);
+                        newGroup.setPhotoUrl("/" + db_images + "/" + db_groups + "/" + newGroupNname);
                         // Get a reference to store file at chat_photos/<FILENAME>
                         final StorageReference photoRef = mPhotosStorageReference.child(newGroupNname);
 
@@ -595,9 +597,6 @@ return cancel;
                         else
                             gotoSummaryActivity(GROUP_EDITED, String.format("%s %s", getString(R.string.saved_group), newGroupNname));
                     }
-
-
-//                    finish();
                 }
                     break;
 
@@ -612,7 +611,7 @@ return cancel;
                                 new DialogInterface.OnClickListener() {
                                     @Override
                                     public void onClick(DialogInterface arg0, int arg1) {
-                                        mDatabaseReference.child("groups/" + group_name).removeValue(new DatabaseReference.CompletionListener() {
+                                        mDatabaseReference.child(db_groups + "/" + group_name).removeValue(new DatabaseReference.CompletionListener() {
                                             @Override
                                             public void onComplete(@Nullable DatabaseError databaseError, @NonNull DatabaseReference databaseReference) {
                                                 gotoSummaryActivity(GROUP_DELETED, String.format("%s %s", getString(R.string.group_deleted), group_name));
@@ -630,7 +629,7 @@ return cancel;
                 break;
 
             case R.id.gotoGroupList:
-                gotoSummaryActivity(ACTION_CANCEL, getString(R.string.cancel));
+                gotoSummaryActivity(ACTION_CANCEL, "");
                 break;
         }
         return super.onOptionsItemSelected(item);
@@ -658,5 +657,31 @@ return cancel;
     public void onStop(){
         super.onStop();
         AppUtils.closeDBReference(mDatabaseReference);
+    }
+
+
+    private void initDBValues(){
+        db_users = getString(R.string.db_users);
+        db_balances = getString(R.string.db_balances);
+        db_groups = getString(R.string.db_groups);
+        db_archivedExpenses = getString(R.string.db_archivedExpenses);
+        db_expenses = getString(R.string.db_expenses);
+        db_members = getString(R.string.db_members);
+        db_nonMembers = getString(R.string.db_nonMembers);
+        db_owner = getString(R.string.db_owner);
+        db_photoUrl = getString(R.string.db_photoUrl);
+        db_amount = getString(R.string.db_amount);
+        db_status = getString(R.string.db_status);
+        db_friends = getString(R.string.db_friends);
+        db_email = getString(R.string.db_email);
+        db_name = getString(R.string.db_name);
+        db_imageUrl = getString(R.string.db_imageUrl);
+        db_totalAmount = getString(R.string.db_totalAmount);
+        db_dateSpent = getString(R.string.db_dateSpent);
+        db_category = getString(R.string.db_category);
+        db_splitDues = getString(R.string.db_splitDues);
+        db_images = getString(R.string.db_images);
+        db_email = getString(R.string.db_email);
+
     }
 }

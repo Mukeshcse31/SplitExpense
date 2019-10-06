@@ -123,8 +123,9 @@
         app:fabCradleMargin="@dimen/fab_margin"
         app:fabCustomSize="@dimen/fab_size"
         android:layout_gravity="end"
-        app:layout_anchorGravity="center|bottom"
+        app:layout_anchorGravity="bottom|end"
         app:layout_anchor="@id/expenses_rv"
+
         app:pressedTranslationZ="@dimen/fab_press_translation_z" />
 
 

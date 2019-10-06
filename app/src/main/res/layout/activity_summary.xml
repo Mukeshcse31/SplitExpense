@@ -71,7 +71,6 @@
                     android:id="@+id/balance_summary_tv"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:text="@string/you_are_owed"
                     android:textSize="@dimen/dateSpent_tv"
                     android:gravity="center"
                     android:alpha="0.97"

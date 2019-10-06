@@ -13,7 +13,10 @@ import android.os.Bundle;
 import android.text.TextUtils;
 import android.util.Log;
 import android.widget.RemoteViews;
+import android.widget.TextView;
+
 import androidx.annotation.NonNull;
+import androidx.core.text.HtmlCompat;
 
 import com.google.app.splitwise_clone.SignIn;
 import com.google.app.splitwise_clone.R;
@@ -69,11 +72,11 @@ public class BalanceWidgetProvider extends AppWidgetProvider {
         }
     }
 
-    public static RemoteViews getSingleRemoteView(Context context) {
+    public static RemoteViews getSingleRemoteView(Context mContext) {
 
         Log.i("Widget", "invoked");
         // Construct the RemoteViews object
-        final RemoteViews views = new RemoteViews(context.getPackageName(), R.layout.widget_balance_amount);
+        final RemoteViews views = new RemoteViews(mContext.getPackageName(), R.layout.widget_balance_amount);
 
         Iterator it = amountGroup.entrySet().iterator();
         String text="";
@@ -91,27 +94,25 @@ public class BalanceWidgetProvider extends AppWidgetProvider {
                 Map.Entry pair2 = (Map.Entry) it2.next();
                 String groupName = (String) pair2.getKey();
                 amount = (float) pair2.getValue();
-                String stat1 = "you owe ";
-                if (amount > 0)
-                    stat1 = "owes you ";
-                stat += String.format("\t%s  %f from group %s \n",stat1, amount, groupName);
 
+                String stat1 = mContext.getString(R.string.you_owe);
+                if (amount > 0)
+                    stat1 = mContext.getString(R.string.owes_you);
+                stat += String.format("\t%s  %.2f %s %s \n",stat1, Math.abs(amount), mContext.getString(R.string.from_group), groupName);
             }
 
             text += String.format("\n%s: %s\n", friendName, stat);
         }
-        views.setTextViewText(R.id.widget_balance_amount, "amount spent by you " + amountSpentByUser + "\n" +
-                text);
-
+        views.setTextViewText(R.id.widget_balance_amount, String.format("%s %.2f \n %s",mContext.getString(R.string.amount_spent_by_you), amountSpentByUser, text));
 
 //        views.setImageViewResource(R.id.widget_ingredient_name, R.drawable.launcher_icon);
         // Construct an Intent object includes web adresss.
-        Intent intent = new Intent(context, SummaryActivity.class);//TODO show the correct recipe's step activity
+        Intent intent = new Intent(mContext, SummaryActivity.class);//TODO show the correct recipe's step activity
 
 //        intent.putExtra(SignIn.RECIPE_SELECTED, mRecipe);
 
         // In widget we are not allowing to use intents as usually. We have to use PendingIntent instead of 'startActivity'
-        PendingIntent pendingIntent = PendingIntent.getActivity(context, 0, intent, 0);
+        PendingIntent pendingIntent = PendingIntent.getActivity(mContext, 0, intent, 0);
         // Here the basic operations the remote view can do.
         views.setOnClickPendingIntent(R.id.widget_balance_amount, pendingIntent);
         return views;

@@ -70,6 +70,8 @@ public class ExpenseList extends AppCompatActivity implements ExpenseAdapter.OnC
     public static String GROUP_NAME = "group_name";
     public static String EDIT_EXPENSE = "edit_expense";
     public static String EDIT_EXPENSEID = "edit_expenseID";
+    String db_users, db_balances, db_groups, db_archivedExpenses, db_expenses, db_members, db_nonMembers,
+            db_totalAmount, db_dateSpent, db_splitDues, db_images, db_category, db_owner, db_photoUrl, db_amount, db_status, db_friends, db_email, db_name, db_imageUrl;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -123,7 +125,7 @@ invalidateOptionsMenu();
             snackBarMsg = intent.getStringExtra(AddExpense.EXPENSE_DELETED);
         }
 
-
+initDBValues();
         mFloatingActionButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
@@ -141,7 +143,6 @@ invalidateOptionsMenu();
     //populate all the archived expenses
     public void populateSettledUpExpenses(View view) {
         getArchivedExpense();
-//showSettledUpExpenses();
     }
 
     private void showSettledUpExpenses() {
@@ -151,8 +152,8 @@ invalidateOptionsMenu();
         mExpenseAdapter = new ExpenseAdapter(archivedExpenseSnapshotMap, ExpenseList.this, false);
         expenses_rv.setAdapter(mExpenseAdapter);
 
-        AppUtils.hideOption(mMenu,new int[]{R.id.orderbyCategory, R.id.orderbyDate, R.id.settle_up, R.id.export, R.id.archivedExp});
-//        AppUtils.showOption(mMenu, new int[]{R.id.orderbyDate});
+        AppUtils.hideOption(mMenu,new int[]{R.id.orderbyCategory, R.id.settle_up, R.id.export, R.id.archivedExp});
+        AppUtils.showOption(mMenu, new int[]{R.id.orderbyDate});
     }
 
     public void settleUpExpenses() {
@@ -163,9 +164,9 @@ invalidateOptionsMenu();
             Map.Entry pair = (Map.Entry) it.next();
 
             Expense expense = (Expense) pair.getValue();
-            mDatabaseReference.child("groups/" + group_name + "/archivedExpenses/").push().setValue(expense);
+            mDatabaseReference.child(db_groups+"/" + group_name + "/"+db_archivedExpenses).push().setValue(expense);
         }
-        Task deleteTask = mDatabaseReference.child("groups/" + group_name + "/expenses/").setValue(null);
+        Task deleteTask = mDatabaseReference.child(db_groups+ "/" + group_name + "/"+db_expenses).setValue(null);
         deleteTask.addOnSuccessListener(new OnSuccessListener() {
             @Override
             public void onSuccess(Object o) {
@@ -195,7 +196,7 @@ invalidateOptionsMenu();
 
         //Get all the group members
         //reset them to init values
-        Query query = mDatabaseReference.child("groups/" + group_name + "/members");
+        Query query = mDatabaseReference.child(db_groups+"/" + group_name + "/"+db_members);
         query.addListenerForSingleValueEvent(new ValueEventListener() {
             @Override
             public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
@@ -207,7 +208,7 @@ invalidateOptionsMenu();
                         SingleBalance sb = new SingleBalance(groupMemberName);
                         groupMembers.put(groupMemberName, sb);
                     }
-                    mDatabaseReference.child("groups/" + group_name + "/members/").setValue(groupMembers, new DatabaseReference.CompletionListener() {
+                    mDatabaseReference.child(db_groups+"/" + group_name + "/"+db_members).setValue(groupMembers, new DatabaseReference.CompletionListener() {
                         @Override
                         public void onComplete(@Nullable DatabaseError databaseError, @NonNull DatabaseReference databaseReference) {
                             populateAppBar();
@@ -223,13 +224,13 @@ invalidateOptionsMenu();
         });
 
 //reset the total Amount
-        mDatabaseReference.child("groups/" + group_name + "/totalAmount/").setValue(0.0);
+        mDatabaseReference.child(db_groups + "/" + group_name + "/" + db_totalAmount).setValue(0.0);
     }
 
     private void populateExpenseList() {
 
         //sparseArray is not used as it doesn't keep the order of insertion
-        Query query = mDatabaseReference.child("groups/" + group_name + "/expenses").orderByChild("dateSpent");
+        Query query = mDatabaseReference.child(db_groups + "/" + group_name + "/" + db_expenses).orderByChild(db_dateSpent);
 //.orderByChild("active").equalTo("Yes") is not required as settle up is implemented
         query.addListenerForSingleValueEvent(new ValueEventListener() {
             @Override
@@ -246,7 +247,7 @@ invalidateOptionsMenu();
                     expenses_rv.setVisibility(View.GONE);
                     
                     //check if there is any archived expense
-                    Query query = mDatabaseReference.child("groups/" + group_name + "/archivedExpenses").limitToFirst(1);
+                    Query query = mDatabaseReference.child(db_groups + "/" + group_name + "/" + db_archivedExpenses).limitToFirst(1);
                     query.addListenerForSingleValueEvent(new ValueEventListener() {
                         @Override
                         public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
@@ -254,7 +255,6 @@ invalidateOptionsMenu();
                                 expenses_rv.setVisibility(View.INVISIBLE);
                                 settleup_tv.setVisibility(View.VISIBLE);
                                 settleup_image.setVisibility(View.VISIBLE);
-
                             } else
                                 noExpenses_tv.setVisibility(View.VISIBLE);
 
@@ -288,7 +288,7 @@ invalidateOptionsMenu();
     }
 
     private void getExpenseByCategory() {
-        Query query = mDatabaseReference.child("groups/" + group_name + "/expenses").orderByChild("category");
+        Query query = mDatabaseReference.child(db_groups + "/" + group_name + "/" + db_expenses).orderByChild("category");
 //.orderByChild("active").equalTo("Yes") is not required as settle up is implemented
         query.addListenerForSingleValueEvent(new ValueEventListener() {
             @Override
@@ -339,7 +339,7 @@ invalidateOptionsMenu();
     }
 
     private void getArchivedExpense() {
-        Query query = mDatabaseReference.child("groups/" + group_name + "/archivedExpenses").orderByChild("category");
+        Query query = mDatabaseReference.child(db_groups + "/" + group_name + "/" + db_archivedExpenses).orderByChild(db_category);
 
         query.addListenerForSingleValueEvent(new ValueEventListener() {
             @Override
@@ -424,7 +424,7 @@ invalidateOptionsMenu();
     private void populateAppBar() {
 
         //get the user's splitDues
-        Query query = mDatabaseReference.child("groups/" + group_name + "/members/" + userName + "/splitDues");
+        Query query = mDatabaseReference.child(db_groups + "/" + group_name + "/" +db_members + "/" + userName + "/" + db_splitDues);
         query.addListenerForSingleValueEvent(new ValueEventListener() {
             @Override
             public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
@@ -454,7 +454,7 @@ invalidateOptionsMenu();
         });
 
         //get the user's splitDues
-        Query query1 = mDatabaseReference.child("groups/" + group_name + "/members/" + userName + "/amount");
+        Query query1 = mDatabaseReference.child(db_groups + "/" + group_name + "/" + db_members + "/" + userName + "/" + db_amount);
         query1.addListenerForSingleValueEvent(new ValueEventListener() {
             @Override
             public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
@@ -477,7 +477,7 @@ invalidateOptionsMenu();
         //TODO reuse this with userImage load in SummaryActivity
 //                    https://firebase.google.com/docs/storage/android/download-files
                     mPhotosStorageReference = mFirebaseStorage.getReference();
-                    StorageReference islandRef = mPhotosStorageReference.child("images/groups/" + group_name);
+                    StorageReference islandRef = mPhotosStorageReference.child(db_images+"/" + db_groups + "/" + group_name);
 
                     final long ONE_MEGABYTE = 1024 * 1024;
                     islandRef.getBytes(ONE_MEGABYTE).addOnSuccessListener(new OnSuccessListener<byte[]>() {
@@ -599,11 +599,35 @@ invalidateOptionsMenu();
 
             }
         };
-        mDatabaseReference.child("groups/" + group_name + "/expenses").addChildEventListener(firebaseListener);
+        mDatabaseReference.child(db_groups + "/" + group_name + "/" + db_expenses).addChildEventListener(firebaseListener);
     }
 
     private void removeListener() {
-        mDatabaseReference.child("groups/" + group_name + "/expenses").removeEventListener(firebaseListener);
+        mDatabaseReference.child(db_groups + "/" + group_name + "/" + db_expenses).removeEventListener(firebaseListener);
     }
 
+
+    private void initDBValues(){
+        db_users = getString(R.string.db_users);
+        db_balances = getString(R.string.db_balances);
+        db_groups = getString(R.string.db_groups);
+        db_archivedExpenses = getString(R.string.db_archivedExpenses);
+        db_expenses = getString(R.string.db_expenses);
+        db_members = getString(R.string.db_members);
+        db_nonMembers = getString(R.string.db_nonMembers);
+        db_owner = getString(R.string.db_owner);
+        db_photoUrl = getString(R.string.db_photoUrl);
+        db_amount = getString(R.string.db_amount);
+        db_status = getString(R.string.db_status);
+        db_friends = getString(R.string.db_friends);
+        db_email = getString(R.string.db_email);
+        db_name = getString(R.string.db_name);
+        db_imageUrl = getString(R.string.db_imageUrl);
+        db_totalAmount = getString(R.string.db_totalAmount);
+        db_dateSpent = getString(R.string.db_dateSpent);
+        db_category = getString(R.string.db_category);
+        db_splitDues = getString(R.string.db_splitDues);
+        db_images = getString(R.string.db_images);
+
+    }
 }

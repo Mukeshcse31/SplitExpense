@@ -162,16 +162,13 @@ public class GroupsAdapter extends RecyclerView.Adapter<GroupsAdapter.ReviewView
                 String friendName = (String) pair.getKey();
                 float amount = Float.parseFloat(String.valueOf(pair.getValue()));
                 balanceAmount += amount;
-                String status = String.format("%s %s $%.2f%s", friendName, mContext.getString(R.string.lent_you), Math.abs(amount),"<br>");
-                String stat1 = AppUtils.getColoredSpanned(status, mContext.getString(R.string.orange));
+                String status = String.format("%s %s %s %s", friendName, mContext.getString(R.string.lent_you), AppUtils.getColoredSpanned("$" + Math.abs(amount), mContext.getString(R.string.orange)),"<br>");
                 if (amount > 0){
-                    status = String.format("%s %s $%.2f%s", friendName, mContext.getString(R.string.owes_you), Math.abs(amount), "<br>");
-                    stat1 = AppUtils.getColoredSpanned(status, mContext.getString(R.string.green));
-
+                    status = String.format("%s %s %s %s", friendName, mContext.getString(R.string.owes_you), AppUtils.getColoredSpanned("$" + Math.abs(amount), mContext.getString(R.string.green)), "<br>");
                 }
 
                 if (!TextUtils.equals(userName, friendName))
-                    member_status += stat1;
+                    member_status += status;
 
             }
             if(!TextUtils.isEmpty(member_status))

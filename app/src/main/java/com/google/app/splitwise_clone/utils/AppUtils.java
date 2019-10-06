@@ -225,4 +225,16 @@ public class AppUtils {
         return input;
     }
 
+    public static void preventTwoClick(final View view){
+//        https://stackoverflow.com/questions/5608720/android-preventing-double-click-on-a-button
+        view.setEnabled(false);
+        view.setClickable(false);
+        view.postDelayed(new Runnable() {
+            public void run() {
+                view.setEnabled(true);
+                view.setClickable(true);
+            }
+        }, 1000);
+    }
+
 }

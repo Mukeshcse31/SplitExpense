@@ -39,6 +39,7 @@ public class AddFriend extends AppCompatActivity {
     private String TAG = "ADDAFriend";
     public static final String FRIEND_ADDED = "friend_added";
     String userName;
+    String db_users, db_balances, db_groups, db_archivedExpenses, db_expenses, db_members, db_nonMembers, db_owner, db_photoUrl, db_amount, db_status, db_friends, db_email, db_name, db_imageUrl;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -51,6 +52,21 @@ public class AddFriend extends AppCompatActivity {
         userName = FirebaseUtils.getUserName();
         mFriendName = findViewById(R.id.friend_name);
         mFriendEmail = findViewById(R.id.friend_email);
+        db_users = getString(R.string.db_users);
+        db_balances = getString(R.string.db_balances);
+        db_groups = getString(R.string.db_groups);
+        db_archivedExpenses = getString(R.string.db_archivedExpenses);
+        db_expenses = getString(R.string.db_expenses);
+        db_members = getString(R.string.db_members);
+        db_nonMembers = getString(R.string.db_nonMembers);
+        db_owner = getString(R.string.db_owner);
+        db_photoUrl = getString(R.string.db_photoUrl);
+        db_amount = getString(R.string.db_amount);
+        db_status = getString(R.string.db_status);
+        db_friends = getString(R.string.db_friends);
+        db_email = getString(R.string.db_email);
+        db_name = getString(R.string.db_name);
+        db_imageUrl = getString(R.string.db_imageUrl);
     }
 
     @Override
@@ -65,6 +81,7 @@ public class AddFriend extends AppCompatActivity {
 
         switch (item.getItemId()) {
             case R.id.addFriend:
+
                 boolean cancel = false;
                 View focusView = null;
                 final String friendName = mFriendName.getText().toString().trim();
@@ -92,86 +109,60 @@ public class AddFriend extends AppCompatActivity {
                     // There was an error; don't attempt login and focus the first form field with an error.
                     focusView.requestFocus();
                 } else {
-//Check for existing email id
+
 //                https://stackoverflow.com/questions/51607449/what-is-the-different-betwen-equalto-and-startat-endat-in-firebase-and-whe/51610286
-                    Query query = mDatabaseReference.child("users/" + userName + "/friends/" + friendName);
+                    Query query = mDatabaseReference.child(db_users + "/" + userName + "/" + db_friends + "/" + friendName).equalTo("true");
                     query.addListenerForSingleValueEvent(new ValueEventListener() {
                         @Override
                         public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+                            //Check for existing friend
                             if (dataSnapshot.exists()) {
-AppUtils.showSnackBar(AddFriend.this, findViewById(android.R.id.content), " is already a friend");
-                            }
+                                mFriendName.setError(getString(R.string.error_username_friend));
+                                AppUtils.showSnackBar(AddFriend.this, findViewById(android.R.id.content), getString(R.string.error_username_friend));
+}
                             else{
 
-                                Query query = mDatabaseReference.child("users/").orderByChild("email").startAt(friendEmail).endAt(friendEmail);
+                                Query query = mDatabaseReference.child(db_users + "/" + friendName);
                                 query.addListenerForSingleValueEvent(new ValueEventListener() {
                                     @Override
                                     public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+                                        //Check for existing userName
                                         if (dataSnapshot.exists()) {
-                                            for (DataSnapshot i : dataSnapshot.getChildren()) {
-                                                User user = i.getValue(User.class);
-                                                String name = user.getName();
-                                                if (friendName.compareToIgnoreCase(name) == 0) {
-                                                    mDatabaseReference.child("users/" + userName + "/friends/" + friendName).setValue(true);
-                                                    mDatabaseReference.child("users/" + friendName + "/friends/" + userName).setValue(true);
-                                                    addFriendsToGroups(friendName, friendEmail);
-                                                } else {
-                                                    mFriendName.setError(getString(R.string.username_exists));
-                                                }
-                                            }
-                                        } else {
-                                            mFriendEmail.setError(getString(R.string.email_exists));
-                                        }
-                                    }
-                                    @Override
-                                    public void onCancelled(@NonNull DatabaseError databaseError) {
 
-                                    }
+                                            Query query = mDatabaseReference.child(db_users + "/" + friendName + "/" + db_email);
+                                            query.addListenerForSingleValueEvent(new ValueEventListener() {
+                                                @Override
+                                                public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+                                                    //Check if the email matches
+                                                    if (dataSnapshot.exists()) {
+                                                        String email = (String) dataSnapshot.getValue();
+//                                                            String name = user.getName();
+                                                            if (friendEmail.compareToIgnoreCase(email) == 0) {
+                                                                mDatabaseReference.child(db_users + "/" + userName + "/" + db_friends + "/" + friendName).setValue(true);
+                                                                mDatabaseReference.child(db_users + "/" + friendName + "/" + db_friends + "/" + userName).setValue(true);
+                                                                addFriendsToGroups(friendName, friendEmail);
+                                                            }
+                                                            else mFriendEmail.setError(getString(R.string.email_nomatch));
+                                                    }
+//                                                    else {
+//                                                        mFriendEmail.setError(getString(R.string.email_nomatch));
+//                                                    }
+                                                }
+                                                @Override
+                                                public void onCancelled(@NonNull DatabaseError databaseError) { }
+                                            });
+                                        }
+                                        else
+                                            mFriendName.setError(getString(R.string.error_username_notfound));
+                                        }
+                                    @Override
+                                    public void onCancelled(@NonNull DatabaseError databaseError) {}
                                 });
                             }
                         }
                         @Override
-                        public void onCancelled(@NonNull DatabaseError databaseError) {
-
-                        }
+                        public void onCancelled(@NonNull DatabaseError databaseError) { }
                     });
-                           /* //check for existing name
-                            Query query = mDatabaseReference.child("users").orderByChild("name").startAt(friendName).endAt(friendName);
-                            query.addListenerForSingleValueEvent(new ValueEventListener() {
-                                @Override
-                                public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
-                                    if (dataSnapshot.exists()) {
-                                        mFriendName.setError(getString(R.string.friendname_exists));
-                                    }
-                                    else{
-                                        //a new user to be added
-                                        User user = new User(friendName, friendEmail);
-                                        user.addAsFriend(userName);
-                                        mDatabaseReference.child("users/" + friendName).setValue(user, new DatabaseReference.CompletionListener() {
-                                            @Override
-                                            public void onComplete(DatabaseError databaseError, DatabaseReference dataReference) {
-
-                                                Intent intent = new Intent(AddFriend.this, SummaryActivity.class);
-                                                intent.putExtra(FRIEND_ADDED, getString(R.string.friend_added));
-                                                startActivity(intent);
-
-                                                if (databaseError != null)
-                                                    Log.i(TAG, databaseError.getDetails());
-
-                                                finish();
-                                            }
-                                        });
-                                        //the new friend is to be added to the userName
-                                        mDatabaseReference.child("users/" + userName + "/friends/" + friendName).setValue(true);
-                                    }
-                                    }
-                                    @Override
-                                    public void onCancelled(@NonNull DatabaseError databaseError) {
-
-                                    }
-                                });
-                        }*/
-
         }
                 break;
 
@@ -184,8 +175,8 @@ AppUtils.showSnackBar(AddFriend.this, findViewById(android.R.id.content), " is a
 
 private void addFriendsToGroups(final String friend_name, final String email){
 
-
-        Query query = mDatabaseReference.child("groups/").orderByChild("members/" + userName + "/name").equalTo(userName);
+        //friend is added to the groups in which the user is the owner
+        Query query = mDatabaseReference.child(db_groups).orderByChild(db_owner).equalTo(userName);
 
     query.addListenerForSingleValueEvent(new ValueEventListener() {
         @Override
@@ -197,7 +188,7 @@ private void addFriendsToGroups(final String friend_name, final String email){
                 //loop through the groups
                 for (DataSnapshot i : dataSnapshot.getChildren()) {
                     String group_name = i.getKey();
-                    mDatabaseReference.child("groups/" + group_name + "/nonMembers/" + friend_name).setValue(sb1);
+                    mDatabaseReference.child(db_groups + "/" + group_name + "/" + db_nonMembers + "/" + friend_name).setValue(sb1);
                 }
             }
 
@@ -212,7 +203,7 @@ private void addFriendsToGroups(final String friend_name, final String email){
     private void gotoSummaryActivity(String friendname){
 
         final Intent intent = new Intent(AddFriend.this, SummaryActivity.class);
-        intent.putExtra(FRIEND_ADDED, friendname + " added");
+        intent.putExtra(FRIEND_ADDED, getString(R.string.friend_added) + " " + friendname);
         startActivity(intent);
         finish();
     }

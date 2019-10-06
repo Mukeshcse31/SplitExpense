@@ -52,7 +52,8 @@ public class AddExpense extends AppCompatActivity implements ListView.OnItemClic
 public static String EXPENSE_ADDED = "EXPENSE_ADDED";
 public static String ACTION_CANCEL = "ACTION_CANCEL";
 public static String EXPENSE_DELETED = "EXPENSE_DELETED";
-
+    String db_users, db_balances, db_groups, db_archivedExpenses, db_expenses, db_members, db_nonMembers,
+            db_totalAmount, db_owner, db_photoUrl, db_amount, db_status, db_friends, db_email, db_name, db_imageUrl;
     private Toolbar mToolbar;
     String userName;
     ListView listView;
@@ -93,7 +94,7 @@ public static String EXPENSE_DELETED = "EXPENSE_DELETED";
 
         spinner2 = findViewById(R.id.member_spent);
         setDefaultDate();
-
+        initDBValues();
         Bundle bundle = getIntent().getExtras();
         if (bundle.containsKey(ExpenseList.GROUP_NAME)) {
 
@@ -106,8 +107,7 @@ public static String EXPENSE_DELETED = "EXPENSE_DELETED";
             }
         }
 
-//        Query query = mDatabaseReference.child("groups/" + group_name + "/members").orderByChild("active").equalTo("Yes");
-        Query query = mDatabaseReference.child("groups/" + group_name + "/members");
+        Query query = mDatabaseReference.child(db_groups + "/" + group_name + "/" + db_members);
         query.addListenerForSingleValueEvent(new ValueEventListener() {
             @Override
             public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
@@ -175,16 +175,6 @@ public static String EXPENSE_DELETED = "EXPENSE_DELETED";
 
     @Override
     public void onItemClick(AdapterView<?> adapter, View arg1, int arg2, long arg3) {
-
-
-        SparseBooleanArray sp = listView.getCheckedItemPositions();
-
-        String str = "";
-        for (int i = 0; i < sp.size(); i++) {
-            str += groupMembers[sp.keyAt(i)] + ",";
-        }
-        Toast.makeText(this, "" + str, Toast.LENGTH_SHORT).show();
-
     }
 
     public void onButtonClicked(View v) {
@@ -274,7 +264,7 @@ public static String EXPENSE_DELETED = "EXPENSE_DELETED";
                 }
 
                 if (expenseId != null) {//update individual expense
-                    mDatabaseReference.child("groups/" + group_name + "/expenses/" + expenseId).setValue(expense, new DatabaseReference.CompletionListener() {
+                    mDatabaseReference.child(db_groups + "/" + group_name + "/" + db_expenses + "/" + expenseId).setValue(expense, new DatabaseReference.CompletionListener() {
                         @Override
                         public void onComplete(@Nullable DatabaseError databaseError, @NonNull DatabaseReference databaseReference) {
                             updateGroup(group_name, participants);
@@ -286,7 +276,7 @@ public static String EXPENSE_DELETED = "EXPENSE_DELETED";
                     });
                 } else {//add expense
 
-                    mDatabaseReference.child("groups/" + group_name + "/expenses").push().setValue(expense, new DatabaseReference.CompletionListener() {
+                    mDatabaseReference.child(db_groups + "/" + group_name + "/" + db_expenses).push().setValue(expense, new DatabaseReference.CompletionListener() {
                         @Override
                         public void onComplete(DatabaseError databaseError, DatabaseReference dataReference) {
                             updateGroup(group_name, participants);
@@ -309,7 +299,7 @@ public static String EXPENSE_DELETED = "EXPENSE_DELETED";
                         new DialogInterface.OnClickListener() {
                             @Override
                             public void onClick(DialogInterface arg0, int arg1) {
-                                mDatabaseReference.child("groups/" + group_name + "/expenses/" + expenseId).removeValue();
+                                mDatabaseReference.child(db_groups + "/" + group_name + "/"+db_expenses + "/" + expenseId).removeValue();
                                 updateGroup(group_name, participants);// TODO send all the group members as list
                                 //get the participants from the previous activity
                                 // so that only those users will be updated
@@ -375,7 +365,7 @@ public static String EXPENSE_DELETED = "EXPENSE_DELETED";
 
         //update the participant's total amount
         //Get all the group members
-        Query query = mDatabaseReference.child("groups/" + groupName);
+        Query query = mDatabaseReference.child(db_groups + "/" + groupName);
 
         query.addListenerForSingleValueEvent(new ValueEventListener() {
             @Override
@@ -401,7 +391,7 @@ public static String EXPENSE_DELETED = "EXPENSE_DELETED";
                         Map.Entry pairMbr = (Map.Entry) itMbr.next();
                         String grouMbr = (String) pairMbr.getKey();
                         groupMember.add(grouMbr);
-                        SingleBalance sb = new SingleBalance(0.0f, "amount owed", grouMbr);
+                        SingleBalance sb = new SingleBalance(0.0f, getString(R.string.you_owe), grouMbr);
                         sb.setSplitDues(new HashMap<>(splitDues));
                         members.put(grouMbr, sb);
                     }
@@ -457,10 +447,10 @@ public static String EXPENSE_DELETED = "EXPENSE_DELETED";
                     }
 
                     //write group total and members into DB
-                    mDatabaseReference.child("groups/" + groupName + "/members/").setValue(members, new DatabaseReference.CompletionListener() {
+                    mDatabaseReference.child(db_groups + "/" + groupName + "/" + db_members).setValue(members, new DatabaseReference.CompletionListener() {
                         @Override
                         public void onComplete(@Nullable DatabaseError databaseError, @NonNull DatabaseReference databaseReference) {
-                            mDatabaseReference.child("groups/" + groupName + "/totalAmount/").setValue(totalGroupExpense, new DatabaseReference.CompletionListener() {
+                            mDatabaseReference.child(db_groups + "/" + groupName + "/" + db_totalAmount).setValue(totalGroupExpense, new DatabaseReference.CompletionListener() {
                                 @Override
                                 public void onComplete(@Nullable DatabaseError databaseError, @NonNull DatabaseReference databaseReference) {
                                     for(String participant : participants)
@@ -485,4 +475,25 @@ public static String EXPENSE_DELETED = "EXPENSE_DELETED";
         Log.i(TAG, "back pressed in Add Expense");
 
 }
+
+    private void initDBValues(){
+
+        db_users = getString(R.string.db_users);
+        db_balances = getString(R.string.db_balances);
+        db_groups = getString(R.string.db_groups);
+        db_archivedExpenses = getString(R.string.db_archivedExpenses);
+        db_expenses = getString(R.string.db_expenses);
+        db_members = getString(R.string.db_members);
+        db_nonMembers = getString(R.string.db_nonMembers);
+        db_owner = getString(R.string.db_owner);
+        db_photoUrl = getString(R.string.db_photoUrl);
+        db_amount = getString(R.string.db_amount);
+        db_status = getString(R.string.db_status);
+        db_friends = getString(R.string.db_friends);
+        db_email = getString(R.string.db_email);
+        db_name = getString(R.string.db_name);
+        db_imageUrl = getString(R.string.db_imageUrl);
+        db_totalAmount = getString(R.string.db_totalAmount);
+
+    }
 }

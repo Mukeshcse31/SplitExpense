@@ -8,6 +8,7 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
 import androidx.core.app.SharedElementCallback;
 import androidx.fragment.app.Fragment;
 import androidx.recyclerview.widget.LinearLayoutManager;
@@ -18,6 +19,7 @@ import com.google.app.splitwise_clone.groups.AddGroup;
 import com.google.app.splitwise_clone.utils.AppUtils;
 import com.google.app.splitwise_clone.utils.FirebaseUtils;
 import com.google.app.splitwise_clone.utils.GroupsAdapter;
+import com.google.firebase.database.ChildEventListener;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
@@ -31,14 +33,18 @@ public class GroupsFragment extends Fragment implements GroupsAdapter.OnClickLis
 
     private DatabaseReference mDatabaseReference;
     List<DataSnapshot> dataSnapshotGroupList = new ArrayList<>();
+    ChildEventListener firebaseListener;
     private RecyclerView groups_rv;
     private String group_name;
     private String userName = "", snackBarMsg;
     onGroupClickListener mGroupListener;
     private GroupsAdapter mGroupsAdapter;
+    String db_users, db_balances, db_groups, db_archivedExpenses, db_expenses, db_members, db_nonMembers,
+            db_totalAmount, db_dateSpent, db_splitDues, db_images, db_category, db_owner, db_photoUrl, db_amount, db_status, db_friends, db_email, db_name, db_imageUrl;
 
     public GroupsFragment() {
         // Required empty public constructor
+
     }
 
     @Override
@@ -62,6 +68,7 @@ public class GroupsFragment extends Fragment implements GroupsAdapter.OnClickLis
         // If not, it throws an exception
         try {
             mGroupListener = (onGroupClickListener) context;
+            initDBValues(context);
         } catch (ClassCastException e) {
             throw new ClassCastException(context.toString()
                     + " must implement OnImageClickListener");
@@ -95,17 +102,6 @@ private void showSnackBar(){
 
     AppUtils.showSnackBar(getContext(), getActivity().findViewById(android.R.id.content),snackBarMsg);
 
-//    if(!TextUtils.isEmpty(snackBarMsg)) {
-//        final Snackbar snackBar = Snackbar.make(getActivity().findViewById(android.R.id.content),snackBarMsg, Snackbar.LENGTH_LONG);
-//        snackBar.setAction(getString(R.string.close), new View.OnClickListener() {
-//            @Override
-//            public void onClick(View v) {
-//                // Call your action method here
-//                snackBar.dismiss();
-//            }
-//        });
-//        snackBar.show();
-//    }
 }
     @Override
     public void onDestroyView() {
@@ -122,7 +118,7 @@ private void showSnackBar(){
 
         //only the owner of the group should be able to edit the group
 
-        Query query = mDatabaseReference.child("groups/" + groupName + "/owner");
+        Query query = mDatabaseReference.child(db_groups+ "/" + groupName + "/" + db_owner);
 
         query.addListenerForSingleValueEvent(new ValueEventListener() {
             @Override
@@ -144,7 +140,7 @@ private void showSnackBar(){
 
 
     private void populateGroupList() {
-        Query query = mDatabaseReference.child("groups").orderByChild("members/" + userName + "/name").equalTo(userName);
+        Query query = mDatabaseReference.child(db_groups).orderByChild(db_members + "/" + userName + "/" + db_name).equalTo(userName);
 
         query.addListenerForSingleValueEvent(new ValueEventListener() {
             @Override
@@ -174,11 +170,72 @@ private void showSnackBar(){
         userName = FirebaseUtils.getUserName();
         showSnackBar();
         populateGroupList();
+        startFriendsListener();
     }
 
     @Override
     public void onPause(){
         super.onPause();
         AppUtils.closeDBReference(mDatabaseReference);
+        removeListener();
+    }
+
+    private void startFriendsListener() {
+
+        firebaseListener = new ChildEventListener() {
+            @Override
+            public void onChildAdded(@NonNull DataSnapshot dataSnapshot, @Nullable String s) {
+                populateGroupList();
+            }
+
+            @Override
+            public void onChildChanged(@NonNull DataSnapshot dataSnapshot, @Nullable String s) {
+                populateGroupList();
+            }
+
+            @Override
+            public void onChildRemoved(@NonNull DataSnapshot dataSnapshot) {
+                populateGroupList();
+            }
+
+            @Override
+            public void onChildMoved(@NonNull DataSnapshot dataSnapshot, @Nullable String s) {
+
+            }
+
+            @Override
+            public void onCancelled(@NonNull DatabaseError databaseError) {
+
+            }
+        };
+        mDatabaseReference.child(db_users + "/" + userName + "/" + db_balances + "/" +  db_groups).addChildEventListener(firebaseListener);
+    }
+
+    private void removeListener() {
+        mDatabaseReference.child(db_users + "/" + userName + "/" + db_balances + "/" + db_groups).removeEventListener(firebaseListener);
+    }
+
+    private void initDBValues(Context context){
+        db_users = context.getString(R.string.db_users);
+        db_balances = context.getString(R.string.db_balances);
+        db_groups = context.getString(R.string.db_groups);
+        db_archivedExpenses = context.getString(R.string.db_archivedExpenses);
+        db_expenses = context.getString(R.string.db_expenses);
+        db_members = context.getString(R.string.db_members);
+        db_nonMembers = context.getString(R.string.db_nonMembers);
+        db_owner = context.getString(R.string.db_owner);
+        db_photoUrl = context.getString(R.string.db_photoUrl);
+        db_amount = context.getString(R.string.db_amount);
+        db_status = context.getString(R.string.db_status);
+        db_friends = context.getString(R.string.db_friends);
+        db_email = context.getString(R.string.db_email);
+        db_name = context.getString(R.string.db_name);
+        db_imageUrl = context.getString(R.string.db_imageUrl);
+        db_totalAmount = context.getString(R.string.db_totalAmount);
+        db_dateSpent = context.getString(R.string.db_dateSpent);
+        db_category = context.getString(R.string.db_category);
+        db_splitDues = context.getString(R.string.db_splitDues);
+        db_images = context.getString(R.string.db_images);
+
     }
 }

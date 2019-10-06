@@ -115,6 +115,7 @@ groupPosted = true;
         adminChannel = new NotificationChannel(ADMIN_CHANNEL_ID, adminChannelName, NotificationManager.IMPORTANCE_HIGH);
         adminChannel.setDescription(adminChannelDescription);
         adminChannel.enableLights(true);
+        adminChannel.setShowBadge(true);
         adminChannel.setLightColor(R.color.red);
         adminChannel.enableVibration(true);
         if (notificationManager != null) {

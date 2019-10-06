@@ -54,6 +54,8 @@ public class SummaryActivity extends AppCompatActivity implements GroupsFragment
     ViewPager viewPager;
     TabLayout tabLayout;
     public static String POSITION = "POSITION";
+    String db_users, db_balances, db_groups, db_archivedExpenses, db_expenses, db_members, db_nonMembers,
+            db_totalAmount, db_dateSpent, db_splitDues, db_images, db_category, db_owner, db_photoUrl, db_amount, db_status, db_friends, db_email, db_name, db_imageUrl;
 
 
     @Override
@@ -69,10 +71,7 @@ public class SummaryActivity extends AppCompatActivity implements GroupsFragment
         Toolbar myToolbar = (Toolbar) findViewById(R.id.my_toolbar);
         myToolbar.setTitle(userName);
         setSupportActionBar(myToolbar);
-
-//        getSupportActionBar().setDisplayShowTitleEnabled(true);
-//        getSupportActionBar().setTitle(userName);
-
+initDBValues();
         profilePicture = findViewById(R.id.profilePicture);
         balance_summary_tv = findViewById(R.id.balance_summary_tv);
 
@@ -92,6 +91,20 @@ public class SummaryActivity extends AppCompatActivity implements GroupsFragment
         Intent intent = getIntent();
         if (intent.hasExtra(AddFriend.FRIEND_ADDED)) {
             snackBarMsg = intent.getStringExtra(AddFriend.FRIEND_ADDED);
+            intent.removeExtra(AddFriend.FRIEND_ADDED);
+        }
+
+        if (intent.hasExtra(SignIn.LOGIN)) {
+            snackBarMsg = intent.getStringExtra(SignIn.LOGIN);
+            intent.removeExtra(SignIn.LOGIN);
+        }
+        if (intent.hasExtra(SignIn.SIGNUP)) {
+            snackBarMsg = intent.getStringExtra(SignIn.SIGNUP);
+            intent.removeExtra(SignIn.SIGNUP);
+        }
+        if (intent.hasExtra(AddGroup.GROUP_ADDED)) {
+            snackBarMsg = intent.getStringExtra(AddGroup.GROUP_ADDED);
+            intent.removeExtra(AddGroup.GROUP_ADDED);
         }
 
         profilePicture.setOnClickListener(new View.OnClickListener() {
@@ -114,12 +127,10 @@ public class SummaryActivity extends AppCompatActivity implements GroupsFragment
 
 //        Intent intent = new Intent(/this, DetailsActivity.class);
 // Pass data object in the bundle and populate details activity.
-//        intent.putExtra(DetailsActivity.EXTRA_CONTACT, contact);
         ActivityOptionsCompat options = ActivityOptionsCompat.
-                makeSceneTransitionAnimation(this, (View)ivProfile, "profile");
+                makeSceneTransitionAnimation(this, (View)ivProfile, getString(R.string.transitioname));
         startActivity(intent, options.toBundle());
 
-//        startActivity(intent);
     }
 
     @Override
@@ -181,7 +192,7 @@ public class SummaryActivity extends AppCompatActivity implements GroupsFragment
             Uri selectedImageUri = data.getData();
 
             // Get a reference to store file at chat_photos/<FILENAME>
-            mPhotosStorageReference = mFirebaseStorage.getReference().child("images/users");
+            mPhotosStorageReference = mFirebaseStorage.getReference().child(db_images + "/" + db_users);
             final StorageReference photoRef = mPhotosStorageReference.child(userName);
 
             // Upload file to Firebase Storage
@@ -190,7 +201,7 @@ public class SummaryActivity extends AppCompatActivity implements GroupsFragment
                         public void onSuccess(UploadTask.TaskSnapshot taskSnapshot) {
 
                             //update the path of image in the DB users'
-                            mDatabaseReference.child("users/" + userName + "/imageUrl").setValue(photoRef.getPath());
+                            mDatabaseReference.child(db_users + "/" + userName + "/" + db_imageUrl).setValue(photoRef.getPath());
 
                             final StorageReference userImgRef = mPhotosStorageReference.child(userName);
                             final long ONE_MEGABYTE = 1024 * 1024;
@@ -229,7 +240,7 @@ public class SummaryActivity extends AppCompatActivity implements GroupsFragment
 
     private void loadUserImage() {
 
-        Query query = mDatabaseReference.child("users/" + userName + "/imageUrl");
+        Query query = mDatabaseReference.child(db_users + "/" + userName + "/" + db_imageUrl);
         query.addListenerForSingleValueEvent(new ValueEventListener() {
             @Override
             public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
@@ -329,5 +340,29 @@ public class SummaryActivity extends AppCompatActivity implements GroupsFragment
 //navigate from groups list to friends list
         if(viewPager.getCurrentItem() == 1)
         viewPager.setCurrentItem(0);
+    }
+
+    private void initDBValues(){
+        db_users = getString(R.string.db_users);
+        db_balances = getString(R.string.db_balances);
+        db_groups = getString(R.string.db_groups);
+        db_archivedExpenses = getString(R.string.db_archivedExpenses);
+        db_expenses = getString(R.string.db_expenses);
+        db_members = getString(R.string.db_members);
+        db_nonMembers = getString(R.string.db_nonMembers);
+        db_owner = getString(R.string.db_owner);
+        db_photoUrl = getString(R.string.db_photoUrl);
+        db_amount = getString(R.string.db_amount);
+        db_status = getString(R.string.db_status);
+        db_friends = getString(R.string.db_friends);
+        db_email = getString(R.string.db_email);
+        db_name = getString(R.string.db_name);
+        db_imageUrl = getString(R.string.db_imageUrl);
+        db_totalAmount = getString(R.string.db_totalAmount);
+        db_dateSpent = getString(R.string.db_dateSpent);
+        db_category = getString(R.string.db_category);
+        db_splitDues = getString(R.string.db_splitDues);
+        db_images = getString(R.string.db_images);
+
     }
 }

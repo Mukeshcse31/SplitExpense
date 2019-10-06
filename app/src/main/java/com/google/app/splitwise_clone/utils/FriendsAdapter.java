@@ -144,13 +144,13 @@ public class FriendsAdapter extends RecyclerView.Adapter<FriendsAdapter.FriendsV
                 Map.Entry pair2 = (Map.Entry) it2.next();
                 String groupName = (String) pair2.getKey();
                 Float amount = (float) pair2.getValue();
-                String status = String.format("%s $%.2f", mContext.getString(R.string.you_owe), Math.abs(amount));
-                String stat1 = AppUtils.getColoredSpanned(status, mContext.getString(R.string.orange));
+                String status = String.format("%s %s", mContext.getString(R.string.you_owe), AppUtils.getColoredSpanned("$" + Math.abs(amount), mContext.getString(R.string.orange)));
+
                 if (amount > 0){
-                    status = String.format("%s $%.2f", mContext.getString(R.string.owes_you), Math.abs(amount));
-                    stat1 = AppUtils.getColoredSpanned(status, mContext.getString(R.string.green));
+                    status = String.format("%s %s", mContext.getString(R.string.owes_you), AppUtils.getColoredSpanned("$" + Math.abs(amount), mContext.getString(R.string.green)));
+
                 }
-                stat += stat1 + " from group " + groupName + "<br>";
+                stat += String.format("%s %s %s <br>",status, mContext.getString(R.string.from_group), groupName);
 
             }
 
@@ -180,12 +180,5 @@ public class FriendsAdapter extends RecyclerView.Adapter<FriendsAdapter.FriendsV
                 }
             });
         }
-    }
-
-
-    public void setFriendsData(Map<String, Map<String, Float>> mBalance) {
-        expenseMatrix = null;
-        this.expenseMatrix = mBalance;
-        this.notifyDataSetChanged();
     }
 }
