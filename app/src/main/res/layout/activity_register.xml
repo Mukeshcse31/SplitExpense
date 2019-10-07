@@ -31,6 +31,7 @@
             android:imeOptions="actionNext"
             android:nextFocusForward="@id/register_email"
             android:inputType="textNoSuggestions"
+            android:maxLength="@integer/user_name_length"
             android:maxLines="@integer/signUp_lines"
             android:textColor="@color/white"
             android:textColorHint="@color/white"
@@ -174,6 +175,7 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     app:srcCompat="@drawable/offline"
+    android:contentDescription="@string/offline"
     android:id="@+id/offline_iv">
 </androidx.appcompat.widget.AppCompatImageView>
 

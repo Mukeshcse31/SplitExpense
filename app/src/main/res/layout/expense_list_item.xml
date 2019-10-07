@@ -78,21 +78,21 @@
 
     <androidx.constraintlayout.widget.Guideline
         android:id="@+id/guideline_1"
-        android:layout_width="1dp"
+        android:layout_width="@dimen/guideline_width"
         android:layout_height="match_parent"
         android:orientation="vertical"
         app:layout_constraintGuide_percent="0.10" />
 
     <androidx.constraintlayout.widget.Guideline
         android:id="@+id/guideline_2"
-        android:layout_width="1dp"
+        android:layout_width="@dimen/guideline_width"
         android:layout_height="match_parent"
         android:orientation="vertical"
         app:layout_constraintGuide_percent="0.20" />
 
     <androidx.constraintlayout.widget.Guideline
         android:id="@+id/guideline_3"
-        android:layout_width="1dp"
+        android:layout_width="@dimen/guideline_width"
         android:layout_height="match_parent"
         android:orientation="vertical"
         app:layout_constraintGuide_percent="0.90" />
@@ -100,7 +100,7 @@
     <androidx.constraintlayout.widget.Guideline
         android:id="@+id/guideline_hor"
         android:layout_width="match_parent"
-        android:layout_height="1dp"
+        android:layout_height="@dimen/guideline_height"
         android:orientation="horizontal"
         app:layout_constraintGuide_percent=".90"/>
 

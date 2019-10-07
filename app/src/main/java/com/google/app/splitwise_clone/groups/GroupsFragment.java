@@ -1,4 +1,4 @@
-package com.google.app.splitwise_clone;
+package com.google.app.splitwise_clone.groups;
 
 import android.content.Context;
 import android.content.Intent;
@@ -9,13 +9,11 @@ import android.view.View;
 import android.view.ViewGroup;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
-import androidx.core.app.SharedElementCallback;
 import androidx.fragment.app.Fragment;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
-import androidx.transition.TransitionInflater;
-import com.google.android.material.snackbar.Snackbar;
-import com.google.app.splitwise_clone.groups.AddGroup;
+
+import com.google.app.splitwise_clone.R;
 import com.google.app.splitwise_clone.utils.AppUtils;
 import com.google.app.splitwise_clone.utils.FirebaseUtils;
 import com.google.app.splitwise_clone.utils.GroupsAdapter;
@@ -27,7 +25,6 @@ import com.google.firebase.database.Query;
 import com.google.firebase.database.ValueEventListener;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Map;
 
 public class GroupsFragment extends Fragment implements GroupsAdapter.OnClickListener {
 

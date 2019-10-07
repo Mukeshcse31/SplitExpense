@@ -1,8 +1,6 @@
 package com.google.app.splitwise_clone;
 
 import android.content.Intent;
-import android.graphics.Bitmap;
-import android.graphics.BitmapFactory;
 import android.net.Uri;
 import android.os.Bundle;
 import android.text.TextUtils;
@@ -21,11 +19,10 @@ import com.bumptech.glide.Glide;
 import com.google.android.gms.tasks.OnFailureListener;
 import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.android.material.appbar.CollapsingToolbarLayout;
-import com.google.android.material.snackbar.Snackbar;
 import com.google.android.material.tabs.TabLayout;
-import com.google.app.splitwise_clone.expense.AddExpense;
 import com.google.app.splitwise_clone.expense.ExpenseList;
 import com.google.app.splitwise_clone.groups.AddGroup;
+import com.google.app.splitwise_clone.groups.GroupsFragment;
 import com.google.app.splitwise_clone.model.Group;
 import com.google.app.splitwise_clone.utils.AppUtils;
 import com.google.app.splitwise_clone.utils.FirebaseUtils;
@@ -37,9 +34,10 @@ import com.google.firebase.database.ValueEventListener;
 import com.google.firebase.storage.FirebaseStorage;
 import com.google.firebase.storage.StorageReference;
 import com.google.firebase.storage.UploadTask;
+
 import java.util.List;
 
-public class SummaryActivity extends AppCompatActivity implements GroupsFragment.onGroupClickListener, FriendsFragment.onFriendClickListener{
+public class SummaryActivity extends AppCompatActivity implements GroupsFragment.onGroupClickListener, FriendsFragment.onFriendClickListener {
 
     private FirebaseStorage mFirebaseStorage;
     private DatabaseReference mDatabaseReference;
@@ -48,14 +46,15 @@ public class SummaryActivity extends AppCompatActivity implements GroupsFragment
     private ImageView profilePicture;
     private CollapsingToolbarLayout toolbar_container;
     private static final int RC_PHOTO_PICKER = 2;
-    private String balanceSummaryTxt, userName = "anonymous", snackBarMsg;
+    private String userName = "anonymous", snackBarMsg;
     private TextView balance_summary_tv;
     private byte[] userImageByte;
     ViewPager viewPager;
     TabLayout tabLayout;
     public static String POSITION = "POSITION";
     String db_users, db_balances, db_groups, db_archivedExpenses, db_expenses, db_members, db_nonMembers,
-            db_totalAmount, db_dateSpent, db_splitDues, db_images, db_category, db_owner, db_photoUrl, db_amount, db_status, db_friends, db_email, db_name, db_imageUrl;
+            db_totalAmount, db_dateSpent, db_splitDues, db_images, db_category, db_owner, db_photoUrl,
+            db_amount, db_status, db_friends, db_email, db_name, db_imageUrl;
 
 
     @Override
@@ -63,7 +62,6 @@ public class SummaryActivity extends AppCompatActivity implements GroupsFragment
         super.onCreate(savedInstanceState);
 
 //        https://android.jlelse.eu/tablayout-and-viewpager-in-your-android-app-738b8840c38a
-        // Set the content of the activity to use the  activity_main.xml layout file
         setContentView(R.layout.activity_summary);
         userName = FirebaseUtils.getUserName();
         toolbar_container = findViewById(R.id.toolbar_container);
@@ -71,7 +69,7 @@ public class SummaryActivity extends AppCompatActivity implements GroupsFragment
         Toolbar myToolbar = (Toolbar) findViewById(R.id.my_toolbar);
         myToolbar.setTitle(userName);
         setSupportActionBar(myToolbar);
-initDBValues();
+        initDBValues();
         profilePicture = findViewById(R.id.profilePicture);
         balance_summary_tv = findViewById(R.id.balance_summary_tv);
 
@@ -128,7 +126,7 @@ initDBValues();
 //        Intent intent = new Intent(/this, DetailsActivity.class);
 // Pass data object in the bundle and populate details activity.
         ActivityOptionsCompat options = ActivityOptionsCompat.
-                makeSceneTransitionAnimation(this, (View)ivProfile, getString(R.string.transitioname));
+                makeSceneTransitionAnimation(this, (View) ivProfile, getString(R.string.transitioname));
         startActivity(intent, options.toBundle());
 
     }
@@ -191,6 +189,7 @@ initDBValues();
         if (requestCode == RC_PHOTO_PICKER && resultCode == RESULT_OK) {
             Uri selectedImageUri = data.getData();
 
+            mFirebaseStorage = AppUtils.getDBStorage();
             // Get a reference to store file at chat_photos/<FILENAME>
             mPhotosStorageReference = mFirebaseStorage.getReference().child(db_images + "/" + db_users);
             final StorageReference photoRef = mPhotosStorageReference.child(userName);
@@ -202,27 +201,18 @@ initDBValues();
 
                             //update the path of image in the DB users'
                             mDatabaseReference.child(db_users + "/" + userName + "/" + db_imageUrl).setValue(photoRef.getPath());
-
-                            final StorageReference userImgRef = mPhotosStorageReference.child(userName);
                             final long ONE_MEGABYTE = 1024 * 1024;
-                            userImgRef.getBytes(ONE_MEGABYTE).addOnSuccessListener(new OnSuccessListener<byte[]>() {
+                            photoRef.getBytes(ONE_MEGABYTE).addOnSuccessListener(new OnSuccessListener<byte[]>() {
                                 @Override
                                 public void onSuccess(byte[] bytes) {
                                     userImageByte = bytes;
-//                                           https://stackoverflow.com/questions/46619510/how-can-i-download-image-on-firebase-storage
-                                    //            https://github.com/bumptech/glide/issues/458
 
-                                    Bitmap bmp = BitmapFactory.decodeByteArray(bytes, 0, bytes.length);
-//                                    profilePicture.setImageBitmap(bmp);
-
-                                    //TODO
                                     Glide.with(SummaryActivity.this)
                                             .load(bytes)
                                             .asBitmap()
                                             .placeholder(R.drawable.people_unselected)
                                             .into(profilePicture);
 
-//                                    Log.i(TAG, "photo download " + mPhotosStorageReference.getPath());
                                 }
                             }).addOnFailureListener(new OnFailureListener() {
                                 @Override
@@ -257,9 +247,7 @@ initDBValues();
                     islandRef.getBytes(ONE_MEGABYTE).addOnSuccessListener(new OnSuccessListener<byte[]>() {
                         @Override
                         public void onSuccess(byte[] bytes) {
-                            userImageByte= bytes;
-//                            Drawable image = new BitmapDrawable(BitmapFactory.decodeByteArray(bytes, 0, bytes.length));
-//                            toolbar_container.setContentScrim(image);
+                            userImageByte = bytes;
                             Glide.with(SummaryActivity.this)
                                     .load(bytes)
                                     .asBitmap()
@@ -314,12 +302,12 @@ initDBValues();
     }
 
     @Override
-    public void updateUserSummary(String balanceSummaryTxt){
+    public void updateUserSummary(String balanceSummaryTxt) {
         balance_summary_tv.setText(balanceSummaryTxt);
     }
 
     @Override
-    public void onResume(){
+    public void onResume() {
         super.onResume();
         mFirebaseStorage = AppUtils.getDBStorage();
         mDatabaseReference = AppUtils.getDBReference();
@@ -329,20 +317,21 @@ initDBValues();
     }
 
     @Override
-    public void onPause(){
+    public void onPause() {
         super.onPause();
         AppUtils.closeDBReference(mDatabaseReference);
+        mFirebaseStorage = null;
     }
 
 
     @Override
-    public void onBackPressed(){
+    public void onBackPressed() {
 //navigate from groups list to friends list
-        if(viewPager.getCurrentItem() == 1)
-        viewPager.setCurrentItem(0);
+        if (viewPager.getCurrentItem() == 1)
+            viewPager.setCurrentItem(0);
     }
 
-    private void initDBValues(){
+    private void initDBValues() {
         db_users = getString(R.string.db_users);
         db_balances = getString(R.string.db_balances);
         db_groups = getString(R.string.db_groups);

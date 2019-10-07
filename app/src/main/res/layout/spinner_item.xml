@@ -4,5 +4,5 @@
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
     android:gravity="center_horizontal|center_vertical"
-    android:padding="5dp"
+    android:padding="@dimen/spinner_padding"
     android:textSize="@dimen/payer" />

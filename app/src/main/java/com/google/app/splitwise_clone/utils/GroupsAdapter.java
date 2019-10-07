@@ -37,6 +37,8 @@ import com.google.app.splitwise_clone.model.SingleBalance;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.storage.FirebaseStorage;
 import com.google.firebase.storage.StorageReference;
+
+import java.text.DecimalFormat;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
@@ -161,10 +163,12 @@ public class GroupsAdapter extends RecyclerView.Adapter<GroupsAdapter.ReviewView
                 Map.Entry pair = (Map.Entry) it.next();
                 String friendName = (String) pair.getKey();
                 float amount = Float.parseFloat(String.valueOf(pair.getValue()));
+                DecimalFormat df = new DecimalFormat("#.##");
+
                 balanceAmount += amount;
-                String status = String.format("%s %s %s %s", friendName, mContext.getString(R.string.lent_you), AppUtils.getColoredSpanned("$" + Math.abs(amount), mContext.getString(R.string.orange)),"<br>");
+                String status = String.format("%s %s %s %s", friendName, mContext.getString(R.string.lent_you), AppUtils.getColoredSpanned("$" + df.format(Math.abs(amount)), mContext.getString(R.string.orange)),"<br>");
                 if (amount > 0){
-                    status = String.format("%s %s %s %s", friendName, mContext.getString(R.string.owes_you), AppUtils.getColoredSpanned("$" + Math.abs(amount), mContext.getString(R.string.green)), "<br>");
+                    status = String.format("%s %s %s %s", friendName, mContext.getString(R.string.owes_you), AppUtils.getColoredSpanned("$" + df.format(Math.abs(amount)), mContext.getString(R.string.green)), "<br>");
                 }
 
                 if (!TextUtils.equals(userName, friendName))
@@ -227,6 +231,7 @@ public class GroupsAdapter extends RecyclerView.Adapter<GroupsAdapter.ReviewView
                     Glide.with(group_image.getContext())
                             .load(bytes)
                             .asBitmap()
+                            .transform(new CircleTransform(mContext))
                             .into(group_image);
                 }
             }).addOnFailureListener(new OnFailureListener() {

@@ -22,8 +22,8 @@
     <dimen name="tv_member_status">20sp</dimen>
     <dimen name="layout_margin_grp">8dp</dimen>
     <dimen name="group_member_label">24sp</dimen>
-    <dimen name="group_image_width">72dp</dimen>
-    <dimen name="group_image_height">52dp</dimen>
+    <dimen name="group_image_width">96dp</dimen>
+    <dimen name="group_image_height">64dp</dimen>
     <dimen name="grpname_marginStart">160dp</dimen>
     <dimen name="camera_image_width">80dp</dimen>
     <dimen name="plus_width">40dp</dimen>

@@ -7,7 +7,5 @@
     android:textAppearance="?android:attr/textAppearanceLarge"
     android:gravity="center_vertical"
     android:checkMark="?android:attr/listChoiceIndicatorMultiple"
-    android:paddingLeft="6dip"
-    android:paddingRight="6dip"
     android:textSize="@dimen/label_exp"
     />

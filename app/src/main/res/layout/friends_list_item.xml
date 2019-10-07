@@ -31,16 +31,6 @@
         app:layout_constraintEnd_toStartOf="@+id/guideline_1"
         app:layout_constraintTop_toTopOf="parent" />
 
-    <!--    <ImageView-->
-    <!--            android:id="@+id/"-->
-    <!--            android:layout_width="20dp"-->
-    <!--            android:layout_height="16dp"-->
-    <!--            android:layout_marginTop="@dimen/margin_4"-->
-    <!--            android:layout_weight="3"-->
-    <!--            android:src="@drawable/person"-->
-    <!--            android:contentDescription="@string/friend_image" />-->
-
-
     <ImageView
         style="@style/greater_image_style"
         android:contentDescription="@string/goto_details"
@@ -69,30 +59,30 @@
 
     <androidx.constraintlayout.widget.Guideline
         android:id="@+id/guideline_1"
-        android:layout_width="1dp"
-        android:layout_height="match_parent"
-        android:orientation="vertical"
-        app:layout_constraintGuide_percent="0.15" />
-
-    <androidx.constraintlayout.widget.Guideline
-        android:id="@+id/guideline_2"
-        android:layout_width="1dp"
+        android:layout_width="@dimen/guideline_width"
         android:layout_height="match_parent"
         android:orientation="vertical"
         app:layout_constraintGuide_percent="0.20" />
 
     <androidx.constraintlayout.widget.Guideline
-        android:id="@+id/guideline_3"
-        android:layout_width="1dp"
+        android:id="@+id/guideline_2"
+        android:layout_width="@dimen/guideline_width"
         android:layout_height="match_parent"
         android:orientation="vertical"
-        app:layout_constraintGuide_percent="0.90" />
+        app:layout_constraintGuide_percent="0.25" />
+
+    <androidx.constraintlayout.widget.Guideline
+        android:id="@+id/guideline_3"
+        android:layout_width="@dimen/guideline_width"
+        android:layout_height="match_parent"
+        android:orientation="vertical"
+        app:layout_constraintGuide_percent="0.85" />
 
 
     <androidx.constraintlayout.widget.Guideline
         android:id="@+id/guideline_hor"
         android:layout_width="match_parent"
-        android:layout_height="1dp"
+        android:layout_height="@dimen/guideline_height"
         android:orientation="horizontal"
         app:layout_constraintGuide_percent=".90" />
 

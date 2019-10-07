@@ -37,6 +37,7 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:hint="@string/add_friend_name"
+            android:maxLength="@integer/user_name_length"
             android:imeOptions="actionNext"
             android:inputType="textNoSuggestions"
             android:maxLines="@integer/signUp_lines"

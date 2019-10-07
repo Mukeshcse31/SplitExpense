@@ -1,5 +1,7 @@
 package com.google.app.splitwise_clone.utils;
 
+import android.appwidget.AppWidgetManager;
+import android.content.ComponentName;
 import android.content.Context;
 import android.content.SharedPreferences;
 import android.text.TextUtils;
@@ -16,6 +18,7 @@ import com.google.app.splitwise_clone.model.Balance;
 import com.google.app.splitwise_clone.model.Group;
 import com.google.app.splitwise_clone.model.SingleBalance;
 import com.google.app.splitwise_clone.notification.MySingleton;
+import com.google.app.splitwise_clone.widget.BalanceWidgetProvider;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.database.DataSnapshot;
@@ -65,6 +68,12 @@ public class FirebaseUtils {
         SharedPreferences prefs = context.getSharedPreferences(SignIn.SPLIT_PREFS, 0);
         prefs.edit().remove(SignIn.USERNAME_KEY).commit();
         prefs.edit().remove(SignIn.PASSWORD_KEY).commit();
+        prefs.edit().remove(SignIn.DISPLAY_NAME_KEY).commit();
+
+        //update widget
+        int[] ids = AppWidgetManager.getInstance(context.getApplicationContext()).getAppWidgetIds(new ComponentName(context.getApplicationContext(), BalanceWidgetProvider.class));
+        BalanceWidgetProvider myWidget = new BalanceWidgetProvider();
+        myWidget.onUpdate(context, AppWidgetManager.getInstance(context),ids);
     }
 
 //    https://www.itsalif.info/content/android-volley-tutorial-http-get-post-put

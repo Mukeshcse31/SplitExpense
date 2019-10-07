@@ -24,12 +24,15 @@ import com.google.app.splitwise_clone.SummaryActivity;
 import com.google.app.splitwise_clone.model.Balance;
 import com.google.app.splitwise_clone.model.Group;
 import com.google.app.splitwise_clone.model.SingleBalance;
+import com.google.app.splitwise_clone.model.User;
 import com.google.app.splitwise_clone.utils.AppUtils;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.Query;
 import com.google.firebase.database.ValueEventListener;
+
+import java.text.DecimalFormat;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Iterator;
@@ -41,7 +44,8 @@ public class BalanceWidgetProvider extends AppWidgetProvider {
     static String userName;
     static String TAG = BalanceWidgetProvider.class.getSimpleName();
     static Map<String, Map<String, Float>> amountGroup;
-    static Float amountSpentByUser = 0.0f;
+    static private Float amountSpentByUser = 0.0f;
+    static private String userSummary = "";
 
     @Override
     public void onUpdate(final Context context, final AppWidgetManager appWidgetManager, final int[] appWidgetIds) {
@@ -72,44 +76,18 @@ public class BalanceWidgetProvider extends AppWidgetProvider {
         }
     }
 
-    public static RemoteViews getSingleRemoteView(Context mContext) {
+    public static RemoteViews getSingleRemoteView(Context mContext, String summary) {
 
         Log.i("Widget", "invoked");
+
         // Construct the RemoteViews object
         final RemoteViews views = new RemoteViews(mContext.getPackageName(), R.layout.widget_balance_amount);
 
-        Iterator it = amountGroup.entrySet().iterator();
-        String text="";
-        while(it.hasNext()) {
-            Map.Entry pair = (Map.Entry) it.next();
-            String friendName = (String) pair.getKey();
-            Map<String, Float> allGroups = new HashMap<>();
-            allGroups = (Map<String, Float>) pair.getValue();
-
-//create text view for each group
-            Iterator it2 = allGroups.entrySet().iterator();
-            String stat = "";
-            Float amount = 0.0f;
-            while (it2.hasNext()) {
-                Map.Entry pair2 = (Map.Entry) it2.next();
-                String groupName = (String) pair2.getKey();
-                amount = (float) pair2.getValue();
-
-                String stat1 = mContext.getString(R.string.you_owe);
-                if (amount > 0)
-                    stat1 = mContext.getString(R.string.owes_you);
-                stat += String.format("\t%s  %.2f %s %s \n",stat1, Math.abs(amount), mContext.getString(R.string.from_group), groupName);
-            }
-
-            text += String.format("\n%s: %s\n", friendName, stat);
-        }
-        views.setTextViewText(R.id.widget_balance_amount, String.format("%s %.2f \n %s",mContext.getString(R.string.amount_spent_by_you), amountSpentByUser, text));
+        views.setTextViewText(R.id.widget_balance_amount, String.format("%s %.2f \n %s", mContext.getString(R.string.amount_spent_by_you), amountSpentByUser, summary));
 
 //        views.setImageViewResource(R.id.widget_ingredient_name, R.drawable.launcher_icon);
         // Construct an Intent object includes web adresss.
-        Intent intent = new Intent(mContext, SummaryActivity.class);//TODO show the correct recipe's step activity
-
-//        intent.putExtra(SignIn.RECIPE_SELECTED, mRecipe);
+        Intent intent = new Intent(mContext, SummaryActivity.class);
 
         // In widget we are not allowing to use intents as usually. We have to use PendingIntent instead of 'startActivity'
         PendingIntent pendingIntent = PendingIntent.getActivity(mContext, 0, intent, 0);
@@ -124,69 +102,79 @@ public class BalanceWidgetProvider extends AppWidgetProvider {
     static void updateAppWidget(final Context context, final AppWidgetManager appWidgetManager,
                                 final int appWidgetId) {
 
+        userSummary = "";
         SharedPreferences prefs = context.getSharedPreferences(SignIn.SPLIT_PREFS, 0);
         userName = prefs.getString(SignIn.DISPLAY_NAME_KEY, "");
-
+        amountSpentByUser = 0.0f;
         Map<String, Float> amountSpentByMember = new HashMap<>();
-        Map<String, Float> amountDueByMember  = new HashMap<>();
+        Map<String, Float> amountDueByMember = new HashMap<>();
         Map<String, Map<String, Float>> expenseMatrix = new HashMap<>();
-        List<String> friends = new ArrayList<>();
-        Map<String, SingleBalance> members= new HashMap<>();
+        final List<String> friends = new ArrayList<>();
+        Map<String, SingleBalance> members = new HashMap<>();
         Iterator it = expenseMatrix.entrySet().iterator();
-        if(TextUtils.isEmpty(userName)) return;
+        if (TextUtils.isEmpty(userName)) {
+            final RemoteViews views = new RemoteViews(context.getPackageName(), R.layout.widget_balance_amount);
+
+            views.setTextViewText(R.id.widget_balance_amount, context.getString(R.string.no_user_signed));
+            appWidgetManager.updateAppWidget(appWidgetId, views);
+            return;
+        }
 
         //update the participant's total amount
         final DatabaseReference mDatabaseReference;
         mDatabaseReference = AppUtils.getDBReference();
 
-        Query query = mDatabaseReference.child("groups/").orderByChild("members/" + userName + "/name").equalTo(userName);
+        String db_groups = context.getString(R.string.db_groups);
+        String db_members = context.getString(R.string.db_members);
+        String db_name = context.getString(R.string.db_name);
+        final String db_users = context.getString(R.string.db_users);
+
+        final String db_balances = context.getString(R.string.db_balances);
+
+        Query query = mDatabaseReference.child(db_users + "/" + userName);
 
         query.addListenerForSingleValueEvent(new ValueEventListener() {
             @Override
             public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
 
                 if (dataSnapshot.exists()) {
+                    String summary="";
                     Balance balance = new Balance();
                     amountGroup = new HashMap<>();
+                    User user = dataSnapshot.getValue(User.class);
 
-                    for (DataSnapshot i : dataSnapshot.getChildren()) {
-                        Group group = i.getValue(Group.class);
-                        String groupName = i.getKey();
-                        Map<String, SingleBalance> sb = group.getMembers();
-                        SingleBalance sb1 = sb.get(userName);
-                        Float amountSpentForGroup = sb1.getAmount();
-                        Map<String, Float> dues = sb1.getSplitDues();
+                    amountSpentByUser = user.getBalances().getAmount();
 
-                        Iterator it = dues.entrySet().iterator();
-                        while (it.hasNext()) {
-                            Map.Entry pair = (Map.Entry) it.next();
-                            String expenseParticipant = (String) pair.getKey();
-                            Float amount = (Float) pair.getValue();
-                            //update user Balance
-                            Map<String, Float> eachGroup = new HashMap<>();
-                            eachGroup.put(groupName, amount);
-                            if (amountGroup.containsKey(expenseParticipant)) {
-                                amountGroup.get(expenseParticipant).put(groupName, amount);
-                            } else
-                                amountGroup.put(expenseParticipant, eachGroup);
+                    Map<String, Map<String, Float>> friends_balances = user.getBalances().getGroups();
+                    Iterator it1 = friends_balances.entrySet().iterator();
 
+
+                    while (it1.hasNext()) {//for each friend
+
+                        Map.Entry pair = (Map.Entry) it1.next();
+
+                        String friendName = (String) pair.getKey();
+                        Map<String, Float> allGroups = new HashMap<>();
+                        allGroups = (Map<String, Float>) pair.getValue();
+
+//create text view for each group
+                        Iterator it2 = allGroups.entrySet().iterator();
+                        while (it2.hasNext()) {
+                            Map.Entry pair2 = (Map.Entry) it2.next();
+                            String groupName = (String) pair2.getKey();
+                            Float amount = (float) pair2.getValue();
+                            DecimalFormat df = new DecimalFormat("#.##");
+                            String status = String.format("%s %s", context.getString(R.string.you_owe), "$" + df.format(Math.abs(amount)));
+
+                            if (amount > 0) {
+                                status = String.format("%s %s", context.getString(R.string.owes_you), "$" + df.format(Math.abs(amount)));
+
+                            }
+                            summary += String.format("%s %s %s", status, context.getString(R.string.from_group), groupName);
                         }
-                        amountSpentByUser += amountSpentForGroup;
+                        summary = friendName + ":\n" + summary;
                     }
-                    balance.setAmount(amountSpentByUser);
-                    amountGroup.remove(userName);
-                    balance.setGroups(amountGroup);
-                    mDatabaseReference.child("users/" + userName + "/balances/").setValue(balance);
-                    Log.i(TAG, "total calculation");
-
-//                  Get current width to decide on single plant vs garden grid view
-
-                    Bundle options = appWidgetManager.getAppWidgetOptions(appWidgetId);
-                    int width = options.getInt(AppWidgetManager.OPTION_APPWIDGET_MIN_WIDTH);
-                    final RemoteViews rv;
-                    rv = getSingleRemoteView(context);
-
-                    appWidgetManager.updateAppWidget(appWidgetId, rv);
+                    appWidgetManager.updateAppWidget(appWidgetId, getSingleRemoteView(context, summary));
                 }
             }
 
@@ -194,8 +182,6 @@ public class BalanceWidgetProvider extends AppWidgetProvider {
             public void onCancelled(@NonNull DatabaseError databaseError) {
             }
         });
-
-//        appWidgetManager.updateAppWidget(appWidgetId, rv);
     }
 
     @TargetApi(Build.VERSION_CODES.JELLY_BEAN)

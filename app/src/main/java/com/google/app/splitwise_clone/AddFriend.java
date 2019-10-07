@@ -144,9 +144,6 @@ public class AddFriend extends AppCompatActivity {
                                                             }
                                                             else mFriendEmail.setError(getString(R.string.email_nomatch));
                                                     }
-//                                                    else {
-//                                                        mFriendEmail.setError(getString(R.string.email_nomatch));
-//                                                    }
                                                 }
                                                 @Override
                                                 public void onCancelled(@NonNull DatabaseError databaseError) { }

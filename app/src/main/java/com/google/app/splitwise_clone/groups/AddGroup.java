@@ -4,12 +4,10 @@ import android.Manifest;
 import android.app.Activity;
 import android.content.DialogInterface;
 import android.content.Intent;
-import android.content.pm.ActivityInfo;
 import android.content.pm.PackageManager;
 import android.net.Uri;
 import android.os.Build;
 import android.os.Bundle;
-import android.provider.Settings;
 import android.text.TextUtils;
 import android.util.Log;
 import android.view.Menu;
@@ -30,11 +28,8 @@ import androidx.recyclerview.widget.RecyclerView;
 import com.bumptech.glide.Glide;
 import com.google.android.gms.tasks.OnFailureListener;
 import com.google.android.gms.tasks.OnSuccessListener;
-import com.google.android.material.snackbar.Snackbar;
 import com.google.app.splitwise_clone.R;
 import com.google.app.splitwise_clone.SummaryActivity;
-import com.google.app.splitwise_clone.expense.AddExpense;
-import com.google.app.splitwise_clone.expense.ExpenseList;
 import com.google.app.splitwise_clone.model.Group;
 import com.google.app.splitwise_clone.model.SingleBalance;
 import com.google.app.splitwise_clone.utils.AppUtils;
@@ -49,9 +44,6 @@ import com.google.firebase.database.ValueEventListener;
 import com.google.firebase.storage.FirebaseStorage;
 import com.google.firebase.storage.StorageReference;
 import com.google.firebase.storage.UploadTask;
-
-import org.w3c.dom.Text;
-
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.Map;
@@ -186,7 +178,6 @@ public class AddGroup extends AppCompatActivity implements GroupMembersAdapter.O
                 if (grantResults.length > 0 && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
 //                    Toast.makeText(getApplicationContext(), "Permission Granted", Toast.LENGTH_SHORT).show();
                     setphotoClickListener();
-                    // main logic
                 } else {
 //                    Toast.makeText(getApplicationContext(), "Permission Denied", Toast.LENGTH_SHORT).show();
                     if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
@@ -448,7 +439,6 @@ return cancel;
                                         if(!(selectedImageUri == null)) {
                                             //add the group creator as a member when the group is created
                                             grp.setPhotoUrl("/" + db_images + "/" + db_groups + "/" + name);
-                                            // Get a reference to store file at chat_photos/<FILENAME>
                                             final StorageReference photoRef = mPhotosStorageReference.child(name);
 
                                             // Upload file to Firebase Storage
@@ -645,12 +635,16 @@ return cancel;
     @Override
     public void onResume(){
         super.onResume();
+        mDatabaseReference = AppUtils.getDBReference();
+        mFirebaseStorage = AppUtils.getDBStorage();
     }
 
     @Override
     public void onPause(){
         super.onPause();
         Log.i(TAG, "listener cleared");
+        AppUtils.closeDBReference(mDatabaseReference);
+        mFirebaseStorage = null;
     }
 
     @Override

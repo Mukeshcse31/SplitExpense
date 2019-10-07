@@ -12,12 +12,10 @@ import android.widget.AutoCompleteTextView;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.TextView;
-
 import androidx.appcompat.app.AlertDialog;
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.AppCompatImageView;
-
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.android.gms.tasks.Task;
@@ -46,7 +44,6 @@ public class SignIn extends AppCompatActivity {
     public static final String PASSWORD_KEY = "password";
     public static final String LOGIN = "login";
     public static final String SIGNUP = "signup";
-
     private DatabaseReference mDatabaseReference;
     static final String TAG = "Registration";
     private AutoCompleteTextView mEmailView;
@@ -57,7 +54,6 @@ public class SignIn extends AppCompatActivity {
     private EditText mConfirmPasswordView;
     private Button mloginbutton, msignUp, mLogin_bn, mSignUp_bn;
     private AppCompatImageView offline_iv;
-    // Firebase instance variables
     private FirebaseAuth mAuth;
     private String userName;
 
@@ -229,7 +225,7 @@ public class SignIn extends AppCompatActivity {
                                     });
 
                             // add new user record in the realtime database
-                            Query query = mDatabaseReference.child("users/" + displayName);
+                            Query query = mDatabaseReference.child(getString(R.string.db_users) + displayName);
                             query.addListenerForSingleValueEvent(new ValueEventListener() {
                                 @Override
                                 public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
@@ -244,8 +240,6 @@ public class SignIn extends AppCompatActivity {
                                                 if (databaseError != null)
                                                     Log.i(TAG, databaseError.getDetails());
                                                 gotoSummaryActivity(SIGNUP , getString(R.string.signup_success));
-//                                                showSnackBar(getString(R.string.signup_success));
-//                                                finish();
                                             }
                                         });
                                     }
@@ -364,7 +358,7 @@ public class SignIn extends AppCompatActivity {
                                 }
                             });
 
-                            gotoSummaryActivity(LOGIN, userName + " signed in");
+                            gotoSummaryActivity(LOGIN, userName + getString(R.string.action_signed_in));
                         }
                     }
                 });

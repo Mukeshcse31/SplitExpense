@@ -28,6 +28,7 @@ import android.widget.ImageView;
 import android.widget.TextView;
 
 import androidx.annotation.NonNull;
+import androidx.core.graphics.drawable.RoundedBitmapDrawable;
 import androidx.core.text.HtmlCompat;
 import androidx.recyclerview.widget.RecyclerView;
 
@@ -38,6 +39,7 @@ import com.google.app.splitwise_clone.R;
 import com.google.firebase.storage.FirebaseStorage;
 import com.google.firebase.storage.StorageReference;
 
+import java.text.DecimalFormat;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
@@ -47,7 +49,7 @@ import java.util.Set;
 public class FriendsAdapter extends RecyclerView.Adapter<FriendsAdapter.FriendsViewHolder> {
 
     private static final String TAG = FriendsAdapter.class.getSimpleName();
-    private String userName;
+    private String userName, db_images, db_users;
     private StorageReference mPhotosStorageReference;
     private FirebaseStorage mFirebaseStorage;
     private FriendsAdapter.OnClickListener mOnClickListener;
@@ -76,6 +78,7 @@ public class FriendsAdapter extends RecyclerView.Adapter<FriendsAdapter.FriendsV
     public FriendsViewHolder onCreateViewHolder(ViewGroup viewGroup, int viewType) {
 
         mContext = viewGroup.getContext();
+        db_images = mContext.getString(R.string.db_images);
         int layoutIdForListItem = R.layout.friends_list_item;
         LayoutInflater inflater = LayoutInflater.from(mContext);
         boolean shouldAttachToParentImmediately = false;
@@ -144,10 +147,11 @@ public class FriendsAdapter extends RecyclerView.Adapter<FriendsAdapter.FriendsV
                 Map.Entry pair2 = (Map.Entry) it2.next();
                 String groupName = (String) pair2.getKey();
                 Float amount = (float) pair2.getValue();
-                String status = String.format("%s %s", mContext.getString(R.string.you_owe), AppUtils.getColoredSpanned("$" + Math.abs(amount), mContext.getString(R.string.orange)));
+                DecimalFormat df = new DecimalFormat("#.##");
+                String status = String.format("%s %s", mContext.getString(R.string.you_owe), AppUtils.getColoredSpanned("$" + df.format(Math.abs(amount)), mContext.getString(R.string.orange)));
 
                 if (amount > 0){
-                    status = String.format("%s %s", mContext.getString(R.string.owes_you), AppUtils.getColoredSpanned("$" + Math.abs(amount), mContext.getString(R.string.green)));
+                    status = String.format("%s %s", mContext.getString(R.string.owes_you), AppUtils.getColoredSpanned("$" + df.format(Math.abs(amount)), mContext.getString(R.string.green)));
 
                 }
                 stat += String.format("%s %s %s <br>",status, mContext.getString(R.string.from_group), groupName);
@@ -160,7 +164,6 @@ public class FriendsAdapter extends RecyclerView.Adapter<FriendsAdapter.FriendsV
         }
 
         private void loadImage(String friendName) {
-
             final StorageReference imageRef = mPhotosStorageReference.child("images/users/" + friendName);
             final long ONE_MEGABYTE = 1024 * 1024;
             imageRef.getBytes(ONE_MEGABYTE).addOnSuccessListener(new OnSuccessListener<byte[]>() {
@@ -168,7 +171,7 @@ public class FriendsAdapter extends RecyclerView.Adapter<FriendsAdapter.FriendsV
                 public void onSuccess(byte[] bytes) {
                     Glide.with(mContext)
                             .load(bytes)
-                            .asBitmap()
+                            .transform(new CircleTransform(mContext))
                             .into(friendImage);
                 }
             }).addOnFailureListener(new OnFailureListener() {

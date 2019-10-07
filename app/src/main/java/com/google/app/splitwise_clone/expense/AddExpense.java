@@ -88,7 +88,6 @@ public static String EXPENSE_DELETED = "EXPENSE_DELETED";
         setSupportActionBar(mToolbar);
         getSupportActionBar().setTitle(getString(R.string.add_expense));
         mDatabaseReference = AppUtils.getDBReference();
-
         listView = findViewById(R.id.group_members);
         listView.setChoiceMode(ListView.CHOICE_MODE_MULTIPLE);
 
@@ -470,11 +469,25 @@ public static String EXPENSE_DELETED = "EXPENSE_DELETED";
         });
     }
 
+
 @Override
     public void onBackPressed(){
         Log.i(TAG, "back pressed in Add Expense");
 
 }
+
+    @Override
+    public void onResume() {
+        super.onResume();
+        mDatabaseReference = AppUtils.getDBReference();
+    }
+
+    @Override
+    public void onPause() {
+        super.onPause();
+        AppUtils.closeDBReference(mDatabaseReference);
+        Log.i(TAG, "listener cleared");
+    }
 
     private void initDBValues(){
 

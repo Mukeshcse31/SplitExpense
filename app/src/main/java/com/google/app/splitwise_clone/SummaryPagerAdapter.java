@@ -6,6 +6,8 @@ import androidx.fragment.app.Fragment;
 import androidx.fragment.app.FragmentManager;
 import androidx.fragment.app.FragmentPagerAdapter;
 
+import com.google.app.splitwise_clone.groups.GroupsFragment;
+
 public class SummaryPagerAdapter extends FragmentPagerAdapter {
 
 
