@@ -1,4 +1,4 @@
-package com.google.app.splitwise_clone;
+package com.google.app.splitwise_clone.friends;
 
 import android.content.Intent;
 import android.os.Bundle;
@@ -8,18 +8,14 @@ import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.AutoCompleteTextView;
-import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.Toolbar;
 
-import com.google.android.material.snackbar.Snackbar;
-import com.google.app.splitwise_clone.groups.AddGroup;
-import com.google.app.splitwise_clone.model.Balance;
-import com.google.app.splitwise_clone.model.Group;
+import com.google.app.splitwise_clone.R;
+import com.google.app.splitwise_clone.SummaryActivity;
 import com.google.app.splitwise_clone.model.SingleBalance;
-import com.google.app.splitwise_clone.model.User;
 import com.google.app.splitwise_clone.utils.AppUtils;
 import com.google.app.splitwise_clone.utils.FirebaseUtils;
 import com.google.firebase.database.DataSnapshot;
@@ -27,9 +23,6 @@ import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.Query;
 import com.google.firebase.database.ValueEventListener;
-
-import java.util.HashMap;
-import java.util.Map;
 
 public class AddFriend extends AppCompatActivity {
 

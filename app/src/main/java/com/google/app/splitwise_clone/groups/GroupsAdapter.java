@@ -13,7 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package com.google.app.splitwise_clone.utils;
+package com.google.app.splitwise_clone.groups;
 
 import android.content.Context;
 import android.text.TextUtils;
@@ -21,8 +21,6 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.view.animation.Animation;
-import android.view.animation.ScaleAnimation;
 import android.widget.ImageView;
 import android.widget.TextView;
 import androidx.annotation.NonNull;
@@ -34,6 +32,9 @@ import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.app.splitwise_clone.R;
 import com.google.app.splitwise_clone.model.Group;
 import com.google.app.splitwise_clone.model.SingleBalance;
+import com.google.app.splitwise_clone.utils.AppUtils;
+import com.google.app.splitwise_clone.utils.CircleTransform;
+import com.google.app.splitwise_clone.utils.FirebaseUtils;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.storage.FirebaseStorage;
 import com.google.firebase.storage.StorageReference;
@@ -92,22 +93,6 @@ public class GroupsAdapter extends RecyclerView.Adapter<GroupsAdapter.ReviewView
     public void onBindViewHolder(ReviewViewHolder holder, int position) {
         Log.d(TAG, "#" + position);
         holder.bind(position);
-        // call Animation function
-        setAnimation(holder.itemView, position);
-    }
-
-
-    private int lastPosition = -1;
-
-    private void setAnimation(View viewToAnimate, int position) {
-        // If the bound view wasn't previously displayed on screen, it's animated
-        if (position > lastPosition) {
-            ScaleAnimation anim = new ScaleAnimation(0.0f, 1.0f, 0.0f, 1.0f, Animation.RELATIVE_TO_SELF, 0.5f, Animation.RELATIVE_TO_SELF, 0.5f);
-//            anim.setDuration(new Random().nextInt(501));//to make duration random number between [0,501)
-            anim.setDuration(1000);
-            viewToAnimate.startAnimation(anim);
-            lastPosition = position;
-        }
     }
 
 

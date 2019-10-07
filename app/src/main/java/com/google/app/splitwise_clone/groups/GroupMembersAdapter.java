@@ -13,7 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package com.google.app.splitwise_clone.utils;
+package com.google.app.splitwise_clone.groups;
 
 import android.content.Context;
 import android.util.Log;
@@ -31,28 +31,25 @@ import java.util.Iterator;
 import java.util.Map;
 import java.util.Set;
 
-public class NonGroupMembersAdapter extends RecyclerView.Adapter<NonGroupMembersAdapter.ReviewViewHolder> {
+public class GroupMembersAdapter extends RecyclerView.Adapter<GroupMembersAdapter.ReviewViewHolder> {
 
-    private static final String TAG = NonGroupMembersAdapter.class.getSimpleName();
+    private static final String TAG = GroupMembersAdapter.class.getSimpleName();
 
-    private static int viewHolderCount;
-    private Set nonMembersSet;
+    private Set membersSet;
     Iterator<String> it;
-    private OnClickListener mOnClickListener;
-    private Map<String, String> nonGroup_members;
+    private Map<String, String> group_members;
+private OnClickListener mOnClickListener;
 
-    public NonGroupMembersAdapter(Map<String, String> nongroup_members, OnClickListener context) {
-        mOnClickListener = context;
-        this.nonGroup_members = nongroup_members;
-        nonMembersSet = nonGroup_members.keySet();
-        it = nonMembersSet.iterator();
-        Set<Map.Entry<String, String>> ee = nonGroup_members.entrySet();
-        ee.size();
-        viewHolderCount = 0;
+    public GroupMembersAdapter(Map<String, String> group_members, Context context) {
+        mOnClickListener = (OnClickListener) context;
+        this.group_members = group_members;
+
+        membersSet = group_members.keySet();
+        it = membersSet.iterator();
     }
 
-    public interface OnClickListener {
-        void addFriendToGroup(String name);
+    public interface OnClickListener{
+        void removeFriendFromGroup(String name);
     }
 
     @Override
@@ -68,9 +65,8 @@ public class NonGroupMembersAdapter extends RecyclerView.Adapter<NonGroupMembers
 
 //        viewHolder.tv_review.setText("ViewHolder index: " + viewHolderCount);
 
-        viewHolderCount++;
-        Log.d(TAG, "onCreateViewHolder: number of ViewHolders created: "
-                + viewHolderCount);
+//        viewHolderCount++;
+//        Log.d(TAG, "onCreateViewHolder: number of ViewHolders created: " + viewHolderCount);
         return viewHolder;
     }
 
@@ -82,7 +78,7 @@ public class NonGroupMembersAdapter extends RecyclerView.Adapter<NonGroupMembers
 
     @Override
     public int getItemCount() {
-        return nonGroup_members.size();
+        return group_members.size();
     }
 
     class ReviewViewHolder extends RecyclerView.ViewHolder {
@@ -97,7 +93,8 @@ public class NonGroupMembersAdapter extends RecyclerView.Adapter<NonGroupMembers
             tv_friend_name = itemView.findViewById(R.id.tv_friend_name);
             member_iv = itemView.findViewById(R.id.member_iv);
 
-            member_iv.setImageDrawable(member_iv.getContext().getDrawable(R.drawable.plus));
+            member_iv.setImageDrawable(member_iv.getContext().getDrawable(R.drawable.minus));
+
 
         }
 
@@ -110,21 +107,20 @@ public class NonGroupMembersAdapter extends RecyclerView.Adapter<NonGroupMembers
         void bind(int listIndex) {
 
             final String member_name = it.next();
-            String email = nonGroup_members.get(member_name);
+            String email = group_members.get(member_name);
             String temp = member_name + tv_friend_name.getContext().getString(R.string.new_line) + email;
             tv_friend_name.setText(temp);
             member_iv.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
-                    mOnClickListener.addFriendToGroup(member_name);
+                    mOnClickListener.removeFriendFromGroup(member_name);
                 }
             });
 
         }
-
     }
-    public void setData(Map<String, String> members){
-        nonGroup_members = members;
-        notifyDataSetChanged();
+        public void setData(Map<String, String> members){
+            group_members = members;
+notifyDataSetChanged();
+        }
     }
-}

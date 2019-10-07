@@ -34,8 +34,6 @@ import com.google.app.splitwise_clone.model.Group;
 import com.google.app.splitwise_clone.model.SingleBalance;
 import com.google.app.splitwise_clone.utils.AppUtils;
 import com.google.app.splitwise_clone.utils.FirebaseUtils;
-import com.google.app.splitwise_clone.utils.GroupMembersAdapter;
-import com.google.app.splitwise_clone.utils.NonGroupMembersAdapter;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;

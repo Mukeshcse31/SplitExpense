@@ -83,7 +83,7 @@ public class BalanceWidgetProvider extends AppWidgetProvider {
         // Construct the RemoteViews object
         final RemoteViews views = new RemoteViews(mContext.getPackageName(), R.layout.widget_balance_amount);
 
-        views.setTextViewText(R.id.widget_balance_amount, String.format("%s %.2f \n %s", mContext.getString(R.string.amount_spent_by_you), amountSpentByUser, summary));
+        views.setTextViewText(R.id.widget_balance_amount, String.format("%s $%.2f \n %s", mContext.getString(R.string.amount_spent_by_you), amountSpentByUser, summary));
 
 //        views.setImageViewResource(R.id.widget_ingredient_name, R.drawable.launcher_icon);
         // Construct an Intent object includes web adresss.

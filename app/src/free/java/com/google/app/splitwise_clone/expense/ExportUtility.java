@@ -9,7 +9,6 @@ import com.google.android.gms.ads.AdRequest;
 import com.google.android.gms.ads.InterstitialAd;
 import com.google.android.gms.ads.MobileAds;
 import com.google.app.splitwise_clone.R;
-import com.google.app.splitwise_clone.utils.ExpenseAdapter;
 
 public class ExportUtility {
 

@@ -158,6 +158,18 @@
         android:layout_marginBottom="@dimen/layout_marginBottom_16"
         android:textStyle="bold"/>
 
+    <ProgressBar
+        android:id="@+id/progressBar"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        app:layout_constraintBottom_toTopOf="@+id/getLogin"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/login_bn">
+
+    </ProgressBar>
+
+
     <Button
         android:id="@+id/getLogin"
         style="?android:textAppearanceMedium"
@@ -171,13 +183,14 @@
         android:layout_marginBottom="@dimen/layout_marginBottom_16"
         android:textStyle="bold"/>
 
-<androidx.appcompat.widget.AppCompatImageView
-    android:layout_width="match_parent"
-    android:layout_height="match_parent"
-    app:srcCompat="@drawable/offline"
-    android:contentDescription="@string/offline"
-    android:id="@+id/offline_iv">
-</androidx.appcompat.widget.AppCompatImageView>
+    <androidx.appcompat.widget.AppCompatImageView
+        android:id="@+id/offline_iv"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:contentDescription="@string/offline"
+        app:srcCompat="@drawable/offline"
+        tools:layout_editor_absoluteX="10dp"
+        tools:layout_editor_absoluteY="-6dp"></androidx.appcompat.widget.AppCompatImageView>
 
 
 </androidx.constraintlayout.widget.ConstraintLayout>

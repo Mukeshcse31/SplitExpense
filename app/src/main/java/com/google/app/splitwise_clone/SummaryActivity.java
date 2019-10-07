@@ -21,6 +21,8 @@ import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.android.material.appbar.CollapsingToolbarLayout;
 import com.google.android.material.tabs.TabLayout;
 import com.google.app.splitwise_clone.expense.ExpenseList;
+import com.google.app.splitwise_clone.friends.AddFriend;
+import com.google.app.splitwise_clone.friends.FriendsFragment;
 import com.google.app.splitwise_clone.groups.AddGroup;
 import com.google.app.splitwise_clone.groups.GroupsFragment;
 import com.google.app.splitwise_clone.model.Group;

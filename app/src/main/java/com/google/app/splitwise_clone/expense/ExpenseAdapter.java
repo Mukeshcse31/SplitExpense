@@ -13,7 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package com.google.app.splitwise_clone.utils;
+package com.google.app.splitwise_clone.expense;
 
 import android.content.Context;
 import android.text.TextUtils;
@@ -27,6 +27,9 @@ import androidx.recyclerview.widget.RecyclerView;
 import com.google.app.splitwise_clone.R;
 import com.google.app.splitwise_clone.model.Expense;
 import com.google.app.splitwise_clone.model.SingleBalance;
+import com.google.app.splitwise_clone.utils.AppUtils;
+import com.google.app.splitwise_clone.utils.FirebaseUtils;
+
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
@@ -34,7 +37,6 @@ import java.util.Iterator;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.Set;
 
 public class ExpenseAdapter extends RecyclerView.Adapter<ExpenseAdapter.ExpenseViewHolder> {
 

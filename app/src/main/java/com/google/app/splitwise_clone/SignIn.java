@@ -11,11 +11,14 @@ import android.view.inputmethod.EditorInfo;
 import android.widget.AutoCompleteTextView;
 import android.widget.Button;
 import android.widget.EditText;
+import android.widget.ProgressBar;
 import android.widget.TextView;
 import androidx.appcompat.app.AlertDialog;
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.AppCompatImageView;
+import androidx.core.widget.ContentLoadingProgressBar;
+
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.android.gms.tasks.Task;
@@ -50,6 +53,7 @@ public class SignIn extends AppCompatActivity {
     private AutoCompleteTextView mUsernameView;
     private TextInputLayout mUserNameLayout;
     private TextInputLayout mlabel_confirm_password;
+    private ProgressBar progressBar;
     private EditText mPasswordView;
     private EditText mConfirmPasswordView;
     private Button mloginbutton, msignUp, mLogin_bn, mSignUp_bn;
@@ -57,15 +61,12 @@ public class SignIn extends AppCompatActivity {
     private FirebaseAuth mAuth;
     private String userName;
 
-//TODO when sign out, the sharedPreferences must be cleared
-
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_register);
 
 //        https://stackoverflow.com/questions/40081539/default-firebaseapp-is-not-initialized
-//        FirebaseApp.initializeApp(getBaseContext());
         mAuth = FirebaseAuth.getInstance();
         SharedPreferences prefs = getSharedPreferences(SPLIT_PREFS, 0);
         mDatabaseReference = AppUtils.getDBReference();
@@ -74,6 +75,7 @@ public class SignIn extends AppCompatActivity {
         String password = prefs.getString(PASSWORD_KEY, "");
         offline_iv = findViewById(R.id.offline_iv);
 
+        progressBar = findViewById(R.id.progressBar);
         mEmailView = findViewById(R.id.register_email);
         mPasswordView = findViewById(R.id.register_password);
         mConfirmPasswordView = findViewById(R.id.register_confirm_password);
@@ -105,6 +107,7 @@ public class SignIn extends AppCompatActivity {
 
         if (TextUtils.isEmpty(email)) {
 
+            progressBar.setVisibility(View.GONE);
             // Keyboard sign in action
             mConfirmPasswordView.setOnEditorActionListener(new TextView.OnEditorActionListener() {
                 @Override
@@ -337,6 +340,7 @@ public class SignIn extends AppCompatActivity {
 
     private void signInWithCredentials(final String email, final String password) {
 
+        progressBar.setVisibility(View.VISIBLE);
         mAuth.signInWithEmailAndPassword(email, password).addOnCompleteListener(this,
                 new OnCompleteListener<AuthResult>() {
 
@@ -374,6 +378,7 @@ public class SignIn extends AppCompatActivity {
 
         final Intent intent = new Intent(SignIn.this, SummaryActivity.class);
         intent.putExtra(name, value);
+        progressBar.setVisibility(View.GONE);
         startActivity(intent);
         finish();
     }

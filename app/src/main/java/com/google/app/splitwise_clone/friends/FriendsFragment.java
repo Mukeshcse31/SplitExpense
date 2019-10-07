@@ -1,4 +1,4 @@
-package com.google.app.splitwise_clone;
+package com.google.app.splitwise_clone.friends;
 
 import android.content.Context;
 import android.os.Bundle;
@@ -8,19 +8,22 @@ import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.ProgressBar;
 import android.widget.TextView;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
+import androidx.core.widget.ContentLoadingProgressBar;
 import androidx.fragment.app.Fragment;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
+
+import com.google.app.splitwise_clone.R;
 import com.google.app.splitwise_clone.model.Balance;
 import com.google.app.splitwise_clone.model.Group;
 import com.google.app.splitwise_clone.model.SingleBalance;
 import com.google.app.splitwise_clone.utils.AppUtils;
 import com.google.app.splitwise_clone.utils.FirebaseUtils;
-import com.google.app.splitwise_clone.utils.FriendsAdapter;
 import com.google.firebase.database.ChildEventListener;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
@@ -38,6 +41,7 @@ public class FriendsFragment extends Fragment implements FriendsAdapter.OnClickL
     private DatabaseReference mDatabaseReference;
     private String userName = "anonymous";
     ChildEventListener firebaseListener;
+    ProgressBar progressBar;
     private String balanceSummaryTxt;
     private onFriendClickListener mOnFriendClickListener;
     Map<String, Float> amountSpentByMember = null;
@@ -66,6 +70,7 @@ public class FriendsFragment extends Fragment implements FriendsAdapter.OnClickL
         setHasOptionsMenu(true);
 
         noExpense_tv = rootView.findViewById(R.id.noExpense_tv);
+        progressBar = rootView.findViewById(R.id.progressBar);
         friends_rv = rootView.findViewById(R.id.friends_rv);
 
         LinearLayoutManager layoutManager = new LinearLayoutManager(getActivity());
@@ -92,7 +97,7 @@ public class FriendsFragment extends Fragment implements FriendsAdapter.OnClickL
     public void updateUsersAmount() {
 
         noExpense_tv.setVisibility(View.GONE);
-
+        progressBar.setVisibility(View.VISIBLE);
         amountSpentByMember = new HashMap<>();
         amountDueByMember = new HashMap<>();
         expenseMatrix = new HashMap<>();
@@ -152,6 +157,7 @@ public class FriendsFragment extends Fragment implements FriendsAdapter.OnClickL
                     mDatabaseReference.child(db_users + "/" + userName + "/" + db_balances).setValue(balance);
                     Log.i(TAG, "total calculation");
                 }
+                progressBar.setVisibility(View.GONE);
             }
 
             @Override

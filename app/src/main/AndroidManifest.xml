@@ -23,7 +23,7 @@
         <activity android:name=".SummaryActivity"
             ></activity>
 <!--        android:parentActivityName=".SignIn"-->
-        <activity android:name=".AddFriend"
+        <activity android:name=".friends.AddFriend"
             android:parentActivityName=".SummaryActivity"></activity>
 
         <activity android:name=".expense.ExpenseList"
