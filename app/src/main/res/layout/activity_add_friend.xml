@@ -16,7 +16,6 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
-    android:background="@color/gray"
     android:layout_height="match_parent">
 
     <include layout="@layout/toolbar_add_friend_group"></include>
@@ -26,7 +25,7 @@
         android:layout_height="wrap_content"
         android:layout_marginTop="?android:actionBarSize"
         android:id="@+id/add_friend_Name"
-        android:textColorHint="@color/white"
+        android:textColorHint="@color/black"
         android:nextFocusDown="@id/add_friend_email"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent"
@@ -36,13 +35,13 @@
             android:id="@+id/friend_name"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:hint="@string/add_friend_name"
+            android:hint="@string/hint_friendname"
+
             android:maxLength="@integer/user_name_length"
             android:imeOptions="actionNext"
             android:inputType="textNoSuggestions"
             android:maxLines="@integer/signUp_lines"
-            android:textColor="@color/white"
-            android:textColorHint="@color/white"
+            android:textColor="@color/black"
             android:textIsSelectable="false"
             android:textSize="@dimen/signUp_textSize"
             android:textStyle="bold" />
@@ -57,7 +56,8 @@
 
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/add_friend_Name"
-        android:textColorHint="@color/white"
+        android:textColorHint="@color/black"
+
         tools:layout_editor_absoluteX="10dp">
 
         <AutoCompleteTextView
@@ -69,8 +69,7 @@
             android:imeOptions="actionNext"
             android:inputType="textEmailAddress"
             android:maxLines="@integer/signUp_lines"
-            android:textColor="@color/white"
-            android:textColorHint="@color/white"
+            android:textColor="@color/black"
             android:textIsSelectable="false"
             android:textSize="@dimen/signUp_textSize"
             android:textStyle="bold" />

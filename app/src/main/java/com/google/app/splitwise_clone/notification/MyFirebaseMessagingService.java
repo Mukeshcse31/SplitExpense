@@ -42,7 +42,7 @@ public class MyFirebaseMessagingService extends FirebaseMessagingService {
 
         //whenever the user signs in, the subscribeToTopic would be updated in Sign in method
         SharedPreferences prefs = getSharedPreferences(SignIn.SPLIT_PREFS, 0);
-        String displayName = prefs.getString(SignIn.DISPLAY_NAME_KEY, "");
+        String displayName = prefs.getString(SignIn.USERNAME_KEY, "");
         displayName = FirebaseUtils.getUserName();
         if (!TextUtils.isEmpty(displayName))
             FirebaseMessaging.getInstance().subscribeToTopic(displayName);

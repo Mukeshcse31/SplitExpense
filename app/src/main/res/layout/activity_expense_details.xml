@@ -4,8 +4,6 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:layout_marginStart="@dimen/layout_marginStart_addExpense"
-    android:layout_marginEnd="@dimen/layout_marginEnd_addExpense"
     android:layout_marginBottom="@dimen/layout_marginBottom_addExpense">
 
 
@@ -14,6 +12,7 @@
         app:layout_constraintTop_toTopOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         style="@style/ToolbarStyle"
+        android:background="@color/skyBlue"
         android:layout_gravity="bottom"
         android:layout_marginLeft="@dimen/list_toolbar_side_margin"
         android:layout_marginRight="@dimen/list_toolbar_side_margin"
@@ -112,6 +111,8 @@
         android:id="@+id/label_expense_desc"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
+        android:layout_marginStart="@dimen/layout_marginStart_addExpense"
+        android:layout_marginEnd="@dimen/layout_marginEnd_addExpense"
         android:layout_margin="@dimen/layout_margin_addExpense"
         android:layout_marginTop="@dimen/layout_marginTop_exp"
         android:textColorHint="@color/black"
@@ -146,6 +147,8 @@
         android:layout_height="wrap_content"
         android:layout_margin="@dimen/layout_margin_addExpense"
         android:layout_marginTop="@dimen/layout_marginTop_10"
+        android:layout_marginStart="@dimen/layout_marginStart_addExpense"
+        android:layout_marginEnd="@dimen/layout_marginEnd_addExpense"
         android:textColorHint="@color/black"
         android:textSize="@dimen/label_exp"
         app:layout_constraintStart_toStartOf="parent"
@@ -155,7 +158,6 @@
 
         <AutoCompleteTextView
             android:id="@+id/expense_amount"
-
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_marginTop="10dp"

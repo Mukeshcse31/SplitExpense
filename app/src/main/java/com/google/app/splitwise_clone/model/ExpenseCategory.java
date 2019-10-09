@@ -4,7 +4,7 @@ public enum ExpenseCategory {
     FOOD("food"),
     BULB("bulb"),
     GAS("gas"),
-    CART("cart"),
+    GROCERY("grocery"),
     HOUSE("house"),
     OTHER("other");
 

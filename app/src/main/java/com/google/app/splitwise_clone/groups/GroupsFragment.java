@@ -7,6 +7,8 @@ import android.text.TextUtils;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.TextView;
+
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
@@ -31,6 +33,7 @@ public class GroupsFragment extends Fragment implements GroupsAdapter.OnClickLis
     List<DataSnapshot> dataSnapshotGroupList = new ArrayList<>();
     ChildEventListener firebaseListener;
     private RecyclerView groups_rv;
+    TextView noExpense_tv;
     private String group_name;
     private String userName = "", snackBarMsg;
     onGroupClickListener mGroupListener;
@@ -47,7 +50,7 @@ public class GroupsFragment extends Fragment implements GroupsAdapter.OnClickLis
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         View rootView = inflater.inflate(R.layout.fragment_groups, container, false);
 
-
+        noExpense_tv = rootView.findViewById(R.id.noExpense_tv);
         groups_rv = rootView.findViewById(R.id.groups_rv);
         LinearLayoutManager layoutManager = new LinearLayoutManager(getContext());
         groups_rv.setLayoutManager(layoutManager);
@@ -149,6 +152,7 @@ private void showSnackBar(){
                     mGroupsAdapter = new GroupsAdapter(dataSnapshotGroupList, GroupsFragment.this);
                     groups_rv.setAdapter(mGroupsAdapter);
                 }
+                else noExpense_tv.setVisibility(View.VISIBLE);
             }
 
             @Override

@@ -7,7 +7,7 @@ import java.util.HashMap;
 import java.util.Map;
 
 //getters and setters are required for all the variables for DB read/write
-public class SingleBalance implements Parcelable {
+public class SingleBalance implements Parcelable, Cloneable {
 
 private float amount;
 private String status;
@@ -41,6 +41,9 @@ public SingleBalance(){
 
     }
 
+    public Object clone()throws CloneNotSupportedException{
+        return super.clone();
+    }
 
     public static final Creator<SingleBalance> CREATOR = new Creator<SingleBalance>() {
         @Override
@@ -92,6 +95,10 @@ public SingleBalance(){
 
     public void setSplitDues(Map<String, Float> splitDues) {
         this.splitDues = splitDues;
+    }
+
+    public void addMemberBalance(String member){
+        splitDues.put(member, 0.0f);
     }
 
     @Override

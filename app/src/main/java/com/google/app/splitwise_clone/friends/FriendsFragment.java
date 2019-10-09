@@ -96,7 +96,6 @@ public class FriendsFragment extends Fragment implements FriendsAdapter.OnClickL
 
     public void updateUsersAmount() {
 
-        noExpense_tv.setVisibility(View.GONE);
         progressBar.setVisibility(View.VISIBLE);
         amountSpentByMember = new HashMap<>();
         amountDueByMember = new HashMap<>();
@@ -155,7 +154,12 @@ public class FriendsFragment extends Fragment implements FriendsAdapter.OnClickL
                     mFriendsAdapter = new FriendsAdapter(amountGroup, FriendsFragment.this);
                     friends_rv.setAdapter(mFriendsAdapter);
                     mDatabaseReference.child(db_users + "/" + userName + "/" + db_balances).setValue(balance);
+                    noExpense_tv.setVisibility(View.GONE);
                     Log.i(TAG, "total calculation");
+                }
+                else{
+
+                    noExpense_tv.setVisibility(View.VISIBLE);
                 }
                 progressBar.setVisibility(View.GONE);
             }
@@ -209,7 +213,7 @@ public class FriendsFragment extends Fragment implements FriendsAdapter.OnClickL
 
             }
         };
-        mDatabaseReference.child(db_users + "/" + userName + "/" + db_balances + "/" +  db_groups).addChildEventListener(firebaseListener);
+         mDatabaseReference.child(db_users + "/" + userName + "/" + db_balances + "/" +  db_groups).addChildEventListener(firebaseListener);
     }
 
     @Override
@@ -227,11 +231,12 @@ public class FriendsFragment extends Fragment implements FriendsAdapter.OnClickL
     public void onResume() {
         super.onResume();
         mDatabaseReference = AppUtils.getDBReference();
+        updateUsersAmount();
         startFriendsListener();
     }
 
     private void removeListener() {
-        mDatabaseReference.child(db_users + "/" + userName + "/" + db_balances + "/" + db_groups).removeEventListener(firebaseListener);
+        mDatabaseReference.child(db_users + "/" + userName + "/" + db_balances + "/" +  db_groups).removeEventListener(firebaseListener);
     }
 
     @Override

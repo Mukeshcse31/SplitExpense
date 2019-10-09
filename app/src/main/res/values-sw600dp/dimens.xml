@@ -20,6 +20,7 @@
     <!--    Group-->
     <dimen name="tv_group_name">24sp</dimen>
     <dimen name="tv_member_status">20sp</dimen>
+    <dimen name="group_name_width">400dp</dimen>
     <dimen name="layout_margin_grp">8dp</dimen>
     <dimen name="group_member_label">24sp</dimen>
     <dimen name="group_image_width">96dp</dimen>

@@ -137,49 +137,58 @@ public class BalanceWidgetProvider extends AppWidgetProvider {
             @Override
             public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
 
+                String summary=context.getString(R.string.no_expense);
                 if (dataSnapshot.exists()) {
-                    String summary="";
                     Balance balance = new Balance();
                     amountGroup = new HashMap<>();
                     User user = dataSnapshot.getValue(User.class);
 
-                    amountSpentByUser = user.getBalances().getAmount();
+                    if (user.getBalances() == null) {
+                        appWidgetManager.updateAppWidget(appWidgetId, getSingleRemoteView(context, summary));
+                    } else {
+                        amountSpentByUser = user.getBalances().getAmount();
 
-                    Map<String, Map<String, Float>> friends_balances = user.getBalances().getGroups();
-                    Iterator it1 = friends_balances.entrySet().iterator();
+                        Map<String, Map<String, Float>> friends_balances = user.getBalances().getGroups();
+                        Iterator it1 = friends_balances.entrySet().iterator();
 
 
-                    while (it1.hasNext()) {//for each friend
+                        while (it1.hasNext()) {//for each friend
 
-                        Map.Entry pair = (Map.Entry) it1.next();
+                            Map.Entry pair = (Map.Entry) it1.next();
 
-                        String friendName = (String) pair.getKey();
-                        Map<String, Float> allGroups = new HashMap<>();
-                        allGroups = (Map<String, Float>) pair.getValue();
+                            String friendName = (String) pair.getKey();
+                            Map<String, Float> allGroups = new HashMap<>();
+                            allGroups = (Map<String, Float>) pair.getValue();
 
 //create text view for each group
-                        Iterator it2 = allGroups.entrySet().iterator();
-                        while (it2.hasNext()) {
-                            Map.Entry pair2 = (Map.Entry) it2.next();
-                            String groupName = (String) pair2.getKey();
-                            Float amount = (float) pair2.getValue();
-                            DecimalFormat df = new DecimalFormat("#.##");
-                            String status = String.format("%s %s", context.getString(R.string.you_owe), "$" + df.format(Math.abs(amount)));
+                            Iterator it2 = allGroups.entrySet().iterator();
+                            while (it2.hasNext()) {
+                                Map.Entry pair2 = (Map.Entry) it2.next();
+                                String groupName = (String) pair2.getKey();
+                                Float amount = (float) pair2.getValue();
+                                DecimalFormat df = new DecimalFormat("#.##");
+                                String status = String.format("%s %s", context.getString(R.string.you_owe), "$" + df.format(Math.abs(amount)));
 
-                            if (amount > 0) {
-                                status = String.format("%s %s", context.getString(R.string.owes_you), "$" + df.format(Math.abs(amount)));
+                                if (amount > 0) {
+                                    status = String.format("%s %s", context.getString(R.string.owes_you), "$" + df.format(Math.abs(amount)));
 
+                                }
+                                summary += String.format("%s %s %s", status, context.getString(R.string.from_group), groupName);
                             }
-                            summary += String.format("%s %s %s", status, context.getString(R.string.from_group), groupName);
+                            summary = friendName + ":\n" + summary;
                         }
-                        summary = friendName + ":\n" + summary;
+                        appWidgetManager.updateAppWidget(appWidgetId, getSingleRemoteView(context, summary));
                     }
-                    appWidgetManager.updateAppWidget(appWidgetId, getSingleRemoteView(context, summary));
                 }
+                else {
+//                    appWidgetManager.updateAppWidget(appWidgetId, getSingleRemoteView(context, context.getString(R.string.no_expense)));
+                }
+
             }
 
             @Override
             public void onCancelled(@NonNull DatabaseError databaseError) {
+                Log.i(TAG, "error");
             }
         });
     }

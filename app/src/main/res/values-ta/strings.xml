@@ -28,6 +28,7 @@
     <string name="error_incorrect_password">இந்த கடவுச்சொல் தவறானது</string>
     <string name="error_field_required">இந்த புலம் தேவை</string>
     <string name="error_username">பயனர் பெயர் செல்லுபடியாகாது</string>
+    <string name="error_username_dupllicate">username already exists</string>
     <string name="error_username_notfound">UserName does not match</string>
     <string name="error_username_friend">Already a friend</string>
     <string name="amount_spent_by_you">Total amount spent by you</string>
@@ -74,12 +75,14 @@
     <string name="action_settleup">முடிவு செய்</string>
     <string name="action_export">ஏற்றுமதி</string>
     <string name="no_expense">இந்த குழுவில் (செயலில்) செலவு இல்லை</string>
+    <string name="no_expense_friend">No (Active) Expense</string>
     <string name="no_arch_expense">No (Archived) Expense in this Group</string>
     <string name="export_title">ஏற்றுமதி செலவுகள்</string>
     <string name="export_heading">தேதி, விளக்கம், பணம் செலுத்தியது, பற்று கடன், செலுத்த வேண்டிய தொகை</string>
     <string name="default_status">பொ / இ</string>
     <string name="group_debt_separator">\n</string>
     <string name="from_group">from group</string>
+    <string name="no_friend">Please add a friend to create a group</string>
 
     <!--DB schema names-->
     <string name="goto_groupDetails">go to group details</string>
@@ -154,6 +157,7 @@
     <string name="invite_text">புதிய பயன்பாட்டைப் பாருங்கள்: https://play.google.com/store/apps/details?id=</string>
     <string name="new_line">\n</string>
     <string name="offline">Offline</string>
+    <string name="hint_friendname"><font size="20">Name</font></string>
 
     <string name="no_user_signed">பயனர் உள்நுழையவில்லை</string>
 
@@ -205,7 +209,7 @@
         <item>gas</item>
         <item>fuel</item>
     </string-array>
-    <string-array name="cart">
+    <string-array name="grocery">
         <item>costco</item>
         <item>amazon</item>
         <item>walmart</item>

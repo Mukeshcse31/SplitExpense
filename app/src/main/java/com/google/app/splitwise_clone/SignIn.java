@@ -13,11 +13,12 @@ import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ProgressBar;
 import android.widget.TextView;
+
 import androidx.appcompat.app.AlertDialog;
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.AppCompatImageView;
-import androidx.core.widget.ContentLoadingProgressBar;
+import androidx.appcompat.widget.Toolbar;
 
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.OnSuccessListener;
@@ -42,7 +43,7 @@ public class SignIn extends AppCompatActivity {
 
     // Constants
     public static final String SPLIT_PREFS = "SplitPrefs";
-    public static final String DISPLAY_NAME_KEY = "displayName";
+        public static final String DISPLAY_NAME_KEY = "displayName";
     public static final String USERNAME_KEY = "username";
     public static final String PASSWORD_KEY = "password";
     public static final String LOGIN = "login";
@@ -59,7 +60,7 @@ public class SignIn extends AppCompatActivity {
     private Button mloginbutton, msignUp, mLogin_bn, mSignUp_bn;
     private AppCompatImageView offline_iv;
     private FirebaseAuth mAuth;
-    private String userName;
+    private String userName, displayName;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -74,6 +75,11 @@ public class SignIn extends AppCompatActivity {
         String email = prefs.getString(USERNAME_KEY, "");
         String password = prefs.getString(PASSWORD_KEY, "");
         offline_iv = findViewById(R.id.offline_iv);
+
+        Toolbar myToolbar = (Toolbar) findViewById(R.id.my_toolbar);
+        myToolbar.setTitle(userName);
+        setSupportActionBar(myToolbar);
+//        getSupportActionBar().setTitle(getString(R.string.action_sign_up));
 
         progressBar = findViewById(R.id.progressBar);
         mEmailView = findViewById(R.id.register_email);
@@ -113,6 +119,7 @@ public class SignIn extends AppCompatActivity {
                 @Override
                 public boolean onEditorAction(TextView textView, int id, KeyEvent keyEvent) {
                     if (id == R.integer.register_form_finished || id == EditorInfo.IME_NULL) {
+                        AppUtils.preventTwoClick(mConfirmPasswordView);
                         attemptRegistration();
                         return true;
                     }
@@ -152,8 +159,8 @@ public class SignIn extends AppCompatActivity {
 
 
         //Check the userName
-        String displayName = mUsernameView.getText().toString().trim();
-        if(!AppUtils.checkUserName(displayName)){
+        displayName = mUsernameView.getText().toString().trim();
+        if (!AppUtils.checkUserName(displayName)) {
             focusView = mUsernameView;
             mUsernameView.setError(getString(R.string.error_username));
             cancel = true;
@@ -181,7 +188,8 @@ public class SignIn extends AppCompatActivity {
             // There was an error; don't attempt login and focus the first form field with an error.
             focusView.requestFocus();
         } else {
-            createFirebaseUser();
+            AppUtils.preventTwoClick(msignUp);
+            checkCreateFirebaseUser();
 
         }
     }
@@ -191,10 +199,8 @@ public class SignIn extends AppCompatActivity {
         return confirmPassword.equals(password) && password.length() > getResources().getInteger(R.integer.password_length);
     }
 
-    private void createFirebaseUser() {
+    private void createFirebaseUser(final String email, final String password) {
 
-        final String email = mEmailView.getText().toString();
-        final String password = mPasswordView.getText().toString();
         mAuth.createUserWithEmailAndPassword(email, password).addOnCompleteListener(this,
                 new OnCompleteListener<AuthResult>() {
 
@@ -206,12 +212,9 @@ public class SignIn extends AppCompatActivity {
                             Log.d(TAG, "user creation failed", task.getException());
                             showErrorDialog(getString(R.string.error_registration) + "\n" + task.getException().getMessage());
                         } else {
-
-                            final String displayName = mUsernameView.getText().toString();
-                            //update the user's profile for the display Name
-//                            https://firebase.google.com/docs/auth/android/manage-users
                             FirebaseUser user = FirebaseAuth.getInstance().getCurrentUser();
-
+                            saveUserCredentials(email, password);
+                            initUser(email);
                             UserProfileChangeRequest profileUpdates = new UserProfileChangeRequest.Builder()
                                     .setDisplayName(displayName)
                                     .build();
@@ -221,41 +224,78 @@ public class SignIn extends AppCompatActivity {
                                         @Override
                                         public void onComplete(@NonNull Task<Void> task) {
                                             if (task.isSuccessful()) {
-                                                saveUserCredentials(email, password);
+
                                                 Log.d(TAG, "User profile updated.");
                                             }
                                         }
                                     });
-
-                            // add new user record in the realtime database
-                            Query query = mDatabaseReference.child(getString(R.string.db_users) + displayName);
-                            query.addListenerForSingleValueEvent(new ValueEventListener() {
-                                @Override
-                                public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
-                                    if (dataSnapshot.exists()) {
-                                        Log.i(TAG, displayName + " is already added by another user");
-                                    } else {
-                                        User friend = new User(displayName, email);
-                                        mDatabaseReference.child("users/" + displayName).setValue(friend, new DatabaseReference.CompletionListener() {
-                                            @Override
-                                            public void onComplete(DatabaseError databaseError, DatabaseReference dataReference) {
-
-                                                if (databaseError != null)
-                                                    Log.i(TAG, databaseError.getDetails());
-                                                gotoSummaryActivity(SIGNUP , getString(R.string.signup_success));
-                                            }
-                                        });
-                                    }
-                                }
-
-                                @Override
-                                public void onCancelled(@NonNull DatabaseError databaseError) {
-
-                                }
-                            });
                         }
                     }
                 });
+    }
+
+    private void initUser(final String email){
+
+        // add new user record in the realtime database
+        Query query = mDatabaseReference.child(getString(R.string.db_users) + displayName);
+        query.addListenerForSingleValueEvent(new ValueEventListener() {
+            @Override
+            public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+                if (dataSnapshot.exists()) {
+                    Log.i(TAG, displayName + " is already added by another user");
+                } else {
+                    User friend = new User(displayName, email);
+                    mDatabaseReference.child("users/" + displayName).setValue(friend, new DatabaseReference.CompletionListener() {
+                        @Override
+                        public void onComplete(DatabaseError databaseError, DatabaseReference dataReference) {
+
+                            if (databaseError != null)
+                                Log.i(TAG, databaseError.getDetails());
+                            gotoSummaryActivity(SIGNUP, getString(R.string.signup_success));
+                        }
+                    });
+                }
+            }
+
+            @Override
+            public void onCancelled(@NonNull DatabaseError databaseError) {
+
+            }
+        });
+    }
+
+
+    private void checkCreateFirebaseUser() {
+
+        final String email = mEmailView.getText().toString();
+        final String password = mPasswordView.getText().toString();
+
+//check if a user exists with the same name
+        Query query = mDatabaseReference.child(getString(R.string.db_users) + "/" + displayName).child(getString(R.string.db_name));
+        query.addListenerForSingleValueEvent(new ValueEventListener() {
+            @Override
+            public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+                //Check for existing friend
+                if (dataSnapshot.exists()) {
+                    mUsernameView.setError(getString(R.string.error_username_dupllicate));
+                    return;
+                } else {
+                    createFirebaseUser(email, password);
+                }
+            }
+
+            @Override
+            public void onCancelled(@NonNull DatabaseError databaseError) {
+                Log.i(TAG, "error");
+            }
+        });
+
+
+//                            final String displayName = mUsernameView.getText().toString();
+        //update the user's profile for the display Name
+//                            https://firebase.google.com/docs/auth/android/manage-users
+
+
     }
 
 
@@ -336,8 +376,8 @@ public class SignIn extends AppCompatActivity {
         signInWithCredentials(email, password);
 
     }
-    //TODO Login and setTitle
 
+    //TODO Login and setTitle
     private void signInWithCredentials(final String email, final String password) {
 
         progressBar.setVisibility(View.VISIBLE);
@@ -362,19 +402,19 @@ public class SignIn extends AppCompatActivity {
                                 }
                             });
 
-                            gotoSummaryActivity(LOGIN, userName + getString(R.string.action_signed_in));
+                            gotoSummaryActivity(LOGIN, userName + " " + getString(R.string.action_signed_in));
                         }
                     }
                 });
     }
 
     @Override
-    public void onResume(){
+    public void onResume() {
         super.onResume();
         Log.i(TAG, "on resume");
     }
 
-    private void gotoSummaryActivity(String name, String value){
+    private void gotoSummaryActivity(String name, String value) {
 
         final Intent intent = new Intent(SignIn.this, SummaryActivity.class);
         intent.putExtra(name, value);

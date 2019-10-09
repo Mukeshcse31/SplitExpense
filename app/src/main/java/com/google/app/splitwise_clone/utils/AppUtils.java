@@ -1,24 +1,22 @@
 package com.google.app.splitwise_clone.utils;
 
 import android.content.Context;
-import android.content.SharedPreferences;
 import android.content.res.Resources;
 import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
 import android.text.TextUtils;
+import android.view.Gravity;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
+import android.widget.FrameLayout;
 
 import com.google.android.material.snackbar.Snackbar;
-import com.google.app.splitwise_clone.SignIn;
 import com.google.app.splitwise_clone.R;
 import com.google.app.splitwise_clone.model.Expense;
 import com.google.app.splitwise_clone.model.ExpenseCategory;
-import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
-import com.google.firebase.messaging.FirebaseMessaging;
 import com.google.firebase.storage.FirebaseStorage;
 
 import java.util.ArrayList;
@@ -53,8 +51,8 @@ public class AppUtils {
                 result = R.drawable.gas;
                 break;
 
-            case "cart":
-                result = R.drawable.cart;
+            case "grocery":
+                result = R.drawable.grocery;
                 break;
 
             case "house":
@@ -76,13 +74,13 @@ public class AppUtils {
         String[] food = res.getStringArray(R.array.food);
         String[] bulb = res.getStringArray(R.array.bulb);
         String[] gas = res.getStringArray(R.array.gas);
-        String[] cart = res.getStringArray(R.array.cart);
+        String[] grocery = res.getStringArray(R.array.grocery);
         String[] house = res.getStringArray(R.array.house);
 
         for (String i : food) allImages.put(i.toLowerCase(), ExpenseCategory.FOOD.getValue());
         for (String i : bulb) allImages.put(i.toLowerCase(), ExpenseCategory.BULB.getValue());
         for (String i : gas) allImages.put(i.toLowerCase(), ExpenseCategory.GAS.getValue());
-        for (String i : cart) allImages.put(i.toLowerCase(), ExpenseCategory.CART.getValue());
+        for (String i : grocery) allImages.put(i.toLowerCase(), ExpenseCategory.GROCERY.getValue());
         for (String i : house) allImages.put(i.toLowerCase(), ExpenseCategory.HOUSE.getValue());
 
         Iterator it;
@@ -174,11 +172,16 @@ public class AppUtils {
 
     //verifies the user's and friends's email id
     public static boolean checkEmail(String email) {
-        // You can add more checking logic here.
+
         if(email == null || TextUtils.isEmpty(email))
             return false;
 
-        return email.contains("@");
+        Pattern pattern = Pattern.compile("^[A-Z0-9._%+-]+@[A-Z0-9.-]+\\.[A-Z]{2,6}$", Pattern.CASE_INSENSITIVE);
+        if(pattern.matcher(email).matches())
+            return true;
+        else
+            return false;
+//        email.contains("@");
     }
 
 
@@ -208,6 +211,13 @@ public class AppUtils {
 
         final Snackbar snackBar = Snackbar.make(view,
                 message, Snackbar.LENGTH_LONG);
+
+//        https://stackoverflow.com/questions/32896816/snackbar-half-width-on-tablet
+        View viewSnackBar = snackBar.getView();
+        FrameLayout.LayoutParams params = (FrameLayout.LayoutParams)viewSnackBar.getLayoutParams();
+        params.gravity = Gravity.BOTTOM | Gravity.CENTER_HORIZONTAL;
+        params.width = FrameLayout.LayoutParams.MATCH_PARENT;
+        viewSnackBar.setLayoutParams(params);
 
         snackBar.setAction(context.getString(R.string.close), new View.OnClickListener() {
             @Override

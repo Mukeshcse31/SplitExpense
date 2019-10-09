@@ -15,6 +15,7 @@ import android.view.MenuItem;
 import android.view.View;
 import android.widget.AutoCompleteTextView;
 import android.widget.ImageView;
+import android.widget.TextView;
 import android.widget.Toast;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
@@ -30,6 +31,7 @@ import com.google.android.gms.tasks.OnFailureListener;
 import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.app.splitwise_clone.R;
 import com.google.app.splitwise_clone.SummaryActivity;
+import com.google.app.splitwise_clone.model.Expense;
 import com.google.app.splitwise_clone.model.Group;
 import com.google.app.splitwise_clone.model.SingleBalance;
 import com.google.app.splitwise_clone.utils.AppUtils;
@@ -44,6 +46,7 @@ import com.google.firebase.storage.StorageReference;
 import com.google.firebase.storage.UploadTask;
 import java.util.HashMap;
 import java.util.Iterator;
+import java.util.LinkedHashMap;
 import java.util.Map;
 
 public class AddGroup extends AppCompatActivity implements GroupMembersAdapter.OnClickListener,
@@ -65,6 +68,7 @@ public class AddGroup extends AppCompatActivity implements GroupMembersAdapter.O
     private RecyclerView members_rv;
     private RecyclerView nonmembers_rv;
     private ImageView mPhotoPickerButton;
+    TextView noFriend_tv, tv_members, tv_nonmembers;
     private String group_name, userName;
     private Group mGroup, grp;
     float friendsCount;
@@ -95,6 +99,11 @@ public class AddGroup extends AppCompatActivity implements GroupMembersAdapter.O
         members_rv = findViewById(R.id.members_rv);
         nonmembers_rv = findViewById(R.id.nonmembers_rv);
         mPhotoPickerButton = findViewById(R.id.photoPickerButton);
+        noFriend_tv = findViewById(R.id.noFriend_tv);
+        tv_nonmembers = findViewById(R.id.tv_nonmembers);
+        tv_members = findViewById(R.id.tv_members);
+
+
         userName = FirebaseUtils.getUserName();
         LinearLayoutManager layoutManager = new LinearLayoutManager(this);
         members_rv.setLayoutManager(layoutManager);
@@ -229,6 +238,16 @@ public class AddGroup extends AppCompatActivity implements GroupMembersAdapter.O
                             }
                         });
                     }
+                }
+                else {
+                    noFriend_tv.setVisibility(View.VISIBLE);
+
+                    tv_members.setVisibility(View.GONE);
+                    tv_nonmembers.setVisibility(View.GONE);
+                    members_rv.setVisibility(View.GONE);
+                    nonmembers_rv.setVisibility(View.GONE);
+                    mPhotoPickerButton.setVisibility(View.GONE);
+                    mGroupName.setVisibility(View.GONE);
                 }
             }
 
@@ -369,13 +388,15 @@ public class AddGroup extends AppCompatActivity implements GroupMembersAdapter.O
 
             if(group_members.size() == 0){
                 cancel = true;
-                Toast.makeText(this,getString(R.string.error_add_member), Toast.LENGTH_LONG).show();
+//                Toast.makeText(this,getString(R.string.error_add_member), Toast.LENGTH_LONG).show();
+                AppUtils.showSnackBar(this, findViewById(android.R.id.content), getString(R.string.error_add_member));
             }
 
             //check if the owner is a member
             if(!group_members.containsKey(userName)){
                 cancel = true;
-                Toast.makeText(this, getString(R.string.error_add_owner), Toast.LENGTH_LONG).show();
+//                Toast.makeText(this, getString(R.string.error_add_owner), Toast.LENGTH_LONG).show();
+                AppUtils.showSnackBar(this, findViewById(android.R.id.content), getString(R.string.error_add_owner));
             }
 return cancel;
         }
@@ -484,7 +505,7 @@ return cancel;
                     Iterator it = group_members.entrySet().iterator();
                     while (it.hasNext()) {
                         Map.Entry pair = (Map.Entry) it.next();
-                        String groupMemberName = (String) pair.getKey();
+                        final String groupMemberName = (String) pair.getKey();
                         String email = (String) pair.getValue();
 
                         //if the member is not found in the prev groupmembers, then get it from non-group members
@@ -492,6 +513,12 @@ return cancel;
 
                             newGroup.getNonMembers().remove(groupMemberName);
                             if(mGroup.getNonMembers().containsKey(groupMemberName)){
+
+//                                //for newly added member init split dues
+//                                Map<String, Float> spl = mGroup.getNonMembers().get(groupMemberName).getSplitDues();
+//                                if(spl ==null)
+//                                    mGroup.getNonMembers().get(groupMemberName).addMemberBalance(userName);
+
                                 newGroup.addMember(groupMemberName, mGroup.getNonMembers().get(groupMemberName));
 
                             }
@@ -522,6 +549,8 @@ return cancel;
                             }
                         }
                     }
+
+
 
                     final String prev_imageName = mGroup.getName();
 

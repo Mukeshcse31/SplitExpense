@@ -2,6 +2,8 @@ package com.google.app.splitwise_clone.expense;
 
 import android.content.DialogInterface;
 import android.content.Intent;
+import android.graphics.Color;
+import android.graphics.drawable.ColorDrawable;
 import android.os.Bundle;
 import android.text.InputFilter;
 import android.text.TextUtils;
@@ -86,6 +88,7 @@ public static String EXPENSE_DELETED = "EXPENSE_DELETED";
 
         mToolbar = (Toolbar) findViewById(R.id.my_toolbar);
         setSupportActionBar(mToolbar);
+
         getSupportActionBar().setTitle(getString(R.string.add_expense));
         mDatabaseReference = AppUtils.getDBReference();
         listView = findViewById(R.id.group_members);
@@ -390,7 +393,16 @@ public static String EXPENSE_DELETED = "EXPENSE_DELETED";
                         Map.Entry pairMbr = (Map.Entry) itMbr.next();
                         String grouMbr = (String) pairMbr.getKey();
                         groupMember.add(grouMbr);
-                        SingleBalance sb = new SingleBalance(0.0f, getString(R.string.you_owe), grouMbr);
+
+                        SingleBalance oldsb = (SingleBalance) pairMbr.getValue();
+                        SingleBalance sb = null;
+                        try {
+                            sb = (SingleBalance) oldsb.clone();
+                        } catch (CloneNotSupportedException e) {
+                            e.printStackTrace();
+                        }
+sb.setAmount(0.0f);
+
                         sb.setSplitDues(new HashMap<>(splitDues));
                         members.put(grouMbr, sb);
                     }

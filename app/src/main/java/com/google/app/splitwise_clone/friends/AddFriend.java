@@ -24,6 +24,9 @@ import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.Query;
 import com.google.firebase.database.ValueEventListener;
 
+import java.util.HashMap;
+import java.util.Map;
+
 public class AddFriend extends AppCompatActivity {
 
     private AutoCompleteTextView mFriendEmail;
@@ -175,11 +178,18 @@ private void addFriendsToGroups(final String friend_name, final String email){
             if (dataSnapshot.exists()) {
                 SingleBalance sb1 = new SingleBalance(friend_name);
                 sb1.setEmail(email);
+                Map<String, Float> splitDues = new HashMap<>();
+                splitDues.put(userName, 0.0f);
+                sb1.setSplitDues(splitDues);
+
                 //loop through the groups
                 for (DataSnapshot i : dataSnapshot.getChildren()) {
                     String group_name = i.getKey();
                     mDatabaseReference.child(db_groups + "/" + group_name + "/" + db_nonMembers + "/" + friend_name).setValue(sb1);
                 }
+
+                //init the user balance
+                mDatabaseReference.child(db_users + "/" + userName + "/" + db_balances + "/" + db_amount).setValue(0);
             }
 
             gotoSummaryActivity(friend_name);

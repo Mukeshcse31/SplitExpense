@@ -15,7 +15,6 @@
 <androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
-    android:background="@color/gray"
     android:layout_height="match_parent">
 
     <include layout="@layout/toolbar_add_friend_group"/>
@@ -26,6 +25,20 @@
         android:orientation="vertical"
         android:id="@+id/guildeline_1"
         app:layout_constraintGuide_percent="0.10"/>
+
+    <TextView
+        android:id="@+id/noFriend_tv"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:textSize="@dimen/expense_description"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        android:visibility="gone"
+        android:text="@string/no_friend">
+
+    </TextView>
 
         <ImageView
             android:id="@+id/photoPickerButton"
@@ -40,11 +53,11 @@
             android:contentDescription="@string/add_group_image" />
 
         <com.google.android.material.textfield.TextInputLayout
-            android:layout_width="400dp"
+            android:layout_width="@dimen/group_name_width"
             android:layout_height="wrap_content"
             android:layout_marginTop="?android:actionBarSize"
             android:layout_marginEnd="8dp"
-            android:textColorHint="@color/white"
+            android:textColorHint="@color/black"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toEndOf="@+id/photoPickerButton"
             app:layout_constraintTop_toTopOf="parent">
@@ -58,8 +71,7 @@
                 android:inputType="textNoSuggestions"
                 android:maxLength="@integer/group_name_length"
                 android:maxLines="@integer/signUp_lines"
-                android:textColor="@color/white"
-                android:textColorHint="@color/white"
+                android:textColor="@color/black"
                 android:tooltipText="@string/group_name"
                 android:textIsSelectable="false"
                 android:textSize="@dimen/signUp_textSize"
