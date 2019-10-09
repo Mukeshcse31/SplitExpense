@@ -1,6 +1,7 @@
 package com.google.app.splitwise_clone.friends;
 
 import android.content.Intent;
+import android.content.res.Configuration;
 import android.os.Bundle;
 import android.text.TextUtils;
 import android.util.Log;
@@ -219,5 +220,13 @@ private void addFriendsToGroups(final String friend_name, final String email){
         super.onPause();
         AppUtils.closeDBReference(mDatabaseReference);
         Log.i(TAG, "listener cleared");
+    }
+
+
+    @Override
+    public void onConfigurationChanged(Configuration newConfig) {
+        super.onConfigurationChanged(newConfig);
+        Log.i(TAG, "config changed");
+
     }
 }

@@ -107,10 +107,12 @@ public class GroupsAdapter extends RecyclerView.Adapter<GroupsAdapter.ReviewView
         TextView tv_group_name;
         // Will display which ViewHolder is displaying this data
         TextView tv_member_status, tv_status, tv_amount;
-        ImageView group_image;
+        ImageView group_image, edit_img;
 
         public ReviewViewHolder(View itemView) {
             super(itemView);
+
+            edit_img = itemView.findViewById(R.id.edit_img);
             group_image = itemView.findViewById(R.id.group_image);
             tv_group_name = itemView.findViewById(R.id.tv_group_name);
             tv_member_status = itemView.findViewById(R.id.tv_member_status);
@@ -180,6 +182,16 @@ public class GroupsAdapter extends RecyclerView.Adapter<GroupsAdapter.ReviewView
             }
 
             //set listeners
+
+            if(TextUtils.equals(group.getOwner(), userName)){
+                edit_img.setVisibility(View.VISIBLE);
+                edit_img.setOnClickListener(new View.OnClickListener(){
+                    @Override
+                    public void onClick(View v){
+                        mOnClickListener.gotoEditGroup(listIndex, group_name);
+                    }
+                });
+            }
             group_image.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {

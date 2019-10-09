@@ -2,6 +2,7 @@ package com.google.app.splitwise_clone.expense;
 
 import android.content.DialogInterface;
 import android.content.Intent;
+import android.content.res.Configuration;
 import android.graphics.Color;
 import android.graphics.drawable.ColorDrawable;
 import android.os.Bundle;
@@ -465,7 +466,7 @@ sb.setAmount(0.0f);
                                 @Override
                                 public void onComplete(@Nullable DatabaseError databaseError, @NonNull DatabaseReference databaseReference) {
                                     for(String participant : participants)
-                                    FirebaseUtils.updateUsersAmount(participant);
+                                    FirebaseUtils.updateUsersAmount(getApplicationContext(), participant);
                                 }
                             });
 //                            finish();
@@ -499,6 +500,13 @@ sb.setAmount(0.0f);
         super.onPause();
         AppUtils.closeDBReference(mDatabaseReference);
         Log.i(TAG, "listener cleared");
+    }
+
+    @Override
+    public void onConfigurationChanged(Configuration newConfig) {
+        super.onConfigurationChanged(newConfig);
+        Log.i(TAG, "config changed");
+
     }
 
     private void initDBValues(){

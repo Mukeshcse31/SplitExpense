@@ -68,7 +68,7 @@
     <dimen name="image_end_margin">8dp</dimen>
     <dimen name="arrow_width">36dp</dimen>
     <dimen name="arrow_height">36dp</dimen>
-    <dimen name="line_margin_start">16dp</dimen>
+    <dimen name="line_margin_start">32dp</dimen>
     <dimen name="line_margin_end">32dp</dimen>
     <dimen name="line_top_margin">8dp</dimen>
     <dimen name="export">28sp</dimen>

@@ -1,6 +1,7 @@
 package com.google.app.splitwise_clone;
 
 import android.content.Intent;
+import android.content.res.Configuration;
 import android.net.Uri;
 import android.os.Bundle;
 import android.text.TextUtils;
@@ -96,7 +97,7 @@ public class SummaryActivity extends AppCompatActivity implements GroupsFragment
 
         if (intent.hasExtra(SignIn.LOGIN)) {
             snackBarMsg = intent.getStringExtra(SignIn.LOGIN);
-            intent.removeExtra(SignIn.LOGIN);
+
         }
         if (intent.hasExtra(SignIn.SIGNUP)) {
             snackBarMsg = intent.getStringExtra(SignIn.SIGNUP);
@@ -313,6 +314,14 @@ public class SummaryActivity extends AppCompatActivity implements GroupsFragment
         super.onResume();
         mFirebaseStorage = AppUtils.getDBStorage();
         mDatabaseReference = AppUtils.getDBReference();
+
+        //TODO set
+        Intent intent = getIntent();
+        if(!intent.hasExtra(SignIn.LOGIN))
+        viewPager.setCurrentItem(1);
+        else
+            intent.removeExtra(SignIn.LOGIN);
+
         loadUserImage();
         Log.i(TAG, "Activity on start");
 
@@ -325,6 +334,12 @@ public class SummaryActivity extends AppCompatActivity implements GroupsFragment
         mFirebaseStorage = null;
     }
 
+    @Override
+    public void onConfigurationChanged(Configuration newConfig) {
+        super.onConfigurationChanged(newConfig);
+        Log.i(TAG, "config changed");
+
+    }
 
     @Override
     public void onBackPressed() {

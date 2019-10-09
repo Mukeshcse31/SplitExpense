@@ -17,7 +17,7 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
-    android:padding="@dimen/line">
+    android:padding="@dimen/margin_4">
 
 <androidx.constraintlayout.widget.Guideline
     android:layout_width="wrap_content"
@@ -34,7 +34,7 @@
         android:contentDescription="@string/friend_image"
         android:layout_gravity="center_vertical|center_horizontal|end"
         android:scaleType="fitXY"
-        android:src="@drawable/person"
+        android:src="@drawable/person_icon"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent" />
 
@@ -52,9 +52,9 @@
 
     <TextView
         android:id="@+id/tv_friend_name"
-        android:layout_width="wrap_content"
+        android:layout_width="@dimen/group_name_width"
         android:layout_height="wrap_content"
-        android:layout_gravity="start"
+        android:layout_gravity="center"
         android:text="Name"
         android:textSize="@dimen/tv_friend_name"
         app:layout_constraintEnd_toStartOf="@+id/member_iv"

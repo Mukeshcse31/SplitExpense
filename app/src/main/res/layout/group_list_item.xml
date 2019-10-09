@@ -19,6 +19,14 @@
     android:layout_height="wrap_content"
     android:padding="@dimen/padding_exp_item">
 
+<ImageView
+    android:layout_width="wrap_content"
+    android:layout_height="@dimen/group_image_height"
+    app:layout_constraintEnd_toStartOf="@id/group_image"
+    app:layout_constraintTop_toTopOf="parent"
+    android:visibility="gone"
+    android:src="@drawable/edit"
+    android:id="@+id/edit_img"></ImageView>
 
     <ImageView
         android:id="@+id/group_image"
@@ -27,7 +35,7 @@
         android:transitionName="profile"
         android:layout_gravity="center_vertical|center_horizontal"
         android:contentDescription="@string/group_image"
-        android:src="@drawable/person"
+        android:src="@drawable/person_icon"
         app:layout_constraintEnd_toStartOf="@+id/guideline_1"
         app:layout_constraintTop_toTopOf="parent"
         app:layout_constraintBottom_toBottomOf="parent"/>
@@ -73,14 +81,14 @@
         android:layout_width="@dimen/guideline_width"
         android:layout_height="match_parent"
         android:orientation="vertical"
-        app:layout_constraintGuide_percent="0.15" />
+        app:layout_constraintGuide_percent="0.20" />
 
     <androidx.constraintlayout.widget.Guideline
         android:id="@+id/guideline_2"
         android:layout_width="@dimen/guideline_width"
         android:layout_height="match_parent"
         android:orientation="vertical"
-        app:layout_constraintGuide_percent="0.20" />
+        app:layout_constraintGuide_percent="0.25" />
 
     <androidx.constraintlayout.widget.Guideline
         android:id="@+id/guideline_3"

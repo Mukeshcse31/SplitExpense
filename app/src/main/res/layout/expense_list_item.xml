@@ -33,6 +33,7 @@
     <ImageView
 
         style="@style/greater_image_style"
+        android:src="@drawable/edit"
         android:contentDescription="@string/goto_groupDetails"
         app:layout_constraintStart_toEndOf="@+id/guideline_3"/>
 

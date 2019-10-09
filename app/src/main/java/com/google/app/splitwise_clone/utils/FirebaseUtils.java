@@ -110,11 +110,17 @@ public class FirebaseUtils {
 }
 
 
-    public static void updateUsersAmount(final String member) {
+    public static void updateUsersAmount(Context context, final String member) {
+
+        final String db_groups = context.getString(R.string.db_groups);
+        final String db_members = context.getString(R.string.db_members);
+        final String db_name = context.getString(R.string.db_name);
+        final String db_users = context.getString(R.string.db_users);
+        final String db_balances = context.getString(R.string.db_balances);
 
         //update the participant's total amount
         final DatabaseReference mDatabaseReference = AppUtils.getDBReference();
-        Query query = mDatabaseReference.child("groups/").orderByChild("members/" + member + "/name").equalTo(member);
+        Query query = mDatabaseReference.child(db_groups).orderByChild(db_members+ "/" + member + "/" + db_name).equalTo(member);
 
         query.addListenerForSingleValueEvent(new ValueEventListener() {
             @Override
@@ -158,7 +164,7 @@ public class FirebaseUtils {
                     balance.setAmount(amountSpentByUser);
                     amountGroup.remove(member);
                     balance.setGroups(amountGroup);
-                    mDatabaseReference.child("users/" + member + "/balances/").setValue(balance);
+                    mDatabaseReference.child(db_users + "/" + member + "/" + db_balances).setValue(balance);
                     Log.i(TAG, "total calculation");
                 }
             }

@@ -2,6 +2,7 @@ package com.google.app.splitwise_clone;
 
 import android.content.Intent;
 import android.content.SharedPreferences;
+import android.content.res.Configuration;
 import android.os.Bundle;
 import android.text.TextUtils;
 import android.util.Log;
@@ -423,4 +424,10 @@ public class SignIn extends AppCompatActivity {
         finish();
     }
 
+    @Override
+    public void onConfigurationChanged(Configuration newConfig) {
+        super.onConfigurationChanged(newConfig);
+        Log.i(TAG, "config changed");
+
+    }
 }
