@@ -315,7 +315,6 @@ public class SummaryActivity extends AppCompatActivity implements GroupsFragment
         mFirebaseStorage = AppUtils.getDBStorage();
         mDatabaseReference = AppUtils.getDBReference();
 
-        //TODO set
         Intent intent = getIntent();
         if(!intent.hasExtra(SignIn.LOGIN))
         viewPager.setCurrentItem(1);
