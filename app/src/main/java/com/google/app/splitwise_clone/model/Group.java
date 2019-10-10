@@ -30,11 +30,11 @@ public class Group implements Parcelable, Cloneable {
         this.members = members;
     }
 
-    public Object clone()throws CloneNotSupportedException{
+    public Object clone() throws CloneNotSupportedException {
         return super.clone();
     }
 
-    protected Group(Parcel in){
+    protected Group(Parcel in) {
 
         name = in.readString();
         photoUrl = in.readString();
@@ -85,6 +85,7 @@ public class Group implements Parcelable, Cloneable {
     public void setPhotoUrl(String photoUrl) {
         this.photoUrl = photoUrl;
     }
+
     public String getName() {
         return name;
     }
@@ -101,7 +102,7 @@ public class Group implements Parcelable, Cloneable {
         this.members = members;
     }
 
-    public void addMember(String memberName, SingleBalance sb){
+    public void addMember(String memberName, SingleBalance sb) {
         this.members.put(memberName, sb);
     }
 
@@ -113,7 +114,7 @@ public class Group implements Parcelable, Cloneable {
         this.nonMembers = nonMembers;
     }
 
-    public void addNonMember(String memberName, SingleBalance sb){
+    public void addNonMember(String memberName, SingleBalance sb) {
         this.nonMembers.put(memberName, sb);
     }
 
@@ -133,7 +134,7 @@ public class Group implements Parcelable, Cloneable {
         this.archivedExpenses = archivedExpenses;
     }
 
-    public void removeMember(String memberName){
+    public void removeMember(String memberName) {
         members.remove(memberName);
     }
 
@@ -141,6 +142,7 @@ public class Group implements Parcelable, Cloneable {
     public int describeContents() {
         return 0;
     }
+
     @Override
     public void writeToParcel(Parcel dest, int flags) {
         dest.writeString(name);

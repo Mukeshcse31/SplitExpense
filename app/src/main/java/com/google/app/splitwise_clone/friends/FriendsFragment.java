@@ -30,6 +30,7 @@ import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.Query;
 import com.google.firebase.database.ValueEventListener;
+
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Iterator;
@@ -156,8 +157,7 @@ public class FriendsFragment extends Fragment implements FriendsAdapter.OnClickL
                     mDatabaseReference.child(db_users + "/" + userName + "/" + db_balances).setValue(balance);
                     noExpense_tv.setVisibility(View.GONE);
                     Log.i(TAG, "total calculation");
-                }
-                else{
+                } else {
 
                     noExpense_tv.setVisibility(View.VISIBLE);
                 }
@@ -182,7 +182,7 @@ public class FriendsFragment extends Fragment implements FriendsAdapter.OnClickL
         mOnFriendClickListener.gotoGroupsList();
     }
 
-     private void startFriendsListener() {
+    private void startFriendsListener() {
 
         firebaseListener = new ChildEventListener() {
             @Override
@@ -213,7 +213,7 @@ public class FriendsFragment extends Fragment implements FriendsAdapter.OnClickL
 
             }
         };
-         mDatabaseReference.child(db_users + "/" + userName + "/" + db_balances + "/" +  db_groups).addChildEventListener(firebaseListener);
+        mDatabaseReference.child(db_users + "/" + userName + "/" + db_balances + "/" + db_groups).addChildEventListener(firebaseListener);
     }
 
     @Override
@@ -236,7 +236,7 @@ public class FriendsFragment extends Fragment implements FriendsAdapter.OnClickL
     }
 
     private void removeListener() {
-        mDatabaseReference.child(db_users + "/" + userName + "/" + db_balances + "/" +  db_groups).removeEventListener(firebaseListener);
+        mDatabaseReference.child(db_users + "/" + userName + "/" + db_balances + "/" + db_groups).removeEventListener(firebaseListener);
     }
 
     @Override
@@ -247,7 +247,7 @@ public class FriendsFragment extends Fragment implements FriendsAdapter.OnClickL
         Log.i(TAG, "listener cleared");
     }
 
-    private void initDBValues(Context context){
+    private void initDBValues(Context context) {
         db_users = context.getString(R.string.db_users);
         db_balances = context.getString(R.string.db_balances);
         db_groups = context.getString(R.string.db_groups);

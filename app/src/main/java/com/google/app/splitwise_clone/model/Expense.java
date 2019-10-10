@@ -2,6 +2,7 @@ package com.google.app.splitwise_clone.model;
 
 import android.os.Parcel;
 import android.os.Parcelable;
+
 import java.util.HashMap;
 import java.util.Map;
 
@@ -25,7 +26,7 @@ public class Expense implements Parcelable {
         this.total = total;
     }
 
-    protected Expense(Parcel in){
+    protected Expense(Parcel in) {
 
         dateSpent = in.readString();
         payer = in.readString();
@@ -97,12 +98,12 @@ public class Expense implements Parcelable {
         this.splitExpense = splitExpense;
     }
 
-    public void addMember(String memberName, SingleBalance sb){
+    public void addMember(String memberName, SingleBalance sb) {
         this.splitExpense.put(memberName, sb);
     }
 
 
-    public void removeMember(String memberName){
+    public void removeMember(String memberName) {
         splitExpense.remove(memberName);
     }
 

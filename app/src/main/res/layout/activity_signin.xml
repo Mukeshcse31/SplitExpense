@@ -2,122 +2,46 @@
 <androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
-              android:layout_width="match_parent"
-              android:layout_height="match_parent"
-              android:paddingBottom="@dimen/activity_vertical_margin_10"
-              tools:context="com.google.app.splitwise_clone.SignIn"
-              android:gravity="top">
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:gravity="top"
+    android:paddingBottom="@dimen/activity_vertical_margin_10"
+    tools:context="com.google.app.splitwise_clone.SignIn">
 
-
-    <androidx.appcompat.widget.Toolbar
-        android:id="@+id/my_toolbar"
-        app:layout_constraintTop_toTopOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        style="@style/ToolbarStyle"
-        android:background="@color/skyBlue"
-        android:layout_gravity="bottom"
-        android:elevation="4dp"
-        android:theme="@style/ThemeOverlay.AppCompat.ActionBar"
-        app:popupTheme="@style/ThemeOverlay.AppCompat.Light"
-        app:layout_collapseMode="parallax" />
-
-    <!--        android:layout_width="match_parent"-->
-    <!--        android:layout_height="wrap_content"-->
-    <!--        app:layout_constraintStart_toStartOf="parent"-->
-    <!--        android:textColorHint="@color/black"-->
-    <!--        tools:layout_editor_absoluteX="10dp"-->
-    <!--        android:layout_marginTop="@dimen/layout_marginTop_10"-->
-    <!--        android:paddingLeft="@dimen/activity_horizontal_margin_10"-->
-    <!--        android:paddingRight="@dimen/activity_horizontal_margin_10"-->
-
-    <com.google.android.material.textfield.TextInputLayout
-        style="@style/signin_textfieldsLayoutStyle"
-        android:id="@+id/label_userName"
-        app:layout_constraintTop_toBottomOf="@+id/my_toolbar">
-
-        <AutoCompleteTextView
-style="@style/signin_textfieldsStyle"
-
-            android:inputType="textNoSuggestions"
-            android:maxLength="@integer/user_name_length"
-            android:id="@+id/register_username"
-            android:hint="@string/prompt_username"
-            android:imeOptions="actionNext"
-            android:nextFocusForward="@id/register_email"/>
-
-    </com.google.android.material.textfield.TextInputLayout>
-
-    <com.google.android.material.textfield.TextInputLayout
-        style="@style/signin_textfieldsLayoutStyle"
-        android:id="@+id/email"
-        app:layout_constraintTop_toBottomOf="@+id/label_userName">
-
-        <AutoCompleteTextView
-            style="@style/signin_textfieldsStyle"
-            android:inputType="textEmailAddress"
-            android:hint="@string/prompt_email"
-            android:imeOptions="actionNext"
-            android:nextFocusForward="@id/register_password"
-            android:id="@+id/register_email"/>
-
-    </com.google.android.material.textfield.TextInputLayout>
-
-        <com.google.android.material.textfield.TextInputLayout
-            style="@style/signin_textfieldsLayoutStyle"
-            android:id="@+id/password1"
-            app:layout_constraintTop_toBottomOf="@+id/email">
-
-            <EditText
-                style="@style/signin_textfieldsStyle"
-                android:inputType="textPassword"
-                android:id="@+id/register_password"
-                android:imeOptions="actionNext"
-                android:nextFocusForward="@id/label_confirm_password"
-                android:hint="@string/prompt_password" />
-
-        </com.google.android.material.textfield.TextInputLayout>
-
-        <com.google.android.material.textfield.TextInputLayout
-            style="@style/signin_textfieldsLayoutStyle"
-            android:id="@+id/label_confirm_password"
-            app:layout_constraintTop_toBottomOf="@+id/password1"
-            >
-
-            <EditText
-                style="@style/signin_textfieldsStyle"
-                android:id="@+id/register_confirm_password"
-                android:hint="@string/prompt_password_again"
-                android:imeActionLabel="@string/action_sign_up"
-                android:nextFocusForward="@id/register_sign_up_button"
-                android:inputType="textPassword" />
-
-        </com.google.android.material.textfield.TextInputLayout>
-
-        <Button
-            style="@style/signin_buttonStyle"
-            android:id="@+id/register_sign_up_button"
-            app:layout_constraintTop_toBottomOf="@+id/label_confirm_password"
-            android:onClick="signUp"
-            android:layout_marginTop="@dimen/layout_marginTop_16"
-            android:text="@string/action_sign_up"        />
 
     <Button
+        android:id="@+id/register_sign_up_button"
         style="@style/signin_buttonStyle"
-        android:id="@+id/login_bn"
-        app:layout_constraintTop_toBottomOf="@+id/label_confirm_password"
-        android:onClick="login"
         android:layout_marginTop="@dimen/layout_marginTop_16"
-        android:visibility="invisible"
-        android:text="@string/action_Login"/>
+        android:onClick="signUp"
+        android:text="@string/action_sign_up"
+        app:layout_constraintTop_toBottomOf="@+id/label_confirm_password" />
 
     <Button
+        android:id="@+id/login_bn"
         style="@style/signin_buttonStyle"
+        android:layout_marginTop="@dimen/layout_marginTop_16"
+        android:onClick="login"
+        android:text="@string/action_Login"
+        android:visibility="invisible"
+        app:layout_constraintTop_toBottomOf="@+id/label_confirm_password" />
+
+    <Button
         android:id="@+id/getSignUp"
-        app:layout_constraintBottom_toBottomOf="parent"
+        style="@style/signin_buttonStyle"
+        android:layout_marginBottom="@dimen/layout_marginBottom_16"
         android:onClick="getSignUp"
         android:text="@string/action_getSignUp"
         android:visibility="invisible"
-        android:layout_marginBottom="@dimen/layout_marginBottom_16"/>
+        app:layout_constraintBottom_toBottomOf="parent" />
+
+    <Button
+        android:id="@+id/getLogin"
+        style="@style/signin_buttonStyle"
+        android:layout_marginBottom="@dimen/layout_marginBottom_16"
+        android:onClick="getLogin"
+        android:text="@string/action_getLogin"
+        app:layout_constraintBottom_toBottomOf="parent" />
 
     <ProgressBar
         android:id="@+id/progressBar"
@@ -130,15 +54,6 @@ style="@style/signin_textfieldsStyle"
 
     </ProgressBar>
 
-
-    <Button
-        style="@style/signin_buttonStyle"
-        android:id="@+id/getLogin"
-        app:layout_constraintBottom_toBottomOf="parent"
-        android:onClick="getLogin"
-        android:text="@string/action_getLogin"
-        android:layout_marginBottom="@dimen/layout_marginBottom_16" />
-
     <androidx.appcompat.widget.AppCompatImageView
         android:id="@+id/offline_iv"
         android:layout_width="match_parent"
@@ -146,7 +61,82 @@ style="@style/signin_textfieldsStyle"
         android:contentDescription="@string/offline"
         app:srcCompat="@drawable/offline"
         tools:layout_editor_absoluteX="10dp"
-        tools:layout_editor_absoluteY="-6dp"></androidx.appcompat.widget.AppCompatImageView>
+        tools:layout_editor_absoluteY="-6dp"/>
+
+    <androidx.appcompat.widget.Toolbar
+        android:id="@+id/my_toolbar"
+        style="@style/ToolbarStyle"
+        android:layout_gravity="bottom"
+        android:background="@color/skyBlue"
+        android:elevation="4dp"
+        android:theme="@style/ThemeOverlay.AppCompat.ActionBar"
+        app:layout_collapseMode="parallax"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        app:popupTheme="@style/ThemeOverlay.AppCompat.Light" />
+
+    <com.google.android.material.textfield.TextInputLayout
+        android:id="@+id/label_userName"
+        style="@style/signin_textfieldsLayoutStyle"
+        app:layout_constraintTop_toBottomOf="@+id/my_toolbar">
+
+        <AutoCompleteTextView
+            android:id="@+id/register_username"
+
+            style="@style/signin_textfieldsStyle"
+            android:hint="@string/prompt_username"
+            android:imeOptions="actionNext"
+            android:inputType="textNoSuggestions"
+            android:maxLength="@integer/user_name_length"
+            android:nextFocusForward="@id/register_email" />
+
+    </com.google.android.material.textfield.TextInputLayout>
+
+    <com.google.android.material.textfield.TextInputLayout
+        android:id="@+id/email"
+        style="@style/signin_textfieldsLayoutStyle"
+        app:layout_constraintTop_toBottomOf="@+id/label_userName">
+
+        <AutoCompleteTextView
+            android:id="@+id/register_email"
+            style="@style/signin_textfieldsStyle"
+            android:hint="@string/prompt_email"
+            android:imeOptions="actionNext"
+            android:inputType="textEmailAddress"
+            android:nextFocusForward="@id/register_password" />
+
+    </com.google.android.material.textfield.TextInputLayout>
+
+
+    <com.google.android.material.textfield.TextInputLayout
+        android:id="@+id/password1"
+        style="@style/signin_textfieldsLayoutStyle"
+        app:layout_constraintTop_toBottomOf="@+id/email">
+
+        <EditText
+            android:id="@+id/register_password"
+            style="@style/signin_textfieldsStyle"
+            android:hint="@string/prompt_password"
+            android:imeOptions="actionNext"
+            android:inputType="textPassword"
+            android:nextFocusForward="@id/label_confirm_password" />
+
+    </com.google.android.material.textfield.TextInputLayout>
+
+    <com.google.android.material.textfield.TextInputLayout
+        android:id="@+id/label_confirm_password"
+        style="@style/signin_textfieldsLayoutStyle"
+        app:layout_constraintTop_toBottomOf="@+id/password1">
+
+        <EditText
+            android:id="@+id/register_confirm_password"
+            style="@style/signin_textfieldsStyle"
+            android:hint="@string/prompt_password_again"
+            android:imeActionLabel="@string/action_sign_up"
+            android:inputType="textPassword"
+            android:nextFocusForward="@id/register_sign_up_button" />
+
+    </com.google.android.material.textfield.TextInputLayout>
 
 
 </androidx.constraintlayout.widget.ConstraintLayout>

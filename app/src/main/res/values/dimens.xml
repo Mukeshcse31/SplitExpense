@@ -11,9 +11,6 @@
 
     <dimen name="subtitle_text_size">14dp</dimen>
 
-<!--    <item name="visible" type="id" />-->
-<!--    <item name="masked" type="id" />-->
-
     <dimen name="list_top_margin">4dp</dimen>
     <dimen name="list_bottom_margin">24dp</dimen>
     <dimen name="app_bar_layout_main_height">150dp</dimen>
@@ -21,7 +18,7 @@
 
     <dimen name="detail_toolbar_elevation">2dp</dimen>
     <dimen name="collap_layout_height">150dp</dimen>
-<dimen name="tool_image_height">150dp</dimen>
+    <dimen name="tool_image_height">150dp</dimen>
     <!--    Group-->
     <dimen name="tv_member_status">16sp</dimen>
     <dimen name="tv_group_name">16sp</dimen>
@@ -30,15 +27,15 @@
     <dimen name="group_top_margin">16dp</dimen>
     <dimen name="group_image_width">40dp</dimen>
     <dimen name="group_image_height">32dp</dimen>
-<dimen name="groupmbr_image_width">32dp</dimen>
+    <dimen name="groupmbr_image_width">32dp</dimen>
     <dimen name="groupmbr_image_height">32dp</dimen>
     <dimen name="group_member_label">16sp</dimen>
     <dimen name="grpname_marginStart">80dp</dimen>
     <dimen name="camera_image_width">60dp</dimen>
     <dimen name="plus_width">24dp</dimen>
     <dimen name="plus_height">24dp</dimen>
-<dimen name="groupname_margin_start">120dp</dimen>
-<dimen name="tv_members_padding_top">16dp</dimen>
+    <dimen name="groupname_margin_start">120dp</dimen>
+    <dimen name="tv_members_padding_top">16dp</dimen>
 
     <!--friends' other-->
     <dimen name="friends_top_margin">116dp</dimen>
@@ -93,19 +90,21 @@
     <dimen name="line_top_margin">4dp</dimen>
     <dimen name="exp_image_width">32dp</dimen>
     <dimen name="exp_image_height">32dp</dimen>
-<dimen name="export">16sp</dimen>
+    <dimen name="export">16sp</dimen>
     <dimen name="settleup">16sp</dimen>
     <dimen name="exp_actions_layout_bottom">8dp</dimen>
-<dimen name="settleup_img_height">48dp</dimen>
+    <dimen name="settleup_img_height">48dp</dimen>
     <dimen name="settleup_img_width">40dp</dimen>
 
 
-<!--    Others-->
+    <!--    Others-->
     <dimen name="guildeline_grp_horizon">4dp</dimen>
     <dimen name="bottom_app_bar_height">52dp</dimen>
     <dimen name="guideline_width">1dp</dimen>
     <dimen name="guideline_height">1dp</dimen>
-<dimen name="settleup_top">48dp</dimen>
+    <dimen name="settleup_top">48dp</dimen>
     <dimen name="spinner_padding">5dp</dimen>
+    <dimen name="widget__min_height">40dp</dimen>
+    <dimen name="widget_min_width">40dp</dimen>
 </resources>
 

@@ -107,7 +107,7 @@ public class AppUtils {
         return mDatabaseReference;
     }
 
-    public static void closeDBReference(DatabaseReference reference ) {
+    public static void closeDBReference(DatabaseReference reference) {
 
         reference = null;
     }
@@ -149,7 +149,7 @@ public class AppUtils {
 
     public static boolean checkGroupName(String groupName) {
 
-        for(String name : groupName.split(" ")){
+        for (String name : groupName.split(" ")) {
 
             Pattern pattern = Pattern.compile("[A-Za-z0-9_]+");
             if (TextUtils.isEmpty(name) || !pattern.matcher(name).matches()) {
@@ -173,11 +173,11 @@ public class AppUtils {
     //verifies the user's and friends's email id
     public static boolean checkEmail(String email) {
 
-        if(email == null || TextUtils.isEmpty(email))
+        if (email == null || TextUtils.isEmpty(email))
             return false;
 
         Pattern pattern = Pattern.compile("^[A-Z0-9._%+-]+@[A-Z0-9.-]+\\.[A-Z]{2,6}$", Pattern.CASE_INSENSITIVE);
-        if(pattern.matcher(email).matches())
+        if (pattern.matcher(email).matches())
             return true;
         else
             return false;
@@ -204,17 +204,17 @@ public class AppUtils {
         }
     }
 
-    public static void showSnackBar(Context context, View view, String message){
+    public static void showSnackBar(Context context, View view, String message) {
         //https://stackoverflow.com/questions/30729312/how-to-dismiss-a-snackbar-using-its-own-action-button
 
-        if(message == null || TextUtils.isEmpty(message)) return;
+        if (message == null || TextUtils.isEmpty(message)) return;
 
         final Snackbar snackBar = Snackbar.make(view,
                 message, Snackbar.LENGTH_LONG);
 
 //        https://stackoverflow.com/questions/32896816/snackbar-half-width-on-tablet
         View viewSnackBar = snackBar.getView();
-        FrameLayout.LayoutParams params = (FrameLayout.LayoutParams)viewSnackBar.getLayoutParams();
+        FrameLayout.LayoutParams params = (FrameLayout.LayoutParams) viewSnackBar.getLayoutParams();
         params.gravity = Gravity.BOTTOM | Gravity.CENTER_HORIZONTAL;
         params.width = FrameLayout.LayoutParams.MATCH_PARENT;
         viewSnackBar.setLayoutParams(params);
@@ -235,7 +235,7 @@ public class AppUtils {
         return input;
     }
 
-    public static void preventTwoClick(final View view){
+    public static void preventTwoClick(final View view) {
 //        https://stackoverflow.com/questions/5608720/android-preventing-double-click-on-a-button
         view.setEnabled(false);
         view.setClickable(false);

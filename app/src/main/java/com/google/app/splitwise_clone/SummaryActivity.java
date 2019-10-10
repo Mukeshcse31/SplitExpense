@@ -11,11 +11,13 @@ import android.view.MenuItem;
 import android.view.View;
 import android.widget.ImageView;
 import android.widget.TextView;
+
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.Toolbar;
 import androidx.core.app.ActivityOptionsCompat;
 import androidx.viewpager.widget.ViewPager;
+
 import com.bumptech.glide.Glide;
 import com.google.android.gms.tasks.OnFailureListener;
 import com.google.android.gms.tasks.OnSuccessListener;
@@ -317,8 +319,8 @@ public class SummaryActivity extends AppCompatActivity implements GroupsFragment
         mDatabaseReference = AppUtils.getDBReference();
 
         Intent intent = getIntent();
-        if(!(intent.hasExtra(SignIn.LOGIN) || intent.hasExtra(SignIn.SIGNUP)))
-        viewPager.setCurrentItem(1);
+        if (!(intent.hasExtra(SignIn.LOGIN) || intent.hasExtra(SignIn.SIGNUP)))
+            viewPager.setCurrentItem(1);
         else
             intent.removeExtra(SignIn.LOGIN);
 

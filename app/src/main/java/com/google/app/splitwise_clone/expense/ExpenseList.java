@@ -225,7 +225,7 @@ public class ExpenseList extends AppCompatActivity implements ExpenseAdapter.OnC
                         Iterator it = splitDues.entrySet().iterator();
 
                         //set 0 for all the group members
-                        while (it.hasNext()){
+                        while (it.hasNext()) {
 
                             Map.Entry pair = (Map.Entry) it.next();
                             String grpMember = (String) pair.getKey();
@@ -294,7 +294,7 @@ public class ExpenseList extends AppCompatActivity implements ExpenseAdapter.OnC
                                 AppUtils.hideOption(mMenu, new int[]{R.id.orderbyCategory, R.id.orderbyDate, R.id.settle_up, R.id.export});
                                 //menu is not created here, so called after this too
                             }
-                                //placed here so it takes a while to reach this and onCreateItemsOption is already called
+                            //placed here so it takes a while to reach this and onCreateItemsOption is already called
                             AppUtils.hideOption(mMenu, new int[]{R.id.orderbyCategory, R.id.orderbyDate, R.id.settle_up, R.id.export});
 
                         }
@@ -475,7 +475,7 @@ public class ExpenseList extends AppCompatActivity implements ExpenseAdapter.OnC
 
     }
 
-    private void setExpenseAdapter(){
+    private void setExpenseAdapter() {
 
         if (VIEW_TYPE == ExpenseListViewType.DATE.getValue()) {
 
@@ -646,14 +646,14 @@ public class ExpenseList extends AppCompatActivity implements ExpenseAdapter.OnC
         builder.show();
     }
 
-    private void populateExpenseAdapter(){
+    private void populateExpenseAdapter() {
 
         if (VIEW_TYPE == ExpenseListViewType.DATE.getValue())
             getExpenseList();
-         else if (VIEW_TYPE == ExpenseListViewType.CATEGORY.getValue())
-             getExpenseByCategory();
-         else if (VIEW_TYPE == ExpenseListViewType.ARCHIVE.getValue())
-             getArchivedExpense();
+        else if (VIEW_TYPE == ExpenseListViewType.CATEGORY.getValue())
+            getExpenseByCategory();
+        else if (VIEW_TYPE == ExpenseListViewType.ARCHIVE.getValue())
+            getArchivedExpense();
     }
 
 

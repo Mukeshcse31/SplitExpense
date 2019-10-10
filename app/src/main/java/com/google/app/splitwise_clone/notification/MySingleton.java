@@ -3,10 +3,11 @@ package com.google.app.splitwise_clone.notification;
 import com.android.volley.Request;
 import com.android.volley.RequestQueue;
 import com.android.volley.toolbox.Volley;
+
 import android.content.Context;
 
 public class MySingleton {
-    private  static MySingleton instance;
+    private static MySingleton instance;
     private RequestQueue requestQueue;
     private Context ctx;
 

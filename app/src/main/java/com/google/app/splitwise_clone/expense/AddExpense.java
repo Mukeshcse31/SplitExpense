@@ -20,12 +20,14 @@ import android.widget.Button;
 import android.widget.ListView;
 import android.widget.Spinner;
 import android.widget.Toast;
+
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.Toolbar;
 import androidx.fragment.app.DialogFragment;
+
 import com.google.app.splitwise_clone.R;
 import com.google.app.splitwise_clone.model.Expense;
 import com.google.app.splitwise_clone.model.Group;
@@ -40,6 +42,7 @@ import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.Query;
 import com.google.firebase.database.ValueEventListener;
+
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.HashMap;
@@ -52,9 +55,9 @@ public class AddExpense extends AppCompatActivity implements ListView.OnItemClic
     private DatabaseReference mDatabaseReference;
     private String TAG = AddExpense.class.getSimpleName();
     public static String EXPENSE_EDITED = "EXPENSE_EDITED";
-public static String EXPENSE_ADDED = "EXPENSE_ADDED";
-public static String ACTION_CANCEL = "ACTION_CANCEL";
-public static String EXPENSE_DELETED = "EXPENSE_DELETED";
+    public static String EXPENSE_ADDED = "EXPENSE_ADDED";
+    public static String ACTION_CANCEL = "ACTION_CANCEL";
+    public static String EXPENSE_DELETED = "EXPENSE_DELETED";
     String db_users, db_balances, db_groups, db_archivedExpenses, db_expenses, db_members, db_nonMembers,
             db_totalAmount, db_owner, db_photoUrl, db_amount, db_status, db_friends, db_email, db_name, db_imageUrl;
     private Toolbar mToolbar;
@@ -218,7 +221,7 @@ public static String EXPENSE_DELETED = "EXPENSE_DELETED";
 
         final List<String> participants = getExpenseParticipants();
         notificationRecipients = new ArrayList<>(participants);
-        if(notificationRecipients.contains(userName))
+        if (notificationRecipients.contains(userName))
             notificationRecipients.remove(userName);
 
         final String description = mDescription.getText().toString();
@@ -302,7 +305,7 @@ public static String EXPENSE_DELETED = "EXPENSE_DELETED";
                         new DialogInterface.OnClickListener() {
                             @Override
                             public void onClick(DialogInterface arg0, int arg1) {
-                                mDatabaseReference.child(db_groups + "/" + group_name + "/"+db_expenses + "/" + expenseId).removeValue();
+                                mDatabaseReference.child(db_groups + "/" + group_name + "/" + db_expenses + "/" + expenseId).removeValue();
                                 updateGroup(group_name, participants);// TODO send all the group members as list
                                 //get the participants from the previous activity
                                 // so that only those users will be updated
@@ -328,7 +331,7 @@ public static String EXPENSE_DELETED = "EXPENSE_DELETED";
         return super.onOptionsItemSelected(item);
     }
 
-    private void gotoExpenseList(String name, String value){
+    private void gotoExpenseList(String name, String value) {
 
         final Intent intent = new Intent(AddExpense.this, ExpenseList.class);
         intent.putExtra(ExpenseList.GROUP_NAME, group_name);
@@ -360,7 +363,7 @@ public static String EXPENSE_DELETED = "EXPENSE_DELETED";
     }
 
     //update a single specified group
-    public void updateGroup(final String groupName, final List<String> participants ) {
+    public void updateGroup(final String groupName, final List<String> participants) {
 
         amountSpentByMember = new HashMap<>();
         amountDueByMember = new HashMap<>();
@@ -402,7 +405,7 @@ public static String EXPENSE_DELETED = "EXPENSE_DELETED";
                         } catch (CloneNotSupportedException e) {
                             e.printStackTrace();
                         }
-sb.setAmount(0.0f);
+                        sb.setAmount(0.0f);
 
                         sb.setSplitDues(new HashMap<>(splitDues));
                         members.put(grouMbr, sb);
@@ -465,8 +468,8 @@ sb.setAmount(0.0f);
                             mDatabaseReference.child(db_groups + "/" + groupName + "/" + db_totalAmount).setValue(totalGroupExpense, new DatabaseReference.CompletionListener() {
                                 @Override
                                 public void onComplete(@Nullable DatabaseError databaseError, @NonNull DatabaseReference databaseReference) {
-                                    for(String participant : participants)
-                                    FirebaseUtils.updateUsersAmount(getApplicationContext(), participant);
+                                    for (String participant : participants)
+                                        FirebaseUtils.updateUsersAmount(getApplicationContext(), participant);
                                 }
                             });
 //                            finish();
@@ -483,11 +486,11 @@ sb.setAmount(0.0f);
     }
 
 
-@Override
-    public void onBackPressed(){
+    @Override
+    public void onBackPressed() {
         Log.i(TAG, "back pressed in Add Expense");
 
-}
+    }
 
     @Override
     public void onResume() {
@@ -509,7 +512,7 @@ sb.setAmount(0.0f);
 
     }
 
-    private void initDBValues(){
+    private void initDBValues() {
 
         db_users = getString(R.string.db_users);
         db_balances = getString(R.string.db_balances);

@@ -54,7 +54,7 @@ public class MyFirebaseMessagingService extends FirebaseMessagingService {
         final Intent intent = new Intent(this, SignIn.class);
         NotificationManager notificationManager = (NotificationManager) getSystemService(Context.NOTIFICATION_SERVICE);
         int notificationID = new Random().nextInt(3000);
-int GROUP_ID = 3;
+        int GROUP_ID = 3;
       /*
         Apps targeting SDK 26 or above (Android O) must implement notification channels and add its notifications
         to at least one of them. Therefore, confirm if version is Oreo or higher, then setup notification channel
@@ -76,12 +76,12 @@ int GROUP_ID = 3;
         NotificationCompat.Builder groupBuilder = new NotificationCompat.Builder(this, ADMIN_CHANNEL_ID)
                 .setSmallIcon(R.drawable.small_icon)
                 .setLargeIcon(largeIcon)
-                        .setContentTitle(getString(R.string.notif_title))
-                        .setContentText(getString(R.string.notif_message))
-                        .setGroupSummary(true)
-                        .setGroup(GROUP_KEY_WORK_EMAIL)
-                        .setStyle(new NotificationCompat.BigTextStyle().bigText(getString(R.string.notif_message)))
-                        .setContentIntent(pendingIntent);
+                .setContentTitle(getString(R.string.notif_title))
+                .setContentText(getString(R.string.notif_message))
+                .setGroupSummary(true)
+                .setGroup(GROUP_KEY_WORK_EMAIL)
+                .setStyle(new NotificationCompat.BigTextStyle().bigText(getString(R.string.notif_message)))
+                .setContentIntent(pendingIntent);
 
         NotificationCompat.Builder notificationBuilder = new NotificationCompat.Builder(this, ADMIN_CHANNEL_ID)
                 .setSmallIcon(R.drawable.small_icon)
@@ -100,9 +100,9 @@ int GROUP_ID = 3;
         notificationManager.notify(notificationID, notificationBuilder.build());
 
 
-        if(!groupPosted) {
+        if (!groupPosted) {
             notificationManager.notify(GROUP_ID, groupBuilder.build());
-groupPosted = true;
+            groupPosted = true;
         }
     }
 

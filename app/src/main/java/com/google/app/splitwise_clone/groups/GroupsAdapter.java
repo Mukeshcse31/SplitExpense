@@ -23,9 +23,11 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
 import android.widget.TextView;
+
 import androidx.annotation.NonNull;
 import androidx.core.text.HtmlCompat;
 import androidx.recyclerview.widget.RecyclerView;
+
 import com.bumptech.glide.Glide;
 import com.google.android.gms.tasks.OnFailureListener;
 import com.google.android.gms.tasks.OnSuccessListener;
@@ -153,8 +155,8 @@ public class GroupsAdapter extends RecyclerView.Adapter<GroupsAdapter.ReviewView
                 DecimalFormat df = new DecimalFormat("#.##");
 
                 balanceAmount += amount;
-                String status = String.format("%s %s %s %s", friendName, mContext.getString(R.string.lent_you), AppUtils.getColoredSpanned("$" + df.format(Math.abs(amount)), mContext.getString(R.string.orange)),"<br>");
-                if (amount > 0){
+                String status = String.format("%s %s %s %s", friendName, mContext.getString(R.string.lent_you), AppUtils.getColoredSpanned("$" + df.format(Math.abs(amount)), mContext.getString(R.string.orange)), "<br>");
+                if (amount > 0) {
                     status = String.format("%s %s %s %s", friendName, mContext.getString(R.string.owes_you), AppUtils.getColoredSpanned("$" + df.format(Math.abs(amount)), mContext.getString(R.string.green)), "<br>");
                 }
 
@@ -162,7 +164,7 @@ public class GroupsAdapter extends RecyclerView.Adapter<GroupsAdapter.ReviewView
                     member_status += status;
 
             }
-            if(!TextUtils.isEmpty(member_status))
+            if (!TextUtils.isEmpty(member_status))
                 tv_member_status.setText(HtmlCompat.fromHtml(member_status, HtmlCompat.FROM_HTML_MODE_LEGACY), TextView.BufferType.SPANNABLE);
 
             //aggregate status
@@ -178,16 +180,16 @@ public class GroupsAdapter extends RecyclerView.Adapter<GroupsAdapter.ReviewView
                     aggr_status = mContext.getString(R.string.you_borrowed);
                 }
                 tv_status.setText(aggr_status);
-                tv_amount.setText(String.format("$%.2f",Math.abs(balanceAmount)));
+                tv_amount.setText(String.format("$%.2f", Math.abs(balanceAmount)));
             }
 
             //set listeners
 
-            if(TextUtils.equals(group.getOwner(), userName)){
+            if (TextUtils.equals(group.getOwner(), userName)) {
                 edit_img.setVisibility(View.VISIBLE);
-                edit_img.setOnClickListener(new View.OnClickListener(){
+                edit_img.setOnClickListener(new View.OnClickListener() {
                     @Override
-                    public void onClick(View v){
+                    public void onClick(View v) {
                         mOnClickListener.gotoEditGroup(listIndex, group_name);
                     }
                 });

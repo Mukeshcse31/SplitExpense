@@ -10,13 +10,13 @@ import java.util.Map;
 
 public class User implements Parcelable {
 
-//    private int id;
+    //    private int id;
     private String name;
     private String email;
     private Float amount;
     private String imageUrl;
     private Map<String, Boolean> friends = new HashMap<>();
-private Balance balances;
+    private Balance balances;
 
     public User() {
     }
@@ -91,11 +91,11 @@ private Balance balances;
         this.friends = friends;
     }
 
-    public void addAsFriend(String friendName){
-            this.friends.put(friendName, true);
+    public void addAsFriend(String friendName) {
+        this.friends.put(friendName, true);
     }
 
-    public void removeAsFriend(String friendName){
+    public void removeAsFriend(String friendName) {
         friends.remove(friendName);
     }
 

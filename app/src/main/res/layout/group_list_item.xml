@@ -27,7 +27,8 @@
     app:layout_constraintBottom_toBottomOf="parent"
     android:visibility="gone"
     android:src="@drawable/edit"
-    android:id="@+id/edit_img"></ImageView>
+    android:contentDescription="@string/edit_group"
+    android:id="@+id/edit_img"/>
 
     <ImageView
         android:id="@+id/group_image"

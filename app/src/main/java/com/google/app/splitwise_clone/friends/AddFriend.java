@@ -86,7 +86,7 @@ public class AddFriend extends AppCompatActivity {
 
                 //check the fields
 
-                if(!AppUtils.checkUserName(friendName)){
+                if (!AppUtils.checkUserName(friendName)) {
                     focusView = mFriendName;
                     mFriendName.setError(getString(R.string.error_username));
                     cancel = true;
@@ -116,8 +116,7 @@ public class AddFriend extends AppCompatActivity {
                             if (dataSnapshot.exists()) {
                                 mFriendName.setError(getString(R.string.error_username_friend));
                                 AppUtils.showSnackBar(AddFriend.this, findViewById(android.R.id.content), getString(R.string.error_username_friend));
-}
-                            else{
+                            } else {
 
                                 Query query = mDatabaseReference.child(db_users + "/" + friendName);
                                 query.addListenerForSingleValueEvent(new ValueEventListener() {
@@ -134,30 +133,35 @@ public class AddFriend extends AppCompatActivity {
                                                     if (dataSnapshot.exists()) {
                                                         String email = (String) dataSnapshot.getValue();
 //                                                            String name = user.getName();
-                                                            if (friendEmail.compareToIgnoreCase(email) == 0) {
-                                                                mDatabaseReference.child(db_users + "/" + userName + "/" + db_friends + "/" + friendName).setValue(true);
-                                                                mDatabaseReference.child(db_users + "/" + friendName + "/" + db_friends + "/" + userName).setValue(true);
-                                                                addFriendsToGroups(friendName, friendEmail);
-                                                            }
-                                                            else mFriendEmail.setError(getString(R.string.email_nomatch));
+                                                        if (friendEmail.compareToIgnoreCase(email) == 0) {
+                                                            mDatabaseReference.child(db_users + "/" + userName + "/" + db_friends + "/" + friendName).setValue(true);
+                                                            mDatabaseReference.child(db_users + "/" + friendName + "/" + db_friends + "/" + userName).setValue(true);
+                                                            addFriendsToGroups(friendName, friendEmail);
+                                                        } else
+                                                            mFriendEmail.setError(getString(R.string.email_nomatch));
                                                     }
                                                 }
+
                                                 @Override
-                                                public void onCancelled(@NonNull DatabaseError databaseError) { }
+                                                public void onCancelled(@NonNull DatabaseError databaseError) {
+                                                }
                                             });
-                                        }
-                                        else
+                                        } else
                                             mFriendName.setError(getString(R.string.error_username_notfound));
-                                        }
+                                    }
+
                                     @Override
-                                    public void onCancelled(@NonNull DatabaseError databaseError) {}
+                                    public void onCancelled(@NonNull DatabaseError databaseError) {
+                                    }
                                 });
                             }
                         }
+
                         @Override
-                        public void onCancelled(@NonNull DatabaseError databaseError) { }
+                        public void onCancelled(@NonNull DatabaseError databaseError) {
+                        }
                     });
-        }
+                }
                 break;
 
             case R.id.cancel:
@@ -167,41 +171,43 @@ public class AddFriend extends AppCompatActivity {
         return super.onOptionsItemSelected(item);
     }
 
-private void addFriendsToGroups(final String friend_name, final String email){
+    private void addFriendsToGroups(final String friend_name, final String email) {
 
         //friend is added to the groups in which the user is the owner
         Query query = mDatabaseReference.child(db_groups).orderByChild(db_owner).equalTo(userName);
 
-    query.addListenerForSingleValueEvent(new ValueEventListener() {
-        @Override
-        public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+        query.addListenerForSingleValueEvent(new ValueEventListener() {
+            @Override
+            public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
 
-            if (dataSnapshot.exists()) {
-                SingleBalance sb1 = new SingleBalance(friend_name);
-                sb1.setEmail(email);
-                Map<String, Float> splitDues = new HashMap<>();
-                splitDues.put(userName, 0.0f);
-                sb1.setSplitDues(splitDues);
+                if (dataSnapshot.exists()) {
+                    SingleBalance sb1 = new SingleBalance(friend_name);
+                    sb1.setEmail(email);
+                    Map<String, Float> splitDues = new HashMap<>();
+                    splitDues.put(userName, 0.0f);
+                    sb1.setSplitDues(splitDues);
 
-                //loop through the groups
-                for (DataSnapshot i : dataSnapshot.getChildren()) {
-                    String group_name = i.getKey();
-                    mDatabaseReference.child(db_groups + "/" + group_name + "/" + db_nonMembers + "/" + friend_name).setValue(sb1);
+                    //loop through the groups
+                    for (DataSnapshot i : dataSnapshot.getChildren()) {
+                        String group_name = i.getKey();
+                        mDatabaseReference.child(db_groups + "/" + group_name + "/" + db_nonMembers + "/" + friend_name).setValue(sb1);
+                    }
+
+                    //init the user balance
+                    mDatabaseReference.child(db_users + "/" + userName + "/" + db_balances + "/" + db_amount).setValue(0);
                 }
 
-                //init the user balance
-                mDatabaseReference.child(db_users + "/" + userName + "/" + db_balances + "/" + db_amount).setValue(0);
+                gotoSummaryActivity(friend_name);
             }
 
-            gotoSummaryActivity(friend_name);
-        }
-        @Override
-        public void onCancelled(@NonNull DatabaseError databaseError) {
+            @Override
+            public void onCancelled(@NonNull DatabaseError databaseError) {
 
-        }
-    });
-}
-    private void gotoSummaryActivity(String friendname){
+            }
+        });
+    }
+
+    private void gotoSummaryActivity(String friendname) {
 
         final Intent intent = new Intent(AddFriend.this, SummaryActivity.class);
         intent.putExtra(FRIEND_ADDED, getString(R.string.friend_added) + " " + friendname);
@@ -210,13 +216,13 @@ private void addFriendsToGroups(final String friend_name, final String email){
     }
 
     @Override
-    public void onResume(){
+    public void onResume() {
         super.onResume();
         mDatabaseReference = AppUtils.getDBReference();
     }
 
     @Override
-    public void onPause(){
+    public void onPause() {
         super.onPause();
         AppUtils.closeDBReference(mDatabaseReference);
         Log.i(TAG, "listener cleared");

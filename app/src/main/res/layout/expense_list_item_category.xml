@@ -17,8 +17,7 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
-    android:background="@color/common_google_signin_btn_text_dark_disabled"
-    >
+    android:background="@color/common_google_signin_btn_text_dark_disabled">
 
     <TextView
         android:id="@+id/category_tv"
@@ -29,6 +28,6 @@
         android:textSize="@dimen/debt_credit_exp"
         android:textStyle="bold"
         app:layout_constraintEnd_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent"/>
+        app:layout_constraintTop_toTopOf="parent" />
 
 </androidx.constraintlayout.widget.ConstraintLayout>

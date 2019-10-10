@@ -5,13 +5,13 @@ public enum ExpenseListViewType {
     CATEGORY("category"),
     ARCHIVE("archive");
 
-private String value;
+    private String value;
 
-ExpenseListViewType(String val){
-value = val;
+    ExpenseListViewType(String val) {
+        value = val;
     }
 
-    public String getValue(){
-    return value;
+    public String getValue() {
+        return value;
     }
 }

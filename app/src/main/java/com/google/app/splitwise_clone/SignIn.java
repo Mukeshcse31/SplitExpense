@@ -41,7 +41,7 @@ public class SignIn extends AppCompatActivity {
 
     // Constants
     public static final String SPLIT_PREFS = "SplitPrefs";
-        public static final String DISPLAY_NAME_KEY = "displayName";
+    public static final String DISPLAY_NAME_KEY = "displayName";
     public static final String USERNAME_KEY = "username";
     public static final String PASSWORD_KEY = "password";
     public static final String LOGIN = "login";
@@ -79,7 +79,7 @@ public class SignIn extends AppCompatActivity {
         myToolbar.setTitle(getString(R.string.action_sign_up));
         setSupportActionBar(myToolbar);
 
-        
+
 //        getSupportActionBar().setTitle(getString(R.string.action_sign_up));
 
         progressBar = findViewById(R.id.progressBar);
@@ -235,7 +235,7 @@ public class SignIn extends AppCompatActivity {
                 });
     }
 
-    private void initUser(final String email){
+    private void initUser(final String email) {
 
         // add new user record in the realtime database
         Query query = mDatabaseReference.child(getString(R.string.db_users) + displayName);
@@ -344,7 +344,7 @@ public class SignIn extends AppCompatActivity {
 
         mloginbutton.setVisibility(View.VISIBLE);
         mSignUp_bn.setVisibility(View.VISIBLE);
-myToolbar.setTitle(getString(R.string.action_Login));
+        myToolbar.setTitle(getString(R.string.action_Login));
     }
 
 

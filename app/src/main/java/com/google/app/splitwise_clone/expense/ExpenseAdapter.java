@@ -23,7 +23,9 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
 import android.widget.TextView;
+
 import androidx.recyclerview.widget.RecyclerView;
+
 import com.google.app.splitwise_clone.R;
 import com.google.app.splitwise_clone.model.Expense;
 import com.google.app.splitwise_clone.model.SingleBalance;
@@ -208,8 +210,7 @@ public class ExpenseAdapter extends RecyclerView.Adapter<ExpenseAdapter.ExpenseV
                 //5. amount due
                 amountDueStr = String.format("$%.2f", Math.abs(amountDue));
                 tv_amount.setText(amountDueStr);
-            }
-            else{//if the user has not participated
+            } else {//if the user has not participated
                 tv_debt_credit.setTextColor(mContext.getColor(R.color.black));
                 tv_amount.setTextColor(mContext.getColor(R.color.black));
             }

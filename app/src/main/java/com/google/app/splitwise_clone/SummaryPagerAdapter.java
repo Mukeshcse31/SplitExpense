@@ -24,7 +24,7 @@ public class SummaryPagerAdapter extends FragmentPagerAdapter {
     public Fragment getItem(int position) {
         if (position == 0) {
             return new FriendsFragment();
-        } else{
+        } else {
             return new GroupsFragment();
         }
     }

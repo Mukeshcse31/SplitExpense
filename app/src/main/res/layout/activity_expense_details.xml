@@ -7,19 +7,97 @@
     android:layout_marginBottom="@dimen/layout_marginBottom_addExpense">
 
 
+    <Button
+        android:id="@+id/date_btn"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_margin="@dimen/layout_margin_addExpense"
+        android:elevation="@dimen/elevation_exp"
+        android:fontFamily="sans-serif-black"
+        android:onClick="onButtonClicked"
+        android:text="@string/set_date"
+        android:textSize="@dimen/label_exp"
+        app:layout_constraintBottom_toTopOf="@id/group_members"
+        app:layout_constraintStart_toEndOf="@id/guideline_ver"
+        app:layout_constraintTop_toBottomOf="@id/my_toolbar" />
+
+    <ListView
+        android:id="@+id/group_members"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_margin="@dimen/layout_margin_addExpense"
+        android:layout_marginStart="@dimen/layout_marginStart_addExpense"
+        android:layout_marginBottom="8dp"
+        android:fontFamily="sans-serif-black"
+        android:textSize="@dimen/label_exp"
+        android:textStyle="bold"
+        app:layout_constraintStart_toEndOf="@id/guideline_ver"
+        app:layout_constraintTop_toBottomOf="@+id/date_btn" />
+
+    <Spinner
+        android:id="@+id/member_spent"
+        android:layout_width="wrap_content"
+        android:layout_height="0dp"
+        android:layout_margin="@dimen/layout_margin_addExpense"
+        android:layout_marginTop="@dimen/layout_marginTop_exp"
+        android:fontFamily="sans-serif-black"
+        android:textSize="@dimen/label_exp"
+        android:textStyle="bold"
+        app:layout_constraintStart_toEndOf="@+id/guideline_ver"
+        app:layout_constraintTop_toBottomOf="@id/group_members" />
+
+    <TextView
+        android:id="@+id/date_tv"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_margin="@dimen/layout_margin_addExpense"
+        android:fontFamily="sans-serif-black"
+        android:text="@string/set_date"
+        android:textSize="@dimen/label_exp"
+        android:textStyle="bold"
+        app:layout_constraintBottom_toTopOf="@id/group_members"
+        app:layout_constraintEnd_toStartOf="@id/guideline_ver"
+        app:layout_constraintTop_toBottomOf="@id/my_toolbar" />
+
+    <TextView
+        android:id="@+id/members_tv"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_margin="@dimen/layout_margin_addExpense"
+        android:fontFamily="sans-serif-black"
+        android:text="@string/split_expense_with"
+        android:textSize="@dimen/label_exp"
+        android:textStyle="bold"
+        app:layout_constraintBottom_toTopOf="@+id/payer_tv"
+        app:layout_constraintEnd_toStartOf="@id/guideline_ver"
+        app:layout_constraintTop_toBottomOf="@id/date_tv" />
+
+    <TextView
+        android:id="@+id/payer_tv"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_margin="@dimen/layout_margin_addExpense"
+        android:fontFamily="sans-serif-black"
+        android:text="@string/payer"
+        android:textSize="@dimen/label_exp"
+        android:textStyle="bold"
+        app:layout_constraintEnd_toStartOf="@id/guideline_ver"
+        app:layout_constraintTop_toBottomOf="@id/group_members" />
+
+
     <androidx.appcompat.widget.Toolbar
         android:id="@+id/my_toolbar"
-        app:layout_constraintTop_toTopOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
         style="@style/ToolbarStyle"
-        android:background="@color/skyBlue"
         android:layout_gravity="bottom"
         android:layout_marginLeft="@dimen/list_toolbar_side_margin"
         android:layout_marginRight="@dimen/list_toolbar_side_margin"
-        android:elevation="4dp"
+        android:background="@color/skyBlue"
+        android:elevation="@dimen/elevation_exp"
         android:theme="@style/ThemeOverlay.AppCompat.ActionBar"
-        app:popupTheme="@style/ThemeOverlay.AppCompat.Light"
-        app:layout_collapseMode="parallax" />
+        app:layout_collapseMode="parallax"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        app:popupTheme="@style/ThemeOverlay.AppCompat.Light" />
 
     <androidx.constraintlayout.widget.Guideline
         android:id="@+id/guideline_ver"
@@ -29,92 +107,14 @@
         android:orientation="vertical"
         app:layout_constraintGuide_percent="0.5" />
 
-    <TextView
-        android:id="@+id/date_tv"
-        android:layout_margin="@dimen/layout_margin_addExpense"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text="@string/date"
-        android:textSize="@dimen/label_exp"
-        android:fontFamily="sans-serif-black"
-        android:textStyle="bold"
-        app:layout_constraintBottom_toTopOf="@id/group_members"
-        app:layout_constraintEnd_toStartOf="@id/guideline_ver"
-        app:layout_constraintTop_toBottomOf="@id/my_toolbar"/>
-
-    <Button
-        android:id="@+id/date_btn"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:fontFamily="sans-serif-black"
-        android:onClick="onButtonClicked"
-        android:text="Set Date"
-        android:textSize="@dimen/label_exp"
-        android:elevation="@dimen/elevation_exp"
-        android:layout_margin="@dimen/layout_margin_addExpense"
-        app:layout_constraintBottom_toTopOf="@id/group_members"
-        app:layout_constraintStart_toEndOf="@id/guideline_ver"
-        app:layout_constraintTop_toBottomOf="@id/my_toolbar"/>
-
-    <TextView
-        android:id="@+id/members_tv"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_margin="@dimen/layout_margin_addExpense"
-        android:text="@string/split_expense_with"
-        android:textSize="@dimen/label_exp"
-        android:textStyle="bold"
-        android:fontFamily="sans-serif-black"
-        app:layout_constraintBottom_toTopOf="@+id/payer_tv"
-        app:layout_constraintEnd_toStartOf="@id/guideline_ver"
-        app:layout_constraintTop_toBottomOf="@id/date_tv" />
-
-    <ListView
-        android:id="@+id/group_members"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_margin="@dimen/layout_margin_addExpense"
-        android:layout_marginStart="@dimen/layout_marginStart_addExpense"
-        android:layout_marginBottom="8dp"
-        android:textSize="@dimen/label_exp"
-        android:textStyle="bold"
-        android:fontFamily="sans-serif-black"
-        app:layout_constraintStart_toEndOf="@id/guideline_ver"
-        app:layout_constraintTop_toBottomOf="@+id/date_btn" />
-
-
-    <TextView
-        android:id="@+id/payer_tv"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text="@string/payer"
-        android:textSize="@dimen/label_exp"
-        android:textStyle="bold"
-        android:fontFamily="sans-serif-black"
-        android:layout_margin="@dimen/layout_margin_addExpense"
-        app:layout_constraintEnd_toStartOf="@id/guideline_ver"
-        app:layout_constraintTop_toBottomOf="@id/group_members" />
-
-    <Spinner
-        android:id="@+id/member_spent"
-        android:layout_width="wrap_content"
-        android:layout_height="0dp"
-        android:layout_margin="@dimen/layout_margin_addExpense"
-        android:layout_marginTop="@dimen/layout_marginTop_exp"
-        android:textSize="@dimen/label_exp"
-        android:textStyle="bold"
-        android:fontFamily="sans-serif-black"
-        app:layout_constraintStart_toEndOf="@+id/guideline_ver"
-        app:layout_constraintTop_toBottomOf="@id/group_members"></Spinner>
-
     <com.google.android.material.textfield.TextInputLayout
         android:id="@+id/label_expense_desc"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_marginStart="@dimen/layout_marginStart_addExpense"
-        android:layout_marginEnd="@dimen/layout_marginEnd_addExpense"
         android:layout_margin="@dimen/layout_margin_addExpense"
+        android:layout_marginStart="@dimen/layout_marginStart_addExpense"
         android:layout_marginTop="@dimen/layout_marginTop_exp"
+        android:layout_marginEnd="@dimen/layout_marginEnd_addExpense"
         android:textColorHint="@color/black"
         android:textSize="@dimen/label_exp"
         app:layout_constraintStart_toStartOf="parent"
@@ -125,6 +125,7 @@
             android:id="@+id/expense_description"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
+            android:fontFamily="sans-serif-black"
             android:hint="@string/description"
             android:imeOptions="actionNext"
             android:inputType="textNoSuggestions"
@@ -135,7 +136,6 @@
             android:textIsSelectable="false"
             android:textSize="@dimen/expense_description"
             android:textStyle="bold"
-            android:fontFamily="sans-serif-black"
             android:windowSoftInputMode="adjustNothing" />
 
     </com.google.android.material.textfield.TextInputLayout>
@@ -146,8 +146,8 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_margin="@dimen/layout_margin_addExpense"
-        android:layout_marginTop="@dimen/layout_marginTop_10"
         android:layout_marginStart="@dimen/layout_marginStart_addExpense"
+        android:layout_marginTop="@dimen/layout_marginTop_10"
         android:layout_marginEnd="@dimen/layout_marginEnd_addExpense"
         android:textColorHint="@color/black"
         android:textSize="@dimen/label_exp"
@@ -161,6 +161,7 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_marginTop="10dp"
+            android:fontFamily="sans-serif-black"
             android:hint="@string/amount"
             android:imeOptions="actionNext"
             android:inputType="numberDecimal"
@@ -170,7 +171,6 @@
             android:textIsSelectable="false"
             android:textSize="@dimen/expense_amount"
             android:textStyle="bold"
-            android:fontFamily="sans-serif-black"
             android:windowSoftInputMode="adjustNothing" />
 
     </com.google.android.material.textfield.TextInputLayout>

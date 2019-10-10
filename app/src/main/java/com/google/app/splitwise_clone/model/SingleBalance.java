@@ -9,15 +9,16 @@ import java.util.Map;
 //getters and setters are required for all the variables for DB read/write
 public class SingleBalance implements Parcelable, Cloneable {
 
-private float amount;
-private String status;
-private String name;
-private String email;
-private Map<String, Float> splitDues = new HashMap<>();
+    private float amount;
+    private String status;
+    private String name;
+    private String email;
+    private Map<String, Float> splitDues = new HashMap<>();
 
-public SingleBalance(){
+    public SingleBalance() {
 
-}
+    }
+
     public SingleBalance(String key) {
         this.amount = 0.0f;
         this.status = "no expenses";
@@ -25,13 +26,13 @@ public SingleBalance(){
 
     }
 
-    public SingleBalance( float amount, String status, String key) {
+    public SingleBalance(float amount, String status, String key) {
         this.amount = amount;
         this.status = status;
         this.name = key;
     }
 
-    protected SingleBalance(Parcel in){
+    protected SingleBalance(Parcel in) {
         amount = in.readFloat();
         status = in.readString();
         name = in.readString();
@@ -41,7 +42,7 @@ public SingleBalance(){
 
     }
 
-    public Object clone()throws CloneNotSupportedException{
+    public Object clone() throws CloneNotSupportedException {
         return super.clone();
     }
 
@@ -97,7 +98,7 @@ public SingleBalance(){
         this.splitDues = splitDues;
     }
 
-    public void addMemberBalance(String member){
+    public void addMemberBalance(String member) {
         splitDues.put(member, 0.0f);
     }
 

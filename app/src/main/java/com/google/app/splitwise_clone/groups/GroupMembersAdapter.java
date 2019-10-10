@@ -38,7 +38,7 @@ public class GroupMembersAdapter extends RecyclerView.Adapter<GroupMembersAdapte
     private Set membersSet;
     Iterator<String> it;
     private Map<String, String> group_members;
-private OnClickListener mOnClickListener;
+    private OnClickListener mOnClickListener;
 
     public GroupMembersAdapter(Map<String, String> group_members, Context context) {
         mOnClickListener = (OnClickListener) context;
@@ -48,7 +48,7 @@ private OnClickListener mOnClickListener;
         it = membersSet.iterator();
     }
 
-    public interface OnClickListener{
+    public interface OnClickListener {
         void removeFriendFromGroup(String name);
     }
 
@@ -119,8 +119,9 @@ private OnClickListener mOnClickListener;
 
         }
     }
-        public void setData(Map<String, String> members){
-            group_members = members;
-notifyDataSetChanged();
-        }
+
+    public void setData(Map<String, String> members) {
+        group_members = members;
+        notifyDataSetChanged();
     }
+}

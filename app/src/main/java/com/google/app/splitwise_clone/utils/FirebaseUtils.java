@@ -6,7 +6,9 @@ import android.content.Context;
 import android.content.SharedPreferences;
 import android.text.TextUtils;
 import android.util.Log;
+
 import androidx.annotation.NonNull;
+
 import com.android.volley.AuthFailureError;
 import com.android.volley.Request;
 import com.android.volley.Response;
@@ -28,6 +30,7 @@ import com.google.firebase.database.Query;
 import com.google.firebase.database.ValueEventListener;
 import com.google.firebase.iid.FirebaseInstanceId;
 import com.google.firebase.messaging.FirebaseMessaging;
+
 import java.io.IOException;
 import java.util.HashMap;
 import java.util.Iterator;
@@ -40,7 +43,7 @@ public class FirebaseUtils {
 
     public static String getUserName() {
 
-        if(userName == null || TextUtils.isEmpty(userName)) {
+        if (userName == null || TextUtils.isEmpty(userName)) {
             FirebaseUser user = FirebaseAuth.getInstance().getCurrentUser();
             if (user != null) {
                 userName = user.getDisplayName();
@@ -52,7 +55,7 @@ public class FirebaseUtils {
     public static void signOut(final Context context) {
 
         //unsubscribe from notification
-            FirebaseMessaging.getInstance().unsubscribeFromTopic(userName);
+        FirebaseMessaging.getInstance().unsubscribeFromTopic(userName);
         try {
             FirebaseInstanceId.getInstance().deleteInstanceId();
         } catch (IOException e) {
@@ -73,24 +76,22 @@ public class FirebaseUtils {
         //update account_image
         int[] ids = AppWidgetManager.getInstance(context.getApplicationContext()).getAppWidgetIds(new ComponentName(context.getApplicationContext(), BalanceWidgetProvider.class));
         BalanceWidgetProvider myWidget = new BalanceWidgetProvider();
-        myWidget.onUpdate(context, AppWidgetManager.getInstance(context),ids);
+        myWidget.onUpdate(context, AppWidgetManager.getInstance(context), ids);
     }
 
-//    https://www.itsalif.info/content/android-volley-tutorial-http-get-post-put
+    //    https://www.itsalif.info/content/android-volley-tutorial-http-get-post-put
     public static void unSubscribe(final Context mContext, String registrationToken) {
         String url = mContext.getString(R.string.unsbuscribe_url) + registrationToken;
         final String serverKey = "key=" + mContext.getString(R.string.server_key);
         StringRequest dr = new StringRequest(Request.Method.DELETE, url,
-                new Response.Listener<String>()
-                {
+                new Response.Listener<String>() {
                     @Override
                     public void onResponse(String response) {
                         // response
                         Log.i(TAG, "successfully unsubscribed");
                     }
                 },
-                new Response.ErrorListener()
-                {
+                new Response.ErrorListener() {
                     @Override
                     public void onErrorResponse(VolleyError error) {
                         // error.
@@ -98,16 +99,17 @@ public class FirebaseUtils {
                         Log.i(TAG, "unsubscribe failure");
                     }
                 }
-        ){
+        ) {
             @Override
             public Map<String, String> getHeaders() throws AuthFailureError {
                 Map<String, String> params = new HashMap<>();
                 params.put(mContext.getString(R.string.notif_Authorization), serverKey);
                 return params;
-            }};
+            }
+        };
 
         MySingleton.getInstance(mContext).addToRequestQueue(dr);
-}
+    }
 
 
     public static void updateUsersAmount(Context context, final String member) {
@@ -120,7 +122,7 @@ public class FirebaseUtils {
 
         //update the participant's total amount
         final DatabaseReference mDatabaseReference = AppUtils.getDBReference();
-        Query query = mDatabaseReference.child(db_groups).orderByChild(db_members+ "/" + member + "/" + db_name).equalTo(member);
+        Query query = mDatabaseReference.child(db_groups).orderByChild(db_members + "/" + member + "/" + db_name).equalTo(member);
 
         query.addListenerForSingleValueEvent(new ValueEventListener() {
             @Override

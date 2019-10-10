@@ -25,17 +25,17 @@
         android:layout_height="@dimen/exp_image_height"
         android:layout_marginStart="@dimen/image_start_margin"
         android:contentDescription="@string/group_image"
-        android:src="@drawable/house"
         android:scaleType="fitXY"
+        android:src="@drawable/house"
         app:layout_constraintStart_toEndOf="@+id/guideline_1"
         app:layout_constraintTop_toTopOf="parent" />
 
     <ImageView
 
         style="@style/greater_image_style"
-        android:src="@drawable/edit"
         android:contentDescription="@string/goto_groupDetails"
-        app:layout_constraintStart_toEndOf="@+id/guideline_3"/>
+        android:src="@drawable/edit"
+        app:layout_constraintStart_toEndOf="@+id/guideline_3" />
 
     <TextView
         android:id="@+id/dateSpent_tv"
@@ -45,7 +45,7 @@
         android:layout_marginEnd="@dimen/date_end_margin"
         android:textSize="@dimen/dateSpent_tv"
         app:layout_constraintEnd_toStartOf="@+id/guideline_1"
-        app:layout_constraintTop_toTopOf="parent"/>
+        app:layout_constraintTop_toTopOf="parent" />
 
     <TextView
         android:id="@+id/tv_expenseDescription"
@@ -58,20 +58,20 @@
         android:id="@+id/tv_paidBy"
         style="@style/paidBy_style"
         app:layout_constraintStart_toEndOf="@+id/guideline_2"
-        app:layout_constraintTop_toBottomOf="@id/tv_expenseDescription"/>
+        app:layout_constraintTop_toBottomOf="@id/tv_expenseDescription" />
 
     <TextView
         android:id="@+id/tv_debt_credit"
         style="@style/debit_credit_style"
         android:text="@string/opted_out"
         app:layout_constraintBottom_toTopOf="@id/tv_amount"
-        app:layout_constraintEnd_toStartOf="@+id/guideline_3"/>
+        app:layout_constraintEnd_toStartOf="@+id/guideline_3" />
 
     <TextView
         android:id="@+id/tv_amount"
         style="@style/expense_details_Amount_Style"
         app:layout_constraintEnd_toStartOf="@+id/guideline_3"
-        app:layout_constraintTop_toBottomOf="@id/tv_debt_credit"/>
+        app:layout_constraintTop_toBottomOf="@id/tv_debt_credit" />
 
     <View
         style="@style/horizontal_line_style"
@@ -103,6 +103,6 @@
         android:layout_width="match_parent"
         android:layout_height="@dimen/guideline_height"
         android:orientation="horizontal"
-        app:layout_constraintGuide_percent=".90"/>
+        app:layout_constraintGuide_percent=".90" />
 
 </androidx.constraintlayout.widget.ConstraintLayout>

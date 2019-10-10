@@ -92,7 +92,7 @@ public class FriendsAdapter extends RecyclerView.Adapter<FriendsAdapter.FriendsV
     public void onBindViewHolder(FriendsViewHolder holder, int position) {
         Log.d(TAG, "#" + position);
         holder.bind(position);
-}
+    }
 
     @Override
     public int getItemCount() {
@@ -146,11 +146,11 @@ public class FriendsAdapter extends RecyclerView.Adapter<FriendsAdapter.FriendsV
                 DecimalFormat df = new DecimalFormat("#.##");
                 String status = String.format("%s %s", mContext.getString(R.string.you_owe), AppUtils.getColoredSpanned("$" + df.format(Math.abs(amount)), mContext.getString(R.string.orange)));
 
-                if (amount > 0){
+                if (amount > 0) {
                     status = String.format("%s %s", mContext.getString(R.string.owes_you), AppUtils.getColoredSpanned("$" + df.format(Math.abs(amount)), mContext.getString(R.string.green)));
 
                 }
-                stat += String.format("%s %s %s <br>",status, mContext.getString(R.string.from_group), groupName);
+                stat += String.format("%s %s %s <br>", status, mContext.getString(R.string.from_group), groupName);
 
             }
 

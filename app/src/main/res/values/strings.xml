@@ -82,6 +82,7 @@
     <string name="group_debt_separator">\n</string>
     <string name="from_group">from group</string>
     <string name="no_friend">Please add a friend to create a group</string>
+    <string name="edit_group">Edit Group</string>
 
     <!--DB schema names-->
     <string name="goto_groupDetails">go to group details</string>
@@ -141,6 +142,7 @@
     <string name="you_owe">you owe</string>
     <string name="amount_you_spent">Amount you spent</string>
     <string name="amount_others_spent">Amount others spent</string>
+    <string name="set_date">Set Date</string>
 
     <!--    Expense Menu-->
     <string name="mnu_resetorder">Reset</string>

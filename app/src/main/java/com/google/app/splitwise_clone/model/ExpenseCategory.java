@@ -8,13 +8,13 @@ public enum ExpenseCategory {
     HOUSE("house"),
     OTHER("other");
 
-private String value;
+    private String value;
 
-ExpenseCategory(String val){
-value = val;
+    ExpenseCategory(String val) {
+        value = val;
     }
 
-    public String getValue(){
-    return value;
+    public String getValue() {
+        return value;
     }
 }

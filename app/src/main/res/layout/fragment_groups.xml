@@ -6,24 +6,23 @@
 
     <TextView
         android:id="@+id/noExpense_tv"
-        app:layout_constraintTop_toTopOf="@id/groups_rv"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
+        android:text="@string/no_expense_friend"
         android:textSize="@dimen/expense_description"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintEnd_toEndOf="parent"
         android:visibility="gone"
-        android:text="@string/no_expense_friend">
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="@id/groups_rv">
 
     </TextView>
 
     <androidx.recyclerview.widget.RecyclerView
         android:id="@+id/groups_rv"
-        app:layout_constraintTop_toTopOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        android:layout_height="match_parent"
         style="@style/RecyclerViewStyle"
+        android:layout_height="match_parent"
         android:nestedScrollingEnabled="true"
-        />
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent" />
 
 </androidx.constraintlayout.widget.ConstraintLayout>

@@ -13,8 +13,10 @@ public class CircleTransform extends BitmapTransformation {
     public CircleTransform(Context context) {
         super(context);
     }
-//    https://stackoverflow.com/questions/25278821/how-to-round-an-image-with-glide-library
-    @Override protected Bitmap transform(BitmapPool pool, Bitmap toTransform, int outWidth, int outHeight) {
+
+    //    https://stackoverflow.com/questions/25278821/how-to-round-an-image-with-glide-library
+    @Override
+    protected Bitmap transform(BitmapPool pool, Bitmap toTransform, int outWidth, int outHeight) {
         return circleCrop(pool, toTransform);
     }
 
@@ -42,7 +44,8 @@ public class CircleTransform extends BitmapTransformation {
         return result;
     }
 
-    @Override public String getId() {
+    @Override
+    public String getId() {
         return getClass().getName();
     }
 }

@@ -177,12 +177,11 @@ public class BalanceWidgetProvider extends AppWidgetProvider {
                             }
                             summary = friendName + ":\n" + summary;
                         }
-                        if(TextUtils.isEmpty(summary))
+                        if (TextUtils.isEmpty(summary))
                             summary = context.getString(R.string.no_expense);
                         appWidgetManager.updateAppWidget(appWidgetId, getSingleRemoteView(context, summary));
                     }
-                }
-                else {
+                } else {
 //                    appWidgetManager.updateAppWidget(appWidgetId, getSingleRemoteView(context, context.getString(R.string.no_expense)));
                 }
 

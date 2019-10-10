@@ -1,20 +1,20 @@
 package com.google.app.splitwise_clone.widget;
 
 /*
-* Copyright (C) 2017 The Android Open Source Project
-*
-* Licensed under the Apache License, Version 2.0 (the "License");
-* you may not use this file except in compliance with the License.
-* You may obtain a copy of the License at
-*
-*  	http://www.apache.org/licenses/LICENSE-2.0
-*
-* Unless required by applicable law or agreed to in writing, software
-* distributed under the License is distributed on an "AS IS" BASIS,
-* WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
-* See the License for the specific language governing permissions and
-* limitations under the License.
-*/
+ * Copyright (C) 2017 The Android Open Source Project
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *  	http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
 
 import android.app.IntentService;
 import android.appwidget.AppWidgetManager;
@@ -30,7 +30,7 @@ import com.google.app.splitwise_clone.R;
  */
 public class BalanceService extends IntentService {
 
-public static final String UPDATE_WIDGETS = "com.google.app.splitwise_clone.action.update_widgets";
+    public static final String UPDATE_WIDGETS = "com.google.app.splitwise_clone.action.update_widgets";
 
     public BalanceService() {
         super("BalanceService");
@@ -62,7 +62,7 @@ public static final String UPDATE_WIDGETS = "com.google.app.splitwise_clone.acti
         }
     }
 
-// Handle action UpdatePlantWidgets in the provided background thread
+    // Handle action UpdatePlantWidgets in the provided background thread
     private void handleActionUpdatePlantWidgets() {
 
         AppWidgetManager appWidgetManager = AppWidgetManager.getInstance(this);
@@ -70,7 +70,7 @@ public static final String UPDATE_WIDGETS = "com.google.app.splitwise_clone.acti
         //Trigger data update to handle the GridView widgets and force a data refresh
 //        appWidgetManager.notifyAppWidgetViewDataChanged(appWidgetIds, R.id.widget_grid_view);
         //Now update all widgets
-        BalanceWidgetProvider.updateAppWidget(this, appWidgetManager,appWidgetIds);
+        BalanceWidgetProvider.updateAppWidget(this, appWidgetManager, appWidgetIds);
     }
 
 }

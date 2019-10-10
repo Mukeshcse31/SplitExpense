@@ -24,6 +24,7 @@ import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.Query;
 import com.google.firebase.database.ValueEventListener;
+
 import java.util.ArrayList;
 import java.util.List;
 
@@ -74,34 +75,36 @@ public class GroupsFragment extends Fragment implements GroupsAdapter.OnClickLis
         }
     }
 
-    public interface onGroupClickListener{
+    public interface onGroupClickListener {
         void gotoClickedGroup(int index, String name, View view);
-        void gotoEditGroup(int index, String groupName, List<DataSnapshot> data );
+
+        void gotoEditGroup(int index, String groupName, List<DataSnapshot> data);
     }
 
-private void showSnackBar(){
+    private void showSnackBar() {
 
-    Intent intent = getActivity().getIntent();
-    if (intent.hasExtra(AddGroup.GROUP_NAME)) {
-        group_name = intent.getStringExtra(AddGroup.GROUP_NAME);
+        Intent intent = getActivity().getIntent();
+        if (intent.hasExtra(AddGroup.GROUP_NAME)) {
+            group_name = intent.getStringExtra(AddGroup.GROUP_NAME);
+        }
+
+        if (intent.hasExtra(AddGroup.GROUP_ADDED)) {
+            snackBarMsg = intent.getStringExtra(AddGroup.GROUP_ADDED);
+        }
+        if (intent.hasExtra(AddGroup.GROUP_EDITED)) {
+            snackBarMsg = intent.getStringExtra(AddGroup.GROUP_EDITED);
+        }
+        if (intent.hasExtra(AddGroup.GROUP_DELETED)) {
+            snackBarMsg = intent.getStringExtra(AddGroup.GROUP_DELETED);
+        }
+        if (intent.hasExtra(AddGroup.ACTION_CANCEL)) {
+            snackBarMsg = intent.getStringExtra(AddGroup.ACTION_CANCEL);
+        }
+
+        AppUtils.showSnackBar(getContext(), getActivity().findViewById(android.R.id.content), snackBarMsg);
+
     }
 
-    if(intent.hasExtra(AddGroup.GROUP_ADDED)){
-        snackBarMsg = intent.getStringExtra(AddGroup.GROUP_ADDED);
-    }
-    if(intent.hasExtra(AddGroup.GROUP_EDITED)){
-        snackBarMsg = intent.getStringExtra(AddGroup.GROUP_EDITED);
-    }
-    if(intent.hasExtra(AddGroup.GROUP_DELETED)){
-        snackBarMsg = intent.getStringExtra(AddGroup.GROUP_DELETED);
-    }
-    if(intent.hasExtra(AddGroup.ACTION_CANCEL)){
-        snackBarMsg = intent.getStringExtra(AddGroup.ACTION_CANCEL);
-    }
-
-    AppUtils.showSnackBar(getContext(), getActivity().findViewById(android.R.id.content),snackBarMsg);
-
-}
     @Override
     public void onDestroyView() {
         super.onDestroyView();
@@ -117,7 +120,7 @@ private void showSnackBar(){
 
         //only the owner of the group should be able to edit the group
 
-        Query query = mDatabaseReference.child(db_groups+ "/" + groupName + "/" + db_owner);
+        Query query = mDatabaseReference.child(db_groups + "/" + groupName + "/" + db_owner);
 
         query.addListenerForSingleValueEvent(new ValueEventListener() {
             @Override
@@ -152,8 +155,7 @@ private void showSnackBar(){
                     mGroupsAdapter = new GroupsAdapter(dataSnapshotGroupList, GroupsFragment.this);
                     groups_rv.setAdapter(mGroupsAdapter);
                     noExpense_tv.setVisibility(View.GONE);
-                }
-                else noExpense_tv.setVisibility(View.VISIBLE);
+                } else noExpense_tv.setVisibility(View.VISIBLE);
             }
 
             @Override
@@ -164,7 +166,7 @@ private void showSnackBar(){
     }
 
     @Override
-    public void onResume(){
+    public void onResume() {
         super.onResume();
 
         mDatabaseReference = AppUtils.getDBReference();
@@ -175,7 +177,7 @@ private void showSnackBar(){
     }
 
     @Override
-    public void onPause(){
+    public void onPause() {
         super.onPause();
         AppUtils.closeDBReference(mDatabaseReference);
         removeListener();
@@ -209,14 +211,14 @@ private void showSnackBar(){
 
             }
         };
-        mDatabaseReference.child(db_users + "/" + userName + "/" + db_balances + "/" +  db_groups).addChildEventListener(firebaseListener);
+        mDatabaseReference.child(db_users + "/" + userName + "/" + db_balances + "/" + db_groups).addChildEventListener(firebaseListener);
     }
 
     private void removeListener() {
         mDatabaseReference.child(db_users + "/" + userName + "/" + db_balances + "/" + db_groups).removeEventListener(firebaseListener);
     }
 
-    private void initDBValues(Context context){
+    private void initDBValues(Context context) {
         db_users = context.getString(R.string.db_users);
         db_balances = context.getString(R.string.db_balances);
         db_groups = context.getString(R.string.db_groups);

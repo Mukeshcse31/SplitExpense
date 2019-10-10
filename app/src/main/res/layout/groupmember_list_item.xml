@@ -15,24 +15,18 @@
 -->
 <androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
     android:padding="@dimen/margin_4">
-
-<androidx.constraintlayout.widget.Guideline
-    android:layout_width="wrap_content"
-    android:layout_height="wrap_content"
-    android:id="@+id/guideline_1"
-    app:layout_constraintGuide_percent=".90"
-    android:orientation="vertical"/>
 
     <ImageView
         android:id="@+id/image"
         android:layout_width="@dimen/groupmbr_image_width"
         android:layout_height="@dimen/groupmbr_image_height"
+        android:layout_gravity="center_vertical|center_horizontal|end"
         android:layout_marginStart="@dimen/margin_4"
         android:contentDescription="@string/friend_image"
-        android:layout_gravity="center_vertical|center_horizontal|end"
         android:scaleType="fitXY"
         android:src="@drawable/person"
         app:layout_constraintStart_toStartOf="parent"
@@ -42,9 +36,9 @@
         android:id="@+id/member_iv"
         android:layout_width="@dimen/plus_width"
         android:layout_height="@dimen/plus_height"
+        android:layout_gravity="center_vertical|center_horizontal|end"
         android:layout_marginEnd="@dimen/margin_4"
         android:contentDescription="@string/goto_details"
-        android:layout_gravity="center_vertical|center_horizontal|end"
         android:scaleType="fitXY"
         android:src="@drawable/plus"
         app:layout_constraintEnd_toStartOf="@+id/guideline_1"
@@ -55,10 +49,17 @@
         android:layout_width="@dimen/group_name_width"
         android:layout_height="wrap_content"
         android:layout_gravity="center"
-        android:text="Name"
         android:textSize="@dimen/tv_friend_name"
         app:layout_constraintEnd_toStartOf="@+id/member_iv"
         app:layout_constraintStart_toEndOf="@+id/image"
-        app:layout_constraintTop_toTopOf="parent" />
+        app:layout_constraintTop_toTopOf="parent"
+        tools:text="Name" />
+
+    <androidx.constraintlayout.widget.Guideline
+        android:id="@+id/guideline_1"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:orientation="vertical"
+        app:layout_constraintGuide_percent=".90" />
 
 </androidx.constraintlayout.widget.ConstraintLayout>

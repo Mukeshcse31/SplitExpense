@@ -95,7 +95,8 @@
 
     <!-- CollapsingToolbarLayout -->
     <style name="CollapsingToolbarLayoutStyle" parent="TextAppearance.Design.CollapsingToolbar.Expanded">
-        <item name="android:colorBackground">@color/common_google_signin_btn_text_dark_disabled</item>
+        <item name="android:colorBackground">@color/common_google_signin_btn_text_dark_disabled
+        </item>
         <item name="android:layout_width">match_parent</item>
         <item name="android:layout_height">@dimen/collap_layout_height</item>
     </style>
