@@ -6,14 +6,11 @@ import android.content.res.Configuration;
 import android.os.Bundle;
 import android.text.TextUtils;
 import android.util.Log;
-import android.view.KeyEvent;
 import android.view.View;
-import android.view.inputmethod.EditorInfo;
 import android.widget.AutoCompleteTextView;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ProgressBar;
-import android.widget.TextView;
 
 import androidx.appcompat.app.AlertDialog;
 import androidx.annotation.NonNull;
@@ -58,15 +55,16 @@ public class SignIn extends AppCompatActivity {
     private ProgressBar progressBar;
     private EditText mPasswordView;
     private EditText mConfirmPasswordView;
-    private Button mloginbutton, msignUp, mLogin_bn, mSignUp_bn;
+    private Button mloginbutton, msignUp, getLogin, mSignUp_bn;
     private AppCompatImageView offline_iv;
     private FirebaseAuth mAuth;
+    Toolbar myToolbar;
     private String userName, displayName;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_register);
+        setContentView(R.layout.activity_signin);
 
 //        https://stackoverflow.com/questions/40081539/default-firebaseapp-is-not-initialized
         mAuth = FirebaseAuth.getInstance();
@@ -77,9 +75,11 @@ public class SignIn extends AppCompatActivity {
         String password = prefs.getString(PASSWORD_KEY, "");
         offline_iv = findViewById(R.id.offline_iv);
 
-        Toolbar myToolbar = (Toolbar) findViewById(R.id.my_toolbar);
-        myToolbar.setTitle(userName);
+        myToolbar = (Toolbar) findViewById(R.id.my_toolbar);
+        myToolbar.setTitle(getString(R.string.action_sign_up));
         setSupportActionBar(myToolbar);
+
+        
 //        getSupportActionBar().setTitle(getString(R.string.action_sign_up));
 
         progressBar = findViewById(R.id.progressBar);
@@ -89,7 +89,7 @@ public class SignIn extends AppCompatActivity {
         mUsernameView = findViewById(R.id.register_username);
         mloginbutton = findViewById(R.id.login_bn);
         msignUp = findViewById(R.id.register_sign_up_button);
-        mLogin_bn = findViewById(R.id.getLogin);
+        getLogin = findViewById(R.id.getLogin);
         mSignUp_bn = findViewById(R.id.getSignUp);
 
         mUserNameLayout = findViewById(R.id.label_userName);
@@ -103,7 +103,7 @@ public class SignIn extends AppCompatActivity {
             mUsernameView.setVisibility(View.GONE);
             mloginbutton.setVisibility(View.GONE);
             msignUp.setVisibility(View.GONE);
-            mLogin_bn.setVisibility(View.GONE);
+            getLogin.setVisibility(View.GONE);
             mSignUp_bn.setVisibility(View.GONE);
             mUserNameLayout.setVisibility(View.GONE);
             mlabel_confirm_password.setVisibility(View.GONE);
@@ -116,17 +116,17 @@ public class SignIn extends AppCompatActivity {
 
             progressBar.setVisibility(View.GONE);
             // Keyboard sign in action
-            mConfirmPasswordView.setOnEditorActionListener(new TextView.OnEditorActionListener() {
-                @Override
-                public boolean onEditorAction(TextView textView, int id, KeyEvent keyEvent) {
-                    if (id == R.integer.register_form_finished || id == EditorInfo.IME_NULL) {
-                        AppUtils.preventTwoClick(mConfirmPasswordView);
-                        attemptRegistration();
-                        return true;
-                    }
-                    return false;
-                }
-            });
+//            mConfirmPasswordView.setOnEditorActionListener(new TextView.OnEditorActionListener() {
+//                @Override
+//                public boolean onEditorAction(TextView textView, int id, KeyEvent keyEvent) {
+//                    if (id == R.integer.register_form_finished || id == EditorInfo.IME_NULL) {
+//                        AppUtils.preventTwoClick(mConfirmPasswordView);
+//                        attemptRegistration();
+//                        return true;
+//                    }
+//                    return false;
+//                }
+//            });
 
         } else {
             signInWithCredentials(email, password);
@@ -215,7 +215,7 @@ public class SignIn extends AppCompatActivity {
                         } else {
                             FirebaseUser user = FirebaseAuth.getInstance().getCurrentUser();
                             saveUserCredentials(email, password);
-                            initUser(email);
+
                             UserProfileChangeRequest profileUpdates = new UserProfileChangeRequest.Builder()
                                     .setDisplayName(displayName)
                                     .build();
@@ -225,7 +225,7 @@ public class SignIn extends AppCompatActivity {
                                         @Override
                                         public void onComplete(@NonNull Task<Void> task) {
                                             if (task.isSuccessful()) {
-
+                                                initUser(email);
                                                 Log.d(TAG, "User profile updated.");
                                             }
                                         }
@@ -340,11 +340,11 @@ public class SignIn extends AppCompatActivity {
         mUserNameLayout.setVisibility(View.INVISIBLE);
         mlabel_confirm_password.setVisibility(View.INVISIBLE);
         msignUp.setVisibility(View.INVISIBLE);
-        mLogin_bn.setVisibility(View.INVISIBLE);
+        getLogin.setVisibility(View.INVISIBLE);
 
         mloginbutton.setVisibility(View.VISIBLE);
         mSignUp_bn.setVisibility(View.VISIBLE);
-
+myToolbar.setTitle(getString(R.string.action_Login));
     }
 
 
@@ -353,11 +353,11 @@ public class SignIn extends AppCompatActivity {
         mUserNameLayout.setVisibility(View.VISIBLE);
         mlabel_confirm_password.setVisibility(View.VISIBLE);
         msignUp.setVisibility(View.VISIBLE);
-        mLogin_bn.setVisibility(View.VISIBLE);
+        getLogin.setVisibility(View.VISIBLE);
 
         mloginbutton.setVisibility(View.INVISIBLE);
         mSignUp_bn.setVisibility(View.INVISIBLE);
-
+        myToolbar.setTitle(getString(R.string.action_sign_up));
     }
 
     public void login(View v) {

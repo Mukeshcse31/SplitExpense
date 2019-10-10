@@ -109,7 +109,7 @@ public class FriendsFragment extends Fragment implements FriendsAdapter.OnClickL
             @Override
             public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
 
-                if (dataSnapshot.exists()) {
+                if (dataSnapshot.exists() && !(userName == null)) {
                     balanceAmount = 0f;
                     amountSpentByUser = 0.0f;
                     Balance balance = new Balance();

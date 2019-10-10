@@ -145,12 +145,13 @@ private void showSnackBar(){
             @Override
             public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
                 dataSnapshotGroupList.clear();
-                if (dataSnapshot.exists()) {
+                if (dataSnapshot.exists() && !(userName == null)) {
                     for (DataSnapshot i : dataSnapshot.getChildren()) {
                         dataSnapshotGroupList.add(i);
                     }
                     mGroupsAdapter = new GroupsAdapter(dataSnapshotGroupList, GroupsFragment.this);
                     groups_rv.setAdapter(mGroupsAdapter);
+                    noExpense_tv.setVisibility(View.GONE);
                 }
                 else noExpense_tv.setVisibility(View.VISIBLE);
             }

@@ -89,7 +89,7 @@ public class BalanceWidgetProvider extends AppWidgetProvider {
         // Construct an Intent object includes web adresss.
         Intent intent = new Intent(mContext, SummaryActivity.class);
 
-        // In widget we are not allowing to use intents as usually. We have to use PendingIntent instead of 'startActivity'
+        // In account_image we are not allowing to use intents as usually. We have to use PendingIntent instead of 'startActivity'
         PendingIntent pendingIntent = PendingIntent.getActivity(mContext, 0, intent, 0);
         // Here the basic operations the remote view can do.
         views.setOnClickPendingIntent(R.id.widget_balance_amount, pendingIntent);
@@ -137,7 +137,7 @@ public class BalanceWidgetProvider extends AppWidgetProvider {
             @Override
             public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
 
-                String summary=context.getString(R.string.no_expense);
+                String summary = "";
                 if (dataSnapshot.exists()) {
                     Balance balance = new Balance();
                     amountGroup = new HashMap<>();
@@ -177,6 +177,8 @@ public class BalanceWidgetProvider extends AppWidgetProvider {
                             }
                             summary = friendName + ":\n" + summary;
                         }
+                        if(TextUtils.isEmpty(summary))
+                            summary = context.getString(R.string.no_expense);
                         appWidgetManager.updateAppWidget(appWidgetId, getSingleRemoteView(context, summary));
                     }
                 }

@@ -70,7 +70,7 @@ public class FirebaseUtils {
         prefs.edit().remove(SignIn.PASSWORD_KEY).commit();
         prefs.edit().remove(SignIn.DISPLAY_NAME_KEY).commit();
 
-        //update widget
+        //update account_image
         int[] ids = AppWidgetManager.getInstance(context.getApplicationContext()).getAppWidgetIds(new ComponentName(context.getApplicationContext(), BalanceWidgetProvider.class));
         BalanceWidgetProvider myWidget = new BalanceWidgetProvider();
         myWidget.onUpdate(context, AppWidgetManager.getInstance(context),ids);

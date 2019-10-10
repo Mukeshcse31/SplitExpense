@@ -32,7 +32,6 @@ import com.google.android.gms.tasks.OnFailureListener;
 import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.app.splitwise_clone.R;
 import com.google.app.splitwise_clone.SummaryActivity;
-import com.google.app.splitwise_clone.model.Expense;
 import com.google.app.splitwise_clone.model.Group;
 import com.google.app.splitwise_clone.model.SingleBalance;
 import com.google.app.splitwise_clone.utils.AppUtils;
@@ -47,7 +46,6 @@ import com.google.firebase.storage.StorageReference;
 import com.google.firebase.storage.UploadTask;
 import java.util.HashMap;
 import java.util.Iterator;
-import java.util.LinkedHashMap;
 import java.util.Map;
 
 public class AddGroup extends AppCompatActivity implements GroupMembersAdapter.OnClickListener,
@@ -154,7 +152,7 @@ public class AddGroup extends AppCompatActivity implements GroupMembersAdapter.O
             Glide.with(this)
                     .load(selectedImageUri)
                     .asBitmap()
-                    .placeholder(R.drawable.people_unselected)
+                    .placeholder(R.drawable.group)
                     .into(mPhotoPickerButton);
         }
     }
@@ -296,7 +294,7 @@ public class AddGroup extends AppCompatActivity implements GroupMembersAdapter.O
                         Glide.with(AddGroup.this)
                                 .load(bytes)
                                 .asBitmap()
-                                .placeholder(R.drawable.people_unselected)
+                                .placeholder(R.drawable.group)
                                 .into(mPhotoPickerButton);
                     }
                 }).addOnFailureListener(new OnFailureListener() {
@@ -357,11 +355,11 @@ public class AddGroup extends AppCompatActivity implements GroupMembersAdapter.O
 
         AppUtils.hideOption(menu, new int[]{R.id.deleteGroup, R.id.saveGroup});
         if (mGroup == null) {
-            AppUtils.showOption(menu, new int[]{R.id.addGroup});
+            AppUtils.showMenuOption(menu, new int[]{R.id.addGroup});
         } else {
             AppUtils.hideOption(menu, new int[]{R.id.addGroup});
             if (TextUtils.equals(mGroup.getOwner(), userName)) {//only the group owner should be allowed to edit
-                AppUtils.showOption(menu, new int[]{R.id.deleteGroup, R.id.saveGroup});
+                AppUtils.showMenuOption(menu, new int[]{R.id.deleteGroup, R.id.saveGroup});
             }
         }
         return true;

@@ -34,7 +34,7 @@
         android:contentDescription="@string/friend_image"
         android:layout_gravity="center_vertical|center_horizontal|end"
         android:scaleType="fitXY"
-        android:src="@drawable/person_icon"
+        android:src="@drawable/person"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent" />
 

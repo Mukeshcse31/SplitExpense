@@ -185,6 +185,8 @@ public class ExpenseList extends AppCompatActivity implements ExpenseAdapter.OnC
             }
         });
         AppUtils.hideOption(mMenu, new int[]{R.id.orderbyCategory, R.id.orderbyDate, R.id.settle_up, R.id.export});
+        AppUtils.showMenuOption(mMenu, new int[]{R.id.archivedExp});
+
     }
 
 
@@ -285,11 +287,16 @@ public class ExpenseList extends AppCompatActivity implements ExpenseAdapter.OnC
                                 expenses_rv.setVisibility(View.INVISIBLE);
                                 settleup_tv.setVisibility(View.VISIBLE);
                                 settleup_image.setVisibility(View.VISIBLE);
-                            } else
-                                noExpenses_tv.setVisibility(View.VISIBLE);
+                                AppUtils.showMenuOption(mMenu, new int[]{R.id.archivedExp});
+                            } else {
 
-                            //placed here so it takes a while to reach this and onCreateItemsOption is already called
-                            AppUtils.hideOption(mMenu, new int[]{R.id.orderbyCategory, R.id.orderbyDate, R.id.settle_up, R.id.export, R.id.archivedExp});
+                                noExpenses_tv.setVisibility(View.VISIBLE);
+                                AppUtils.hideOption(mMenu, new int[]{R.id.orderbyCategory, R.id.orderbyDate, R.id.settle_up, R.id.export});
+                                //menu is not created here, so called after this too
+                            }
+                                //placed here so it takes a while to reach this and onCreateItemsOption is already called
+                            AppUtils.hideOption(mMenu, new int[]{R.id.orderbyCategory, R.id.orderbyDate, R.id.settle_up, R.id.export});
+
                         }
 
                         @Override
@@ -306,7 +313,7 @@ public class ExpenseList extends AppCompatActivity implements ExpenseAdapter.OnC
                     expenseSnapshotMap = AppUtils.reverseExpense(expenseSnapshotMap);
                     mExpenseAdapter = new ExpenseAdapter(expenseSnapshotMap, ExpenseList.this, true);
                     expenses_rv.setAdapter(mExpenseAdapter);
-                    AppUtils.showOption(mMenu, new int[]{R.id.orderbyCategory, R.id.settle_up, R.id.export, R.id.archivedExp});
+                    AppUtils.showMenuOption(mMenu, new int[]{R.id.orderbyCategory, R.id.settle_up, R.id.export, R.id.archivedExp});
                     AppUtils.hideOption(mMenu, new int[]{R.id.orderbyDate});
                 }
             }
@@ -362,7 +369,7 @@ public class ExpenseList extends AppCompatActivity implements ExpenseAdapter.OnC
         });
 
         AppUtils.hideOption(mMenu, new int[]{R.id.orderbyCategory});
-        AppUtils.showOption(mMenu, new int[]{R.id.orderbyDate, R.id.settle_up, R.id.export, R.id.archivedExp});
+        AppUtils.showMenuOption(mMenu, new int[]{R.id.orderbyDate, R.id.settle_up, R.id.export, R.id.archivedExp});
     }
 
     private void getArchivedExpense() {
@@ -405,7 +412,7 @@ public class ExpenseList extends AppCompatActivity implements ExpenseAdapter.OnC
         });
 
         AppUtils.hideOption(mMenu, new int[]{R.id.orderbyCategory, R.id.settle_up, R.id.export, R.id.archivedExp});
-        AppUtils.showOption(mMenu, new int[]{R.id.orderbyDate});
+        AppUtils.showMenuOption(mMenu, new int[]{R.id.orderbyDate});
     }
 
     @Override
@@ -450,7 +457,7 @@ public class ExpenseList extends AppCompatActivity implements ExpenseAdapter.OnC
     public boolean onCreateOptionsMenu(Menu menu) {
         // Inflate the menu; this adds items to the action bar if it is present.
         mMenu = menu;
-        getMenuInflater().inflate(R.menu.expense_list_menu, menu);
+        getMenuInflater().inflate(R.menu.menu_expense_list, menu);
         return true;
     }
 
@@ -558,7 +565,7 @@ public class ExpenseList extends AppCompatActivity implements ExpenseAdapter.OnC
                 Glide.with(ExpenseList.this)
                         .load(bytes)
                         .asBitmap()
-                        .placeholder(R.drawable.people_unselected)
+                        .placeholder(R.drawable.group)
                         .into(groupImage);
             }
         }).addOnFailureListener(new OnFailureListener() {

@@ -24,6 +24,7 @@
     android:layout_height="@dimen/group_image_height"
     app:layout_constraintEnd_toStartOf="@id/group_image"
     app:layout_constraintTop_toTopOf="parent"
+    app:layout_constraintBottom_toBottomOf="parent"
     android:visibility="gone"
     android:src="@drawable/edit"
     android:id="@+id/edit_img"></ImageView>
@@ -35,7 +36,7 @@
         android:transitionName="profile"
         android:layout_gravity="center_vertical|center_horizontal"
         android:contentDescription="@string/group_image"
-        android:src="@drawable/person_icon"
+        android:src="@drawable/group"
         app:layout_constraintEnd_toStartOf="@+id/guideline_1"
         app:layout_constraintTop_toTopOf="parent"
         app:layout_constraintBottom_toBottomOf="parent"/>

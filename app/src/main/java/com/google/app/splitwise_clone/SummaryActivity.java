@@ -72,6 +72,7 @@ public class SummaryActivity extends AppCompatActivity implements GroupsFragment
         Toolbar myToolbar = (Toolbar) findViewById(R.id.my_toolbar);
         myToolbar.setTitle(userName);
         setSupportActionBar(myToolbar);
+
         initDBValues();
         profilePicture = findViewById(R.id.profilePicture);
         balance_summary_tv = findViewById(R.id.balance_summary_tv);
@@ -101,8 +102,8 @@ public class SummaryActivity extends AppCompatActivity implements GroupsFragment
         }
         if (intent.hasExtra(SignIn.SIGNUP)) {
             snackBarMsg = intent.getStringExtra(SignIn.SIGNUP);
-            intent.removeExtra(SignIn.SIGNUP);
         }
+
         if (intent.hasExtra(AddGroup.GROUP_ADDED)) {
             snackBarMsg = intent.getStringExtra(AddGroup.GROUP_ADDED);
             intent.removeExtra(AddGroup.GROUP_ADDED);
@@ -213,7 +214,7 @@ public class SummaryActivity extends AppCompatActivity implements GroupsFragment
                                     Glide.with(SummaryActivity.this)
                                             .load(bytes)
                                             .asBitmap()
-                                            .placeholder(R.drawable.people_unselected)
+                                            .placeholder(R.drawable.group)
                                             .into(profilePicture);
 
                                 }
@@ -254,7 +255,7 @@ public class SummaryActivity extends AppCompatActivity implements GroupsFragment
                             Glide.with(SummaryActivity.this)
                                     .load(bytes)
                                     .asBitmap()
-                                    .placeholder(R.drawable.person)
+                                    .placeholder(R.drawable.account_image)
                                     .into(profilePicture);
 
                         }
@@ -316,7 +317,7 @@ public class SummaryActivity extends AppCompatActivity implements GroupsFragment
         mDatabaseReference = AppUtils.getDBReference();
 
         Intent intent = getIntent();
-        if(!intent.hasExtra(SignIn.LOGIN))
+        if(!(intent.hasExtra(SignIn.LOGIN) || intent.hasExtra(SignIn.SIGNUP)))
         viewPager.setCurrentItem(1);
         else
             intent.removeExtra(SignIn.LOGIN);

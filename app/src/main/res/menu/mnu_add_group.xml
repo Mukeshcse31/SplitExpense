@@ -5,24 +5,28 @@
     <item
         android:id="@+id/addGroup"
         android:title="@string/add"
-        app:showAsAction="always"
+        app:showAsAction="always|withText"
+        android:icon="@drawable/save"
         android:orderInCategory="1"/>
     <item
         android:id="@+id/saveGroup"
         android:title="@string/save"
-        app:showAsAction="always"
+        android:icon="@drawable/save"
+        app:showAsAction="always|withText"
         android:orderInCategory="1"/>
 
     <item
         android:id="@+id/deleteGroup"
         android:title="@string/delete"
-        app:showAsAction="always"
+        android:icon="@drawable/delete"
+        app:showAsAction="always|withText"
         android:orderInCategory="1"/>
 
     <item
         android:id="@+id/gotoGroupList"
         android:title="@string/cancel"
-        app:showAsAction="always"
+        android:icon="@drawable/cancel"
+        app:showAsAction="always|withText"
         android:orderInCategory="5"/>
 
 </menu>

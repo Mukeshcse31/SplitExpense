@@ -5,24 +5,30 @@
     <item
         android:id="@+id/saveFriend"
         android:title="@string/add_friend"
-        app:showAsAction="always"
+        app:showAsAction="always|withText"
+        android:icon="@drawable/addperson_icon"
         android:orderInCategory="0"/>
 
     <item
         android:id="@+id/gotoAddGroup"
         android:title="@string/add_group"
-        app:showAsAction="always"
+        app:showAsAction="always|withText"
+        android:icon="@drawable/addgroup_icon"
         android:orderInCategory="1"/>
 
 
     <item
         android:id="@+id/invite_friend"
         android:title="@string/inviteafriend"
+        app:showAsAction="never|withText"
+        android:icon="@drawable/invite_friend"
         android:orderInCategory="2"/>
 
     <item
         android:id="@+id/signout"
         android:title="@string/signout"
+        android:icon="@drawable/logout"
+        app:showAsAction="never|withText"
         android:orderInCategory="3"/>
 
 </menu>

@@ -51,7 +51,7 @@
                     android:layout_height="@dimen/tool_image_height"
                     android:contentDescription="@string/prompt_username"
                     android:scaleType="fitXY"
-                    android:src="@drawable/person"
+                    android:src="@drawable/account_image"
                     app:layout_collapseMode="parallax"
                     android:foregroundTint="@color/common_google_signin_btn_text_dark_disabled"
                     android:tint="@color/common_google_signin_btn_text_dark_disabled"
@@ -65,14 +65,13 @@
                     android:layout_height="wrap_content"
                     app:layout_constraintEnd_toEndOf="parent"
                     app:layout_constraintStart_toStartOf="parent"
-                    app:layout_constraintTop_toTopOf="parent"
                     app:layout_constraintBottom_toBottomOf="parent">
                 <TextView
                     android:id="@+id/balance_summary_tv"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:textSize="@dimen/dateSpent_tv"
-                    android:gravity="center"
+                    android:gravity="bottom"
                     android:alpha="0.97"
                     android:textColor="@color/white"/>
                 </com.google.app.splitwise_clone.utils.MaxWidthLinearLayout>
@@ -103,11 +102,6 @@
         android:nestedScrollingEnabled="true"
         app:layout_behavior="@string/appbar_scrolling_view_behavior"
         >
-
-<!--        <androidx.viewpager.widget.PagerTitleStrip-->
-<!--            android:layout_width="match_parent"-->
-<!--            android:layout_height="wrap_content"-->
-<!--            android:layout_gravity="top" />-->
 
     </androidx.viewpager.widget.ViewPager>
 

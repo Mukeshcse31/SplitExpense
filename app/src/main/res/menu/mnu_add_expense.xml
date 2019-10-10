@@ -5,21 +5,21 @@
     <item
         android:id="@+id/saveExpense"
         android:title="@string/save"
-        app:showAsAction="always"
+        app:showAsAction="always|withText"
         android:icon="@drawable/save"
         android:orderInCategory="0"/>
 
     <item
         android:id="@+id/deleteExpense"
         android:title="@string/delete"
-        app:showAsAction="ifRoom"
+        app:showAsAction="ifRoom|withText"
         android:icon="@drawable/delete"
         android:orderInCategory="1"/>
 
     <item
         android:id="@+id/cancelUpdate"
         android:title="@string/cancel"
-        app:showAsAction="ifRoom"
+        app:showAsAction="ifRoom|withText"
         android:icon="@drawable/cancel"
         android:orderInCategory="2"/>
 

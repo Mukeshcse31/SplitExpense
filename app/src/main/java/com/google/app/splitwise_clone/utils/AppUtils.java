@@ -185,7 +185,7 @@ public class AppUtils {
     }
 
 
-    public static void showOption(Menu mMenu, int[] ids) {
+    public static void showMenuOption(Menu mMenu, int[] ids) {
 
         if (mMenu == null) return;
         for (int id : ids) {

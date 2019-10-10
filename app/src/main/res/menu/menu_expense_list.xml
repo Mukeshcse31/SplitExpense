@@ -6,23 +6,28 @@
     <item
         android:id="@+id/orderbyCategory"
         android:title="@string/mnu_orderbycategory"
-        app:showAsAction="ifRoom"
-        android:orderInCategory="0"/>
+        android:icon="@drawable/category_order"
+        app:showAsAction="ifRoom|withText"
+        android:orderInCategory="0"
+        />
 
     <item
         android:id="@+id/orderbyDate"
         android:title="@string/mnu_resetorder"
-        app:showAsAction="ifRoom"
+        android:icon="@drawable/orderby_date"
+        app:showAsAction="ifRoom|withText"
         android:orderInCategory="1"/>
 
     <item
         android:id="@+id/settle_up"
+        android:icon="@drawable/payment"
         android:title="@string/settle_up"
         android:orderInCategory="2"/>
 
     <item
         android:id="@+id/export"
         android:title="@string/mnu_export"
+        android:icon="@drawable/share"
         android:orderInCategory="3"/>
 
     <item
@@ -32,6 +37,7 @@
 
     <item
         android:id="@+id/signout"
+        android:icon="@drawable/logout"
         android:title="@string/signout"
         android:orderInCategory="6"/>
 
