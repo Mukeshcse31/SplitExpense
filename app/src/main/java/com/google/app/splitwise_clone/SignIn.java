@@ -230,6 +230,13 @@ public class SignIn extends AppCompatActivity {
                                             }
                                         }
                                     });
+                            FirebaseMessaging.getInstance().subscribeToTopic(displayName).addOnSuccessListener(new OnSuccessListener<Void>() {
+                                @Override
+                                public void onSuccess(Void aVoid) {
+                                    Log.i(TAG, "login success");
+                                }
+                            });
+
                         }
                     }
                 });
