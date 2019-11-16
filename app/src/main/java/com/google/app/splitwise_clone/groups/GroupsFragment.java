@@ -15,6 +15,11 @@ import androidx.fragment.app.Fragment;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
+import com.google.android.gms.ads.AdRequest;
+import com.google.android.gms.ads.AdView;
+import com.google.android.gms.ads.MobileAds;
+import com.google.android.gms.ads.initialization.InitializationStatus;
+import com.google.android.gms.ads.initialization.OnInitializationCompleteListener;
 import com.google.app.splitwise_clone.R;
 import com.google.app.splitwise_clone.utils.AppUtils;
 import com.google.app.splitwise_clone.utils.FirebaseUtils;
@@ -41,6 +46,7 @@ public class GroupsFragment extends Fragment implements GroupsAdapter.OnClickLis
     private GroupsAdapter mGroupsAdapter;
     String db_users, db_balances, db_groups, db_archivedExpenses, db_expenses, db_members, db_nonMembers,
             db_totalAmount, db_dateSpent, db_splitDues, db_images, db_category, db_owner, db_photoUrl, db_amount, db_status, db_friends, db_email, db_name, db_imageUrl;
+    private AdView mAdView;
 
     public GroupsFragment() {
         // Required empty public constructor
@@ -56,6 +62,15 @@ public class GroupsFragment extends Fragment implements GroupsAdapter.OnClickLis
         LinearLayoutManager layoutManager = new LinearLayoutManager(getContext());
         groups_rv.setLayoutManager(layoutManager);
         postponeEnterTransition();
+
+        MobileAds.initialize(getContext(), new OnInitializationCompleteListener() {
+            @Override
+            public void onInitializationComplete(InitializationStatus initializationStatus) {
+            }
+        });
+        mAdView = rootView.findViewById(R.id.adView);
+        AdRequest adRequest = new AdRequest.Builder().build();
+        mAdView.loadAd(adRequest);
 
         return rootView;
     }

@@ -222,4 +222,7 @@
         <item>house</item>
         <item>rent</item>
     </string-array>
+
+    <string name="adunitid">ca-app-pub-6076864297699362/6131707000</string>
+<!--    <string name="adunitid">ca-app-pub-3940256099942544/6300978111</string>-->
 </resources>
