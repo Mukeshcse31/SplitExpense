@@ -601,6 +601,7 @@ public class AddGroup extends AppCompatActivity implements GroupMembersAdapter.O
                                 @Override
                                 public void onFailure(@NonNull Exception exception) {
 
+                                    gotoSummaryActivity(GROUP_EDITED, String.format("%s %s", getString(R.string.saved_group), newGroupNname));
                                     Log.i(TAG, exception.getMessage());
                                     // Handle any errors
                                 }
