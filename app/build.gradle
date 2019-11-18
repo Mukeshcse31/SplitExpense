@@ -11,8 +11,8 @@ android {
     }
     compileSdkVersion 29
     defaultConfig {
-        applicationId "com.google.app.splitwise_clone"
-        minSdkVersion 29
+        applicationId "com.android.app.splitwise_clone"
+        minSdkVersion 27
         targetSdkVersion 29
         versionCode 1
         versionName "1.0"
@@ -28,12 +28,12 @@ android {
     flavorDimensions "version"
     productFlavors {
         free {
-            applicationId "com.google.app.splitwise_clone.free"
+            applicationId "com.android.app.splitwise_clone.free"
             versionName "1.0-free"
             signingConfig signingConfigs.debug
         }
         paid {
-            applicationId "com.google.app.splitwise_clone.paid"
+            applicationId "com.android.app.splitwise_clone.paid"
             versionName "1.0-paid"
         }
     }
@@ -43,6 +43,9 @@ dependencies {
     implementation fileTree(dir: 'libs', include: ['*.jar'])
     implementation 'androidx.appcompat:appcompat:1.0.2'
 //    https://stackoverflow.com/questions/51957275/inflateexception-when-using-textinputlayout/51957367#51957367
+
+    testImplementation 'junit:junit:4.12'
+    androidTestImplementation 'androidx.test:runner:1.2.0'
 
     implementation 'androidx.constraintlayout:constraintlayout:1.1.3'
     implementation 'androidx.recyclerview:recyclerview:1.0.0'

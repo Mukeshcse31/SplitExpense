@@ -7,7 +7,7 @@
     android:layout_height="match_parent"
     android:fitsSystemWindows="true"
     android:orientation="vertical"
-    tools:context=".SummaryActivity">
+    tools:context="com.android.app.splitwise_clone.SummaryActivity">
 
 
     <androidx.viewpager.widget.ViewPager
@@ -69,7 +69,7 @@
                     app:layout_constraintStart_toStartOf="parent"
                     app:layout_constraintTop_toTopOf="parent" />
 
-                <com.google.app.splitwise_clone.utils.MaxWidthLinearLayout
+                <com.android.app.splitwise_clone.utils.MaxWidthLinearLayout
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     app:layout_constraintBottom_toBottomOf="parent"
@@ -84,7 +84,7 @@
                         android:gravity="bottom"
                         android:textColor="@color/white"
                         android:textSize="@dimen/dateSpent_tv" />
-                </com.google.app.splitwise_clone.utils.MaxWidthLinearLayout>
+                </com.android.app.splitwise_clone.utils.MaxWidthLinearLayout>
 
             </androidx.constraintlayout.widget.ConstraintLayout>
         </com.google.android.material.appbar.CollapsingToolbarLayout>

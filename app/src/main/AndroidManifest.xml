@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
-    package="com.google.app.splitwise_clone">
+    package="com.android.app.splitwise_clone">
 
     <application
         android:allowBackup="true"
@@ -12,7 +12,7 @@
         android:theme="@style/Theme.AppCompat.DayNight.NoActionBar">
 
         <activity
-            android:name=".SignIn"
+            android:name="com.android.app.splitwise_clone.SignIn"
             android:configChanges="keyboardHidden|orientation|screenSize">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
@@ -20,22 +20,22 @@
             </intent-filter>
         </activity>
 
-        <activity android:name=".SummaryActivity"
+        <activity android:name="com.android.app.splitwise_clone.SummaryActivity"
             android:configChanges="keyboard|orientation"
             ></activity>
 <!--        android:parentActivityName=".SignIn"-->
-        <activity android:name=".friends.AddFriend"
+        <activity android:name="com.android.app.splitwise_clone.friends.AddFriend"
             android:configChanges="keyboard|orientation"
-            android:parentActivityName=".SummaryActivity"></activity>
+            android:parentActivityName="com.android.app.splitwise_clone.SummaryActivity"></activity>
 
-        <activity android:name=".expense.ExpenseList"
-    android:parentActivityName=".SummaryActivity"
+        <activity android:name="com.android.app.splitwise_clone.expense.ExpenseList"
+    android:parentActivityName="com.android.app.splitwise_clone.SummaryActivity"
             android:configChanges="keyboard|orientation"></activity>
 
-        <activity android:name=".expense.AddExpense"
+        <activity android:name="com.android.app.splitwise_clone.expense.AddExpense"
             android:configChanges="keyboard|orientation"></activity>
 
-        <activity android:name=".groups.AddGroup"
+        <activity android:name="com.android.app.splitwise_clone.groups.AddGroup"
             android:configChanges="keyboard|orientation"/>
 
         <meta-data
@@ -48,7 +48,7 @@
             android:configChanges="keyboard|keyboardHidden|orientation|screenLayout|uiMode|screenSize|smallestScreenSize"
             android:theme="@android:style/Theme.Translucent" />
 
-        <receiver android:name=".widget.BalanceWidgetProvider">
+        <receiver android:name="com.android.app.splitwise_clone.widget.BalanceWidgetProvider">
             <intent-filter>
                 <action android:name="android.appwidget.action.APPWIDGET_UPDATE" />
             </intent-filter>
@@ -60,10 +60,10 @@
         </receiver>
 
         <!--        https://blog.usejournal.com/send-device-to-device-push-notifications-without-server-side-code-238611c143-->
-        <service android:name=".widget.BalanceService" />
+        <service android:name="com.android.app.splitwise_clone.widget.BalanceService" />
 
         <service
-            android:name=".notification.MyFirebaseMessagingService"
+            android:name="com.android.app.splitwise_clone.notification.MyFirebaseMessagingService"
             android:permission="com.google.android.c2dm.permission.SEND">
             <intent-filter>
                 <action android:name="com.google.firebase.INSTANCE_ID_EVENT" />
